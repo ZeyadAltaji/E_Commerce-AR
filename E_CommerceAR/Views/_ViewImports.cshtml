@@ -1,0 +1,17 @@
+﻿@using E_CommerceAR
+ @* @using E_CommerceAR.UI.Models
+ *@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+
+@using E_CommerceAR.Extensions;
+
+@using Microsoft.AspNetCore.Http
+@using E_CommerceAR.Domain;
+
+@{
+    string lang = Context.Session.GetString("language") ?? "en"; ;
+    string language = lang == "ar-Pl" ? "ar" : "en";
+    string dir = lang == "ar-Pl" ? "rtl" : "ltr";
+
+}

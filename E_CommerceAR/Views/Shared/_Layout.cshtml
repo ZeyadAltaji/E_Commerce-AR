@@ -1,0 +1,59 @@
+﻿@{
+    string lang = Context.Session.GetString("E-CommerceAR_Lang") ?? "en";
+    string language = lang == "ar-Pl" ? "ar" : "en";
+    string dir = lang == "ar-Pl" ? "rtl" : "ltr";
+}
+
+
+@using E_CommerceAR.Extensions;
+
+<!DOCTYPE html>
+<html lang="@language" dir="@dir">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - @Html.Translate("متجرنا", "E-Commerce") </title>
+ 
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    @if (dir == "rtl")
+    {
+        <link id="pagestyle" href="~/assets/css/material-dashboardAr.css?v=3.1.0" rel="stylesheet" />
+
+    }
+    else
+    {
+        <link id="pagestyle" href="~/assets/css/material-dashboardEn.css?v=3.1.0" rel="stylesheet" />
+
+    }
+
+    <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
+</head>
+
+<body dir="@dir">
+   
+ 
+        @RenderBody()
+ 
+
+   
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/assets/js/core/popper.min.js"></script>
+    <script src="~/assets/js/core/bootstrap.min.js"></script>
+    <script src="~/assets/js/plugins/perfect-scrollbar.min.js"></script>
+    <script src="~/assets/js/plugins/smooth-scrollbar.min.js"></script>
+    <script src="~/assets/js/material-dashboard.min.js?v=3.1.0"></script>
+
+    <script>
+        var win = navigator.platform.indexOf('Win') > -1;
+        if (win && document.querySelector('#sidenav-scrollbar')) {
+            var options = {
+                damping: '0.5'
+            }
+            Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+        }
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

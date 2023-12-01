@@ -18,7 +18,9 @@ namespace E_CommerceAR.Controllers
         {
             auth = new FirebaseAuthProvider(
                         new FirebaseConfig(ApiKey));
-            System.Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", "C:\\Users\\ziada\\Source\\repos\\E_CommerceAR\\E_CommerceAR\\Extensions\\finalprojectar-d85ea-firebase-adminsdk-9x4fl-3f47b05b2e.json");
+            System.Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", 
+                "C:\\Users\\ziada\\Source\\repos\\E_CommerceAR\\E_CommerceAR\\Extensions\\" +
+                     "finalprojectar-d85ea-firebase-adminsdk-9x4fl-3f47b05b2e.json");
             firestoreDb = FirestoreDb.Create("finalprojectar-d85ea");
 
         }

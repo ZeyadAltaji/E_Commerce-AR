@@ -12,5 +12,17 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
         {
             return View();
         }
+        public IActionResult Container()
+        {
+            return PartialView("_Container");
+        }
+        public IActionResult Menu()
+        {
+            return PartialView("_MenuPartial");
+        }
+        public IActionResult NavBar()
+        {
+            return PartialView("_NavBarPartial");
+        }
     }
 }

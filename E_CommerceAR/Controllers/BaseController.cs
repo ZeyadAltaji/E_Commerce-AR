@@ -32,9 +32,9 @@ namespace E_CommerceAR.Controllers
             {
                 get
                 {
-                    if (HttpContext.Session.GetString("me") != null)
+                    if (HttpContext.Session.GetString("_UserToken") != null)
                     {
-                        HttpContext.Session.SetObject("me", user);
+                        HttpContext.Session.SetObject("_UserToken", user);
                     }
                     return user;
                 }
@@ -94,7 +94,7 @@ namespace E_CommerceAR.Controllers
                 if (!filterContext.Controller.ToString().Contains("AccountsController"))
                 {
                     filterContext.HttpContext.Response.Headers.Add("Cache-Control", "no-store");
-                    if (HttpContext.Session.GetString("me") == null)
+                    if (HttpContext.Session.GetString("_UserToken") == null)
                     {
                         filterContext.Result = new RedirectResult(Url.Action("Logout", "Account", new { area = string.Empty }));
                     }

@@ -9,6 +9,9 @@
   <ItemGroup>
     <Folder Include="Areas\AdminDashboard\Data\" />
     <Folder Include="Areas\AdminDashboard\Models\" />
+    <Folder Include="Areas\DealerAreas\Data\" />
+    <Folder Include="Areas\DealerAreas\Models\" />
+    <Folder Include="Areas\DealerAreas\Views\" />
   </ItemGroup>
 
   <ItemGroup>

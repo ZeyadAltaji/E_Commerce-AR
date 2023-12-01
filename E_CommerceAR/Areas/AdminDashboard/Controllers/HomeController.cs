@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using E_CommerceAR.Controllers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace E_CommerceAR.Areas.AdminDashboard.Controllers
 {
     [Area("AdminDashboard")]
 
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
          [Route("AdminDashboard/Home/Index")]
         public IActionResult Index()

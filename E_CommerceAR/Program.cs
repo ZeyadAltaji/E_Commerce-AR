@@ -29,10 +29,6 @@ app.UseStaticFiles();
 
 app.UseRouting();
 app.UseSession();
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
- });
 
 app.UseAuthorization();
 
@@ -43,6 +39,11 @@ app.MapControllerRoute(
     name: "AdminDashboard",
     pattern: "AdminDashboard/{controller=Home}/{action=Index}/{id?}",
     defaults: new { area = "AdminDashboard" });
+app.MapControllerRoute(
+    name: "DealerAreas",
+    pattern: "DealerAreas/{controller=index}/{action=Home}/{id?}",
+    defaults:new { area= "DealerAreas" }
+    );
 
 
 

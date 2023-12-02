@@ -21,7 +21,7 @@ namespace E_CommerceAR.Controllers
             System.Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", 
                 "C:\\Users\\ziada\\Source\\repos\\E_CommerceAR\\E_CommerceAR\\Extensions\\" +
                      "finalprojectar-d85ea-firebase-adminsdk-9x4fl-3f47b05b2e.json");
-            firestoreDb = FirestoreDb.Create("finalprojectar-d85ea");
+            firestoreDb = FirestoreDb.Create(PorjectId);
 
         }
         public IActionResult Login()
@@ -65,13 +65,24 @@ namespace E_CommerceAR.Controllers
                 if (token != null)
                 {
 
-                    HttpContext.Session.SetString("_UserToken", token);
 
                     var user = await FetchUserFromDatabase(loginModel.Email);
-                    HttpContext.Session.SetString("Role", user.Role.ToString());
 
                     if (user != null)
                     {
+                        if (!user.IsActive)
+                        {
+                            ViewData["IsActive"] = "Please wait for the official's approval.";
+                            return View(loginModel);
+                        }
+
+                        if (user.IsDeleted ==true)
+                        {
+                            ViewData["IsDeleted"] = "Your account is deleted. Please contact the administrator.";
+                            return View(loginModel);
+                        }
+                        HttpContext.Session.SetString("_UserToken", token);
+                        HttpContext.Session.SetString("Role", user.Role.ToString());
 
                         switch (user.Role)
                         {
@@ -104,16 +115,13 @@ namespace E_CommerceAR.Controllers
         {
             try
             {
-                FirestoreDb db = FirestoreDb.Create("finalprojectar-d85ea");
-
-                // Assuming "users" is your collection and "Email" is the field you want to search
-                Query query = db.Collection("user").WhereEqualTo("email", email);
+ 
+                 Query query = firestoreDb.Collection("user").WhereEqualTo("email", email);
                 QuerySnapshot querySnapshot = await query.GetSnapshotAsync();
 
                 if (querySnapshot.Documents.Count > 0)
                 {
-                    // Assuming you have a User class to represent your user data
-                    return querySnapshot.Documents[0].ConvertTo<Login>();
+                     return querySnapshot.Documents[0].ConvertTo<Login>();
                 }
 
                 return null;
@@ -134,7 +142,7 @@ namespace E_CommerceAR.Controllers
         {
             try
             {
-                SignupModel.IsActive = true;
+                SignupModel.IsActive = false;
                 SignupModel.IsDeleted = false;
                 SignupModel.Role = 2;
 

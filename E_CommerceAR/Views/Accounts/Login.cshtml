@@ -50,6 +50,18 @@
                                         <label class="text-danger mb-0 ms-3" for="ErrorMessage">@Html.Translate("بريد إلكتروني أو كلمة مرور غير صالحة", "Invalid Email or Password")</label>
                                     </div>
                                 }
+                                else if (ViewData["IsActive"] != null)
+                                {
+                                    <div class="form-check form-switch d-flex align-items-center mb-3">
+                                        <label class="text-danger mb-0 ms-3" for="ErrorMessage">@Html.Translate(" يرجى الانتظار موافقة المسؤول.", "Please wait for the official's approval.")</label>
+                                    </div>
+                                }
+                                else if (ViewData["IsDeleted"] != null)
+                                {
+                                    <div class="form-check form-switch d-flex align-items-center mb-3">
+                                        <label class="text-danger mb-0 ms-3" for="ErrorMessage">@Html.Translate(" تم حذف حسابك يرجى مراجعة المسؤول.", "Your account is deleted. Please contact the administrator.")</label>
+                                    </div>
+                                }
                                 <div class="form-check form-switch d-flex align-items-center mb-3">
                                     <input class="form-check-input" type="checkbox" id="rememberMe" checked style="@(lang == "en"? "right: 2rem;" : "")">
                                     <label class="form-check-label mb-0 ms-3" style="@(lang== "en" ? "" :"right: 2rem;")" for="rememberMe">@Html.Translate("تذكرني","Remember Me")</label>

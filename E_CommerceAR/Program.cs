@@ -1,4 +1,5 @@
 using Google.Api;
+using Microsoft.AspNetCore.Builder;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
@@ -39,6 +40,11 @@ app.MapControllerRoute(
     name: "AdminDashboard",
     pattern: "AdminDashboard/{controller=Home}/{action=Index}/{id?}",
     defaults: new { area = "AdminDashboard" });
+app.MapControllerRoute(
+    name: "AdminDashboardProductsSpecific",
+    pattern: "AdminDashboard/Products/{action}",
+    defaults: new { area = "AdminDashboard", controller = "Products" });
+
 app.MapControllerRoute(
     name: "DealerAreas",
     pattern: "DealerAreas/{controller=index}/{action=Home}/{id?}",

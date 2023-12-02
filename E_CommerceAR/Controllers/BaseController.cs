@@ -11,8 +11,8 @@ namespace E_CommerceAR.Controllers
     
             public readonly static string ApiKey = "AIzaSyBSjwMDM_Cf4STiMVKqCqDXziCvFis3fQU";
             public readonly static string Bucket = "gs://finalprojectar-d85ea.appspot.com/";
-
-
+            public readonly static string PorjectId = "finalprojectar-d85ea";
+       
             public string Title { get; set; }
             private string Lang;
  

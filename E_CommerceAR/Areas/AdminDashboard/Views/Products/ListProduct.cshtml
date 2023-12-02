@@ -1,0 +1,60 @@
+﻿@model IEnumerable<E_CommerceAR.Domain.ModalsViews.Products>
+@using E_CommerceAR.Extensions;
+
+@{
+    int count = 1;
+}
+<style>
+    table.dataTable thead th, table.dataTable thead td, table.dataTable tfoot th, table.dataTable tfoot td, div.dataTables_wrapper div.dataTables_filter {
+        text-align: @Html.Translate("left","right");
+    }
+</style>
+<table class="table align-items-center mb-0" id="Prodcuts">
+    <thead>
+        <tr>
+            <th class="text-center">#</th>
+            <th class="text-center">@Html.Translate("اسم المنتج","Name Product")</th>
+            <th class="text-center">@Html.Translate("الفئة","category")</th>
+            <th class="text-center">@Html.Translate("اسم البائع","Name Dealer")</th>
+            <th class="text-center"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var  item in Model)
+        {
+            <tr>
+                <td class="text-center">
+                    @count
+                </td>
+                <td class="text-center">
+                    @item.Name
+                </td>
+                <td class="text-center">
+                   @item.Category
+                </td>
+                <td class="text-center">
+                    @item.DealerId
+                </td>
+
+                <td class="text-center">
+                    <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
+                        Edit
+                    </a>
+                    <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
+                        delete
+                    </a>
+                    <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
+                        info
+                    </a>
+                </td>
+            </tr>
+            count++;
+        }
+    </tbody>
+</table>
+<script>
+    $('#Prodcuts').DataTable({
+        responsive:true,
+
+    })
+</script>

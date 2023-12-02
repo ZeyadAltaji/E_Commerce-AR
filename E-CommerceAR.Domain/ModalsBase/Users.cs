@@ -6,26 +6,39 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Google.Cloud.Firestore;
 
 namespace E_CommerceAR.Domain.ModalsBase
 {
-   
-        public partial class User : BaseEntity
+    [FirestoreData]
+
+    public partial class User : BaseEntity
         {
             [Required]
+            [FirestoreProperty("UserName")]
+
             public string UserName { get; set; } = string.Empty;
             [Required]
+            [FirestoreProperty("firstName")]
+
             public string Frist_Name { get; set; } = string.Empty;
             [Required]
+            [FirestoreProperty("lastName")]
+
             public string Last_Name { get; set; } = string.Empty;
             [Required]
             [EmailAddress]
+            [FirestoreProperty("email")]
+
             public string Email { get; set; } = string.Empty;
             [Required]
             [MinLength(6)]
+            [FirestoreProperty("password")]
+
             public byte[] Password { get; set; }
             [Required]
             [Compare("Password")]
+
             public byte[] ComfirmPassword { get; set; }
             public byte[] PasswordKey { get; set; }
             [Required]

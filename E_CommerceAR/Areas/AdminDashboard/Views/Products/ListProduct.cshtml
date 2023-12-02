@@ -3,6 +3,8 @@
 
 @{
     int count = 1;
+    string FristName = ViewBag.Frist_Name;
+    string LastName = ViewBag.LastName;
 }
 <style>
     table.dataTable thead th, table.dataTable thead td, table.dataTable tfoot th, table.dataTable tfoot td, div.dataTables_wrapper div.dataTables_filter {
@@ -33,7 +35,7 @@
                    @item.Category
                 </td>
                 <td class="text-center">
-                    @item.DealerId
+                    @FristName + @LastName
                 </td>
 
                 <td class="text-center">

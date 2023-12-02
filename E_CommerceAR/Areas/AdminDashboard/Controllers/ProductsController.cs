@@ -1,4 +1,5 @@
 ﻿using E_CommerceAR.Controllers;
+using E_CommerceAR.Domain.ModalsBase;
 using E_CommerceAR.Domain.ModalsViews;
 using Firebase.Auth;
 using Google.Cloud.Firestore;
@@ -37,6 +38,7 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
         {
             CollectionReference productsCollection = firestoreDb.Collection("Products");
             QuerySnapshot querySnapshot = await productsCollection.GetSnapshotAsync();
+        
 
             List<Products> products = new List<Products>();
 
@@ -45,15 +47,39 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
                 try
                 {
                     Products product = documentSnapshot.ConvertTo<Products>();
+                    var user = await FetchUserNamesFromDatabase(product.DealerId);
+                
                     products.Add(product);
                 }
                 catch (Exception ex)
                 {
                      Console.WriteLine($"Error converting document {documentSnapshot.Id}: {ex.Message}");
-                 }
+                }
             }
 
             return PartialView(products);
+        }
+        private async Task<(string FristName, string LastName)> FetchUserNamesFromDatabase(string DealerId)
+        {
+            try
+            {
+
+                DocumentReference docRef = firestoreDb.Collection("user").Document(DealerId);
+                DocumentSnapshot documentSnapshot = await docRef.GetSnapshotAsync();
+
+                if (documentSnapshot.Exists)
+                {
+                    var user = documentSnapshot.ConvertTo<Signup>();
+                    return (user.firstName, user.firstName);
+                }
+
+                return (null, null);
+
+            }
+            catch (Exception ex)
+            {
+                return (null, null);
+            }
         }
 
         public IActionResult GetProductById(int id)

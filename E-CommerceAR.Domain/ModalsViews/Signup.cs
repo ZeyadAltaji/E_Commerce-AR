@@ -11,18 +11,19 @@ namespace E_CommerceAR.Domain.ModalsViews
     [FirestoreData]
     public partial class Signup
     {
+
         [FirestoreProperty("firstName")]
-        [Required]
+        [Required(ErrorMessage = "his field is required")]
         public string firstName { get; set; } = string.Empty;
         [FirestoreProperty("lastName")]
-        [Required]
+        [Required(ErrorMessage = "his field is required")]
         public string lastName { get; set; } = string.Empty;
         [FirestoreProperty("email")]
-        [Required]
+        [Required(ErrorMessage = "his field is required")]
         [EmailAddress]
         public string email { get; set; } = string.Empty;
         [FirestoreProperty("password")]
-        [Required]
+        [Required(ErrorMessage = "his field is required")]
         public string password { get; set; } = string.Empty;
         [FirestoreProperty("Role")]
         public int Role { get; set; }

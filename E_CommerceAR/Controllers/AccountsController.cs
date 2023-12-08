@@ -52,63 +52,72 @@ namespace E_CommerceAR.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(Login loginModel)
         {
-            try
+            if (ModelState.IsValid)
             {
-
-                if (!IsValidEmail(loginModel.Email))
+                try
                 {
-                    ModelState.AddModelError("Email", "Invalid email address");
+
+                    if (!IsValidEmail(loginModel.Email))
+                    {
+                        ModelState.AddModelError("Email", "Invalid email address");
+                        return View(loginModel);
+                    }
+
+                    var fbAuthLink = await auth.SignInWithEmailAndPasswordAsync(loginModel.Email, loginModel.Password);
+                    string token = fbAuthLink.FirebaseToken;
+                    if (token != null)
+                    {
+
+
+                        var user = await FetchUserFromDatabase(loginModel.Email);
+
+                        if (user != null)
+                        {
+                            if (!user.IsActive)
+                            {
+                                ViewData["IsActive"] = "Please wait for the official's approval.";
+                                return View(loginModel);
+                            }
+
+                            if (user.IsDeleted == true)
+                            {
+                                ViewData["IsDeleted"] = "Your account is deleted. Please contact the administrator.";
+                                return View(loginModel);
+                            }
+                            HttpContext.Session.SetString("_UserToken", token);
+                            HttpContext.Session.SetString("Role", user.Role.ToString());
+
+                            switch (user.Role)
+                            {
+                                case 1:
+                                    return RedirectToAction("Index", "Home", new { area = "AdminDashboard" });
+
+                                case 2:
+                                    return RedirectToAction("Index", "Home", new { area = "DealerAreas" });
+                                default:
+                                    return StatusCode(404);
+
+                            }
+
+                        }
+                    }
+                    ViewData["InvalidMessage"] = Translate("بريد إلكتروني أو كلمة مرور غير صالحة", "Invalid Email or Password");
                     return View(loginModel);
                 }
-
-                var fbAuthLink = await auth.SignInWithEmailAndPasswordAsync(loginModel.Email, loginModel.Password);
-                string token = fbAuthLink.FirebaseToken;
-                if (token != null)
+                catch (FirebaseAuthException ex)
                 {
+                    var firebaseEx = JsonConvert.DeserializeObject<FirebaseError>(ex.ResponseData);
+                    ModelState.AddModelError(String.Empty, firebaseEx.error.message);
+                    ViewData["InvalidMessage"] = Translate("بريد إلكتروني أو كلمة مرور غير صالحة", "Invalid Email or Password");
 
-
-                    var user = await FetchUserFromDatabase(loginModel.Email);
-
-                    if (user != null)
-                    {
-                        if (!user.IsActive)
-                        {
-                            ViewData["IsActive"] = "Please wait for the official's approval.";
-                            return View(loginModel);
-                        }
-
-                        if (user.IsDeleted ==true)
-                        {
-                            ViewData["IsDeleted"] = "Your account is deleted. Please contact the administrator.";
-                            return View(loginModel);
-                        }
-                        HttpContext.Session.SetString("_UserToken", token);
-                        HttpContext.Session.SetString("Role", user.Role.ToString());
-
-                        switch (user.Role)
-                        {
-                            case 1:
-                                return RedirectToAction("Index", "Home", new { area = "AdminDashboard" });
-
-                            case 2:
-                                return RedirectToAction("Index", "Home", new { area = "DealerAreas" });
-                            default:
-                                return StatusCode(404);
-
-                        }
-
-                    }
+                    return View(loginModel);
                 }
-                ViewData["ErrorMessage"] = Translate("بريد إلكتروني أو كلمة مرور غير صالحة", "Invalid Email or Password");
-                return View(loginModel);
             }
-            catch (FirebaseAuthException ex)
+            else
             {
-                var firebaseEx = JsonConvert.DeserializeObject<FirebaseError>(ex.ResponseData);
-                ModelState.AddModelError(String.Empty, firebaseEx.error.message);
-                ViewData["ErrorMessage"] = Translate("بريد إلكتروني أو كلمة مرور غير صالحة", "Invalid Email or Password");
-
+                ViewData["ErrorMessage"] = Translate("هذا الحقل الزامي", "This field is required");
                 return View(loginModel);
+
             }
 
         }
@@ -141,51 +150,66 @@ namespace E_CommerceAR.Controllers
         [HttpPost]
         public async Task<IActionResult> Signup(Signup SignupModel, IFormFile attachments)
         {
-            try
+            if(ModelState.IsValid)
             {
-                SignupModel.IsActive = false;
-                SignupModel.IsDeleted = false;
-                SignupModel.Role = 2;
-
-                var user = new Signup
+                try
                 {
-                    firstName = SignupModel.firstName,
-                    lastName = SignupModel.lastName,
-                    email = SignupModel.email,
-                    password = SignupModel.password,
-                    Role = SignupModel.Role,
-                    IsActive = SignupModel.IsActive,
-                    IsDeleted = SignupModel.IsDeleted
-                };
-                await auth
-                    .CreateUserWithEmailAndPasswordAsync(SignupModel.email, SignupModel.password);
+                    SignupModel.IsActive = false;
+                    SignupModel.IsDeleted = false;
+                    SignupModel.Role = 2;
 
-                var userCollectionReference = firestoreDb.Collection("user");
-
-                var documentReference = await userCollectionReference.AddAsync(user);
-
-                string autoGeneratedDocumentId = documentReference.Id;
-                string folderName = $"Attachments/{autoGeneratedDocumentId}/";
-
-                if (attachments != null && attachments.Length > 0)
-                {
-                    string bucketName = "finalprojectar-d85ea.appspot.com";
-                    var storage = StorageClient.Create();
-
-                     string fileName = $"{folderName}{attachments.FileName}";
-
-                    using (var stream = attachments.OpenReadStream())
+                    var user = new Signup
                     {
-                         storage.UploadObject(bucketName, fileName, null, stream);
-                    }
-                }
+                        firstName = SignupModel.firstName,
+                        lastName = SignupModel.lastName,
+                        email = SignupModel.email,
+                        password = SignupModel.password,
+                        Role = SignupModel.Role,
+                        IsActive = SignupModel.IsActive,
+                        IsDeleted = SignupModel.IsDeleted
+                    };
+                    await auth
+                        .CreateUserWithEmailAndPasswordAsync(SignupModel.email, SignupModel.password);
 
-                return RedirectToAction("Login", "Accounts");
+                    var userCollectionReference = firestoreDb.Collection("user");
+
+                    var documentReference = await userCollectionReference.AddAsync(user);
+
+                    string autoGeneratedDocumentId = documentReference.Id;
+                    string folderName = $"Attachments/{autoGeneratedDocumentId}/";
+
+                    if (attachments != null && attachments.Length > 0)
+                    {
+                        string bucketName = "finalprojectar-d85ea.appspot.com";
+                        var storage = StorageClient.Create();
+
+                        string fileName = $"{folderName}{attachments.FileName}";
+
+                        using (var stream = attachments.OpenReadStream())
+                        {
+                            storage.UploadObject(bucketName, fileName, null, stream);
+                        }
+                    }
+
+                    return RedirectToAction("Login", "Accounts");
+                }
+                catch (Exception ex)
+                {
+                    // Handle the exception appropriately
+                    return RedirectToAction("Signup", "Accounts");
+                }
             }
-            catch (Exception ex)
+            else
             {
-                // Handle the exception appropriately
-                return RedirectToAction("Signup", "Accounts");
+                if (attachments == null)
+                {
+                    ViewData["ErrorMessage"] = Translate("هذا الحقل الزامي", "This field is required");
+
+
+                }
+                ViewData["ErrorMessage"] = Translate("هذا الحقل الزامي", "This field is required");
+
+                return View("Signup", SignupModel);
             }
         }
 

@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
-
+using E_CommerceAR.Domain.ModalsViews;
 namespace E_CommerceAR.Extensions
 {
     public static class DisplayExtensions
     {
         public static HtmlString Translate(this IHtmlHelper html, string Arabic, string English)
-        
         {
             var httpContextAccessor = html.ViewContext.HttpContext.RequestServices.GetService<IHttpContextAccessor>();
 

@@ -21,33 +21,56 @@
                          </div>
                         <div class="card-body">
                             <form role="form" asp-action="Signup" enctype="multipart/form-data">
-                                <div class="input-group input-group-outline mb-3">
-                                    <label class="form-label">@Html.Translate("الاسم الاول","First Name")</label>
-                                    <input type="text" class="form-control" name="firstName">
-                                        <label class="text-danger mb-0 ms-3" for="ErrorMessage">@Html.Translate("هذا الحقل الزامي", "This field is required")</label>
+                                    <div class="col-md-auto mb-3">
+                                        <div class="input-group input-group-outline mb-1">
+                                            <label class="form-label">@Html.Translate("الاسم الاول","First Name")</label>
+                                            <input type="text" class="form-control" name="firstName">
+                                        </div>
+                                        @if (ViewData["ErrorMessage"] != null)
+                                        {
+                                            <span class="text-danger">@Html.Translate("هذا الحقل الزامي", "This field is required")</span>
+                                        }
                                     </div>
-                                <div class="input-group input-group-outline mb-3">
-                                    <label class="form-label">@Html.Translate("الاسم الاخير","Last Name")</label>
-                                    <input type="text" class="form-control" name="LastName">
-                                        <label class="text-danger mb-0 ms-3" for="ErrorMessage">@Html.Translate("هذا الحقل الزامي", "This field is required")</label>
-
-                                </div>
-                                <div class="input-group input-group-outline mb-3">
-                                    <label class="form-label">@Html.Translate("البريد الالكتروني","Email")</label>
-                                    <input type="email" class="form-control" name="email">
-                                        <label class="text-danger mb-0 ms-3" for="ErrorMessage">@Html.Translate("هذا الحقل الزامي", "This field is required")</label>
-
-                                </div>
-                                <div class="input-group input-group-outline mb-3">
-                                    <label class="form-label">@Html.Translate("كلمة المرور","Password")</label>
-                                    <input type="password" name="password" class="form-control">
-                                        <label class="text-danger mb-0 ms-3" for="ErrorMessage">@Html.Translate("هذا الحقل الزامي", "This field is required")</label>
-
-                                </div>
-                                    <div class="input-group input-group-outline mb-3">
-                                        <label class="form-label">@Html.Translate("المرفقات","Attachments")</label>
-                                        <input type="file" name="Attachments" class="form-control">
-                                        <label class="text-danger mb-0 ms-3" for="ErrorMessage">@Html.Translate("هذا الحقل الزامي", "This field is required")</label>
+                                    <div class="col-md-auto mb-3">
+                                        <div class="input-group input-group-outline mb-1">
+                                            <label class="form-label">@Html.Translate("الاسم الاخير","Last Name")</label>
+                                            <input type="text" class="form-control" name="LastName">
+                                        </div>
+                                        @if (ViewData["ErrorMessage"] != null)
+                                        {
+                                            <span class="text-danger">@Html.Translate("هذا الحقل الزامي", "This field is required")</span>
+                                        }
+                                    </div>
+                                    <div class="col-md-auto mb-3">
+                                        <div class="input-group input-group-outline mb-1">
+                                            <label class="form-label">@Html.Translate("البريد الالكتروني","Email")</label>
+                                            <input type="email" class="form-control" name="email">
+                                        </div>
+                                        @if (ViewData["ErrorMessage"] != null)
+                                        {
+                                            <span class="text-danger">@Html.Translate("هذا الحقل الزامي", "This field is required")</span>
+                                        }
+                                    </div>
+                                    <div class="col-md-auto mb-3">
+                                        <div class="input-group input-group-outline mb-1">
+                                            <label class="form-label">@Html.Translate("كلمة المرور","Password")</label>
+                                            <input type="password" name="password" class="form-control">
+                                        </div>
+                                        @if (ViewData["ErrorMessage"] != null)
+                                        {
+                                            <span class="text-danger">@Html.Translate("هذا الحقل الزامي", "This field is required")</span>
+                                        }
+                                    </div>
+                                    <div class="col-md-auto mb-3">
+                                        <div class="input-group input-group-outline mb-1">
+                                            <label class="form-label">@Html.Translate("المرفقات","Attachments")</label>
+                                            <input type="file" name="Attachments" class="form-control">
+                                           
+                                        </div>
+                                        @if (ViewData["ErrorMessage"] != null)
+                                        {
+                                            <span class="text-danger">@Html.Translate("هذا الحقل الزامي", "This field is required")</span>
+                                        }
                                     </div>
                                     <div class="form-check form-check-info text-start ps-0" style="text-align:@Html.Translate("right !important","left !important")">
                                     <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" checked>

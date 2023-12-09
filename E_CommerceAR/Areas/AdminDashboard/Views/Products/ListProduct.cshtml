@@ -1,11 +1,9 @@
-﻿@model List<E_CommerceAR.Areas.AdminDashboard.Controllers.ProductsController.ProductViewModel>
+﻿@model List<E_CommerceAR.Domain.ModalsViews.ProductViewModel>
 @using E_CommerceAR.Extensions;
 
 @{
     int count = 1;
-    string FristName = ViewBag.Frist_Name;
-    string LastName = ViewBag.LastName;
-}
+  }
 <style>
     table.dataTable thead th, table.dataTable thead td, table.dataTable tfoot th, table.dataTable tfoot td, div.dataTables_wrapper div.dataTables_filter {
         text-align: @Html.Translate("left","right");
@@ -36,7 +34,7 @@
                     @item.Product.Category
                 </td>
                 <td class="text-center">
-                    @FristName + @LastName
+                   @(item.FirstName + item.LastName)
                 </td>
 
                 <td class="text-center">

@@ -38,17 +38,31 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
         [Route("Products/ListProduct")]
 
         [HttpGet]
+        //public async Task<IActionResult> ListProduct()
+        //{
+        //    List<ProductViewModel> productDataList = await FetchProductsFromDatabase();
+        //    return PartialView(productDataList);
+        //}
+      
         public async Task<IActionResult> ListProduct()
         {
             List<ProductViewModel> productDataList = await FetchProductsFromDatabase();
+
+            // Fetch user names for each product concurrently
+            var fetchUserTasks = productDataList.Select(product => FetchUserNamesFromDatabase(product.Product.DealerId));
+            var userNames = await Task.WhenAll(fetchUserTasks);
+
+            // Add user names to each item in productDataList
+            for (int i = 0; i < productDataList.Count; i++)
+            {
+                productDataList[i].FirstName = userNames[i].FristName;
+                productDataList[i].LastName = userNames[i].LastName;
+            }
+
             return PartialView(productDataList);
         }
 
-        public class ProductViewModel
-        {
-            public Products Product { get; set; }
-            public string DocumentId { get; set; }
-        }
+
 
         private async Task<List<ProductViewModel>> FetchProductsFromDatabase()
         {
@@ -95,7 +109,7 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
                 if (documentSnapshot.Exists)
                 {
                     var user = documentSnapshot.ConvertTo<Signup>();
-                    return (user.firstName, user.firstName);
+                    return (user.firstName, user.lastName);
                 }
 
                 return (null, null);

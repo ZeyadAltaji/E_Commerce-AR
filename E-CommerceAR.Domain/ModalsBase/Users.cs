@@ -35,12 +35,12 @@ namespace E_CommerceAR.Domain.ModalsBase
             [MinLength(6)]
             [FirestoreProperty("password")]
 
-            public byte[] Password { get; set; }
+            public string Password { get; set; }
             [Required]
             [Compare("Password")]
 
-            public byte[] ComfirmPassword { get; set; }
-            public byte[] PasswordKey { get; set; }
+            public string ComfirmPassword { get; set; }
+            public string PasswordKey { get; set; }
             [Required]
             public string Phone1 { get; set; } = string.Empty;
             [Required]

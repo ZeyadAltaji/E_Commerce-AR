@@ -1,0 +1,94 @@
+﻿@using E_CommerceAR.Extensions;
+@model E_CommerceAR.Domain.ModalsViews.Products;
+@{
+    bool Edit = ViewBag.Edit;
+    string DocumentId = ViewBag.DocumentId;
+}
+
+<style>
+    input {
+        border: 1px solid !important
+    }
+
+
+
+
+    .form-control:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+</style>
+<div class="row">
+    <div class="col-12">
+        <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 p-1">
+                    <div class="col-md-12 d-flex">
+                        <div class="col-md-11">
+                            <h6 class="text-white text-capitalize ps-3">@Html.Translate("قائمة المنتجات","List Products")</h6>
+                        </div>
+                        <div class="col-md-1">
+                            <button class="btn bg-gradient-info mb-0" onclick="addnewProducts()">
+                                @Html.Translate(" عودة الى القائمة","Back to list")
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <form role="form" action="@Url.Action("SaveEditProducts", "Products")" class="text-start">
+                    <div class="row">
+                        <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
+                            <label class="form-label">@Html.Translate("اسم المنتج","Name Products")</label>
+                            <input type="text" class="form-control" name="Name" value="@Model.Name" @(Edit == true ? "" : "disabled")>
+                            <input type="hidden" name="DocumentId" value="@DocumentId">
+
+                        </div>
+                        <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
+                            <label class="form-label">@Html.Translate("اسم الصنف","Name Category")</label>
+                            <input type="text" class="form-control" name="Category" value="@Model.Category" @(Edit == true ? "" : "disabled")>
+                        </div>
+                        <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
+                            <label class="form-label">@Html.Translate("وصف المنتج","Desc Products")</label>
+                            <input type="text" class="form-control" name="Description" value="@Model.Description" @(Edit == true ? "" : "disabled")>
+                        </div>
+                        <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
+                            <label class="form-label">@Html.Translate("السعر","Price")</label>
+                            <input type="number" class="form-control" name="Price" value="@Model.Price" @(Edit == true ? "" : "disabled")>
+                        </div>
+                        <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
+                            <label class="form-label">@Html.Translate("الخصم &","Offer %")</label>
+                            <input type="number" class="form-control" name="OfferPercentage" value="@Model.OfferPercentage" @(Edit == true ? "" : "disabled")>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
+                        <label class="form-label">@Html.Translate("تفاصيل المنتج :","Products Details : ")</label>
+                    </div>
+                    <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
+                        <input type="text" class="form-control" placeholder="@Html.Translate("الحجم | الاستحدام","Sizes | use")" @(Edit == true ? "" : "disabled")>
+                    </div>
+                    <br />
+                    <div class="col-md-12">
+                        <button type="submit" class="btn bg-gradient-success  mb-0" @(Edit == true ? "" : "hidden")> @Html.Translate("حفظ","Save")</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('.form-control').focus(function () {
+            $(this).addClass('focused');
+        });
+
+        $('.form-control').blur(function () {
+            if (!$(this).val()) {
+                $(this).removeClass('focused');
+            }
+        });
+    });
+</script>

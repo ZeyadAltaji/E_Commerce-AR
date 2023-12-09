@@ -1,4 +1,4 @@
-﻿@model IEnumerable<E_CommerceAR.Domain.ModalsViews.Products>
+﻿@model List<E_CommerceAR.Areas.AdminDashboard.Controllers.ProductsController.ProductViewModel>
 @using E_CommerceAR.Extensions;
 
 @{
@@ -27,27 +27,31 @@
             <tr>
                 <td class="text-center">
                     @count
+             
                 </td>
                 <td class="text-center">
-                    @item.Name
+                    @item.Product.Name
                 </td>
                 <td class="text-center">
-                   @item.Category
+                    @item.Product.Category
                 </td>
                 <td class="text-center">
                     @FristName + @LastName
                 </td>
 
                 <td class="text-center">
-                    <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
-                        Edit
-                    </a>
-                    <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
-                        delete
-                    </a>
-                    <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
-                        info
-                    </a>
+                    <button onclick="EditProducts('@item.DocumentId')" class="btn btn-outline-success" style="padding: 9px;">
+                        <i class="fa fa-pen"></i>
+                    </button>
+                    <button onclick="DeleteProducts('@item.DocumentId')" class="btn btn-outline-danger" style="padding: 9px;">
+                        <i class="fa fa-trash"></i>
+
+                    </button>
+
+                    <button onclick="ViewProducts('@item.DocumentId')" class="btn btn-outline-info " style="padding: 9px;">
+                        <i class="fa fa-info"></i>
+                    </button>
+                   
                 </td>
             </tr>
             count++;
@@ -62,4 +66,40 @@
         responsive:true,
 
     })
+    function EditProducts(DocumentId) {
+        var Edit = true;
+        $('#allProdictsDiv').html('');
+
+        var url = '/Products/EditProduct?DocumentId=' + DocumentId + '&Edit=' + Edit;
+        $('#allProdictsDiv').load(url);
+    }
+    function ViewProducts(DocumentId) {
+        var Edit = false;
+        $('#allProdictsDiv').html('');
+
+        var url = '/Products/EditProduct?DocumentId=' + DocumentId + '&Edit=' + Edit;
+        $('#allProdictsDiv').load(url);
+    }
+    function DeleteProducts(DocumentId) {
+
+        var url = '/Products/DeleteProduct?DocumentId=' + DocumentId;
+
+        fetch(url, {
+            method: 'POST',  
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                 if (data.success) {
+                     console.log(data.message);
+                } else {
+                     console.error(data.message);
+                }
+            })
+            .catch((error) => {
+                 console.error('Error:', error);
+            });
+    }
 </script>

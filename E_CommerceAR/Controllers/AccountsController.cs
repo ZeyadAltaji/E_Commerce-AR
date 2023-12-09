@@ -4,6 +4,7 @@ using Firebase.Auth;
 using Google.Cloud.Firestore;
 using Google.Cloud.Storage.V1;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using Newtonsoft.Json;
 using System.Globalization;
 
@@ -52,6 +53,7 @@ namespace E_CommerceAR.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(Login loginModel)
         {
+ 
             if (ModelState.IsValid)
             {
                 try
@@ -69,7 +71,7 @@ namespace E_CommerceAR.Controllers
                     {
 
 
-                        var user = await FetchUserFromDatabase(loginModel.Email);
+                        var (user, documentId) = await FetchUserFromDatabase(loginModel.Email);
 
                         if (user != null)
                         {
@@ -86,6 +88,8 @@ namespace E_CommerceAR.Controllers
                             }
                             HttpContext.Session.SetString("_UserToken", token);
                             HttpContext.Session.SetString("Role", user.Role.ToString());
+                            HttpContext.Session.SetString("UserId", documentId);
+
 
                             switch (user.Role)
                             {
@@ -121,25 +125,25 @@ namespace E_CommerceAR.Controllers
             }
 
         }
-        private async Task<Login> FetchUserFromDatabase(string email)
+        private async Task<(Login User, string DocumentId)> FetchUserFromDatabase(string email)
         {
             try
             {
- 
-                 Query query = firestoreDb.Collection("user").WhereEqualTo("email", email);
+                Query query = firestoreDb.Collection("user").WhereEqualTo("email", email);
                 QuerySnapshot querySnapshot = await query.GetSnapshotAsync();
 
                 if (querySnapshot.Documents.Count > 0)
                 {
-                     return querySnapshot.Documents[0].ConvertTo<Login>();
+                    string documentPath = querySnapshot.Documents[0].Reference.Path;
+                    string documentId = documentPath.Split('/').Last();
+                    return (querySnapshot.Documents[0].ConvertTo<Login>(), documentId);
                 }
 
-                return null;
-
+                return (null, null);
             }
             catch (Exception ex)
             {
-                return null;
+                return (null, null);
             }
         }
 

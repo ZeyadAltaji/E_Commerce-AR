@@ -38,12 +38,6 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
         [Route("Products/ListProduct")]
 
         [HttpGet]
-        //public async Task<IActionResult> ListProduct()
-        //{
-        //    List<ProductViewModel> productDataList = await FetchProductsFromDatabase();
-        //    return PartialView(productDataList);
-        //}
-      
         public async Task<IActionResult> ListProduct()
         {
             List<ProductViewModel> productDataList = await FetchProductsFromDatabase();
@@ -210,7 +204,7 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
                      return RedirectToAction("AddNewProduct", "Products");
                 }
 
-                return RedirectToAction("ListProduct", "Products");
+                return View(Index);
             }
             catch (Exception ex)
             {

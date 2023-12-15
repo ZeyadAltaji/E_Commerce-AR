@@ -1,0 +1,239 @@
+﻿@using E_CommerceAR.Extensions;
+@model E_CommerceAR.Domain.ModalsViews.Orders;
+@{
+  }
+
+<style>
+    input {
+        border: 1px solid !important
+    }
+
+
+
+
+    .form-control:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+</style>
+<div class="row">
+    <div class="col-12">
+        <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 p-1">
+                    <div class="col-md-12 d-flex">
+                        <div class="col-md-10">
+                            <h6 class="text-white text-capitalize ps-3">@Html.Translate("معلومات طلب رقم ","Info Order No ")@Model.OrderId</h6>
+                        </div>
+                        <div class="col-md-2" style="text-align: end !important;">
+                            <button class="btn bg-gradient-info mb-0" onclick="addnewProducts()">
+                                @Html.Translate(" عودة الى القائمة","Back to list")
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                    <div class="row">
+                         <div class="col-md-12 mb-lg-0 mb-4">
+                        <div class="card mt-4">
+                            <div class="card-header pb-0 p-3">
+                                <div class="row">
+                                    <div class="col-6 d-flex align-items-center">
+                                        <h6 class="mb-0">
+                                            @Html.Translate(" معلومات عامة الطلب","General Information Order")
+                                        </h6>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                            <div class="card-body p-3">
+                                <div class="row">
+                                    <div class="col-md-3 mb-md-0 mb-4">
+                                        <div class="card card-body   d-flex align-items-center flex-row">
+                                             <h6 class="mb-0">@Html.Translate("رقم الطلب","No Order") : </h6>
+                                            <h6 class="mb-0">@Model.OrderId </h6>
+
+                                         </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="card card-body   d-flex align-items-center flex-row">
+                                            <h6 class="mb-0">@Html.Translate("تاريخ الطلب","Date Order")</h6>
+                                            <h6 class="mb-0">@Model.Date </h6>
+                                         </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="card card-body   d-flex align-items-center flex-row">
+                                            <h6 class="mb-0">@Html.Translate("حالة الطلب","Status Order") </h6>
+                                            <h6 class="mb-0">@Model.OrderStatus </h6>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="card card-body   d-flex align-items-center flex-row">
+                                            <h6 class="mb-0">@Html.Translate("السعر الكلي","Total Price") </h6>
+                                            <h6 class="mb-0"> $@Model.TotalPrice</h6>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                         <div class="col-md-12 mb-lg-0 mb-4">
+                    <div class="card mt-4">
+                        <div class="card-header pb-0 p-3">
+                            <div class="row">
+                                <div class="col-6 d-flex align-items-center">
+                                    <h6 class="mb-0">
+                                        @Html.Translate("معلومات العميل و الموقع","Information Customer & Address")
+                                    </h6>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="card-body p-3">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="card card-body   d-flex align-items-center flex-row">
+                                        <h6 class="mb-0">@Html.Translate("الاسم الكامل","Full Name") </h6>
+                                        <h6 class="mb-0">@Model.Address.FullName </h6>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card card-body   d-flex align-items-center flex-row">
+                                        <h6 class="mb-0">
+                                            @Html.Translate("رقم هاتف","phone Number") </h6>
+                                        <h6 class="mb-0">@Model.Address.PhoneNumber </h6>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card card-body   d-flex align-items-center flex-row">
+                                        <h6 class="mb-0">
+                                            @Html.Translate("الدولة","State")
+                                        </h6>
+                                        <h6 class="mb-0">@Model.Address.State </h6>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-md-0 mb-4">
+                                    <div class="card card-body   d-flex align-items-center flex-row">
+                                        <h6 class="mb-0">@Html.Translate("العنوان","Address Title") : </h6>
+                                        <h6 class="mb-0">@Model.Address.AddressTitle </h6>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mt-4">
+                                    <div class="card card-body   d-flex align-items-center flex-row">
+                                        <h6 class="mb-0">@Html.Translate("مدينة","City")</h6>
+                                        <h6 class="mb-0">@Model.Address.City </h6>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-3 mt-4">
+                                    <div class="card card-body   d-flex align-items-center flex-row">
+                                        <h6 class="mb-0">
+                                            @Html.Translate("شارع","Street") </h6>
+                                        <h6 class="mb-0">@Model.Address.Street </h6>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                        <div class="col-md-12 mt-4">
+                            <div class="card">
+                                <div class="card-header pb-0 px-3">
+                                <h6 class="mb-0">
+                                    @Html.Translate(" معلومات  المنتجات التي يحتويها الطلب ","Product information contained in the order")
+                                </h6>
+                                </div>
+                                <div class="card-body pt-4 p-3">
+                                    <ul class="list-group row">
+                                    @foreach (var item in Model.Products)
+                                    {
+                                        <li class="list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg card card-body">
+                                            <h6 class="mb-3 text-sm">@Html.Translate("اسم المنتج","Product Name ") @item.Product.Name </h6>
+
+                                            <div class="d-flex flex-wrap">
+                                                <div class="col-md-auto  mt-2" style="@Html.Translate("margin-left: 1.5rem;","margin-right: 1.5rem;")">
+                                                    <div class="card card-body d-flex align-items-center flex-row">
+                                                        <h6 class="mb-0">@Html.Translate("الفئة","Category") </h6>
+                                                        <h6 class="mb-0">@item.Product.Category </h6>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-auto  mt-2" style="@Html.Translate("margin-left: 1.5rem;","margin-right: 1.5rem;")">
+                                                    <div class="card card-body d-flex align-items-center flex-row">
+                                                        <h6 class="mb-0">@Html.Translate("نسبة الخصم","Offer Percentage") </h6>
+                                                        <h6 class="mb-0">@item.Product.OfferPercentage </h6>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-auto  mt-2" style="@Html.Translate("margin-left: 1.5rem;","margin-right: 1.5rem;")">
+                                                    <div class="card card-body d-flex align-items-center flex-row">
+                                                        <h6 class="mb-0">@Html.Translate("السعر","Price") </h6>
+                                                        <h6 class="mb-0">@item.Product.Price </h6>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-auto  mt-2" style="@Html.Translate("margin-left: 1.5rem;","margin-right: 1.5rem;")">
+                                                    <div class="card card-body d-flex align-items-center flex-row">
+                                                        <h6 class="mb-0">
+                                                            @Html.Translate("الحجم","sizes")
+                                                        </h6>
+                                                        @foreach (var size in item.Product.Sizes)
+                                                        {
+                                                            <span class="badge bg-primary me-1">@size</span>
+                                                        }
+                                                     </div>
+                                                </div>
+                                                <div class="col-md-auto  mt-2" style="@Html.Translate("margin-left: 1.5rem;","margin-right: 1.5rem;")">
+                                                    <div class="card card-body d-flex align-items-center flex-row">
+                                                        <h6 class="mb-0">
+                                                            @Html.Translate("الكمية","Quantity")
+                                                        </h6>
+                                                        <h6 class="mb-0">@item.Quantity  </h6>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-auto  mt-2" style="@Html.Translate("margin-left: 1.5rem;","margin-right: 1.5rem;")">
+                                                    <div class="card card-body   d-flex align-items-center flex-row">
+                                                        <h6 class="mb-0">@Html.Translate("لون مختار","Selected Color") </h6>
+                                                        <h6 class="mb-0">@item.SelectedColor  </h6>
+                                                    </div>
+                                                </div>
+                                                
+                                            </div>
+
+                                        </li>
+                                    }
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                      
+             </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('.form-control').focus(function () {
+            $(this).addClass('focused');
+        });
+
+        $('.form-control').blur(function () {
+            if (!$(this).val()) {
+                $(this).removeClass('focused');
+            }
+        });
+    });
+    // function ListProducts() {
+    //     debugger
+    //     $('#allProdictsDiv').html('');
+    //     var url = '@Url.Action("Index", "Products")';
+    //     $('#allProdictsDiv').load(url);
+    // }
+</script>

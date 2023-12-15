@@ -1,5 +1,33 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@using E_CommerceAR.Extensions;
+
+<div id="allOrdersDiv">
+    <div class="row">
+        <div class="col-12">
+            <div class="card my-4">
+                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                    <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 p-1">
+                        <div class="col-md-12 d-flex">
+                            <div class="col-md-12">
+                                <h6 class="text-white text-capitalize ps-3">@Html.Translate("قائمة الطلبات","List Orders")</h6>
+                            </div>
+                            
+
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body px-0 pb-2">
+                    <div class="table-responsive p-0" id="ListOrdersDiv">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $('#ListOrdersDiv').html('');
+    var url = '@Url.Action("ListOrders", "Orders")';
+    $('#ListOrdersDiv').load(url);
+    
+</script>

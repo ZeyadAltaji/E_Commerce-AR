@@ -1,0 +1,86 @@
+﻿@using E_CommerceAR.Extensions;
+
+
+<style>
+    input {
+        border: 1px solid !important
+    }
+
+
+
+
+    .form-control:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+</style>
+<div class="row">
+    <div class="col-12">
+        <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 p-1">
+                    <div class="col-md-12 d-flex">
+                        <div class="col-md-10">
+                            <h6 class="text-white text-capitalize ps-3">@Html.Translate("قائمة المنتجات","List Products")</h6>
+                        </div>
+                        <div class="col-md-2" style="text-align: end !important;">
+                            <button class="btn bg-gradient-info mb-0" onclick="ListUsers()">
+                                @Html.Translate(" عودة الى القائمة","Back to list")
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <form role="form" action="@Url.Action("SaveNewProducts", "Products")" class="text-start">
+                    <div class="row">
+                        <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
+                            <label class="form-label"> @Html.Translate("الاسم الأول","First Name")</label>
+                            <input type="text" class="form-control" name="firstName">
+
+                        </div>
+                        <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
+                            <label class="form-label">@Html.Translate("الاسم الأخير","Last Name")</label>
+                            <input type="text" class="form-control" name="LastName">
+                        </div>
+                        <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
+                            <label class="form-label">@Html.Translate("البريد الإلكتروني","Email")</label>
+                            <input type="email" class="form-control" name="email">
+                        </div>
+                        <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
+                            <label class="form-label">@Html.Translate("كلمة المرور","Password")</label>
+                            <input type="password" class="form-control" name="password">
+                        </div>
+                         
+                    </div>
+                    <br />
+                    
+                    <div class="col-md-12">
+                        <button type="submit" class="btn bg-gradient-success  mb-0"> @Html.Translate("حفظ","Save")</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('.form-control').focus(function () {
+            $(this).addClass('focused');
+        });
+
+        $('.form-control').blur(function () {
+            if (!$(this).val()) {
+                $(this).removeClass('focused');
+            }
+        });
+    });
+    function ListUsers() {
+        debugger
+        $('#allUsersDiv').html('');
+        var url = '@Url.Action("Index", "Users")';
+        $('#allUsersDiv').load(url);
+    }
+</script>

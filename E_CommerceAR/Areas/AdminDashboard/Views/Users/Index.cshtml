@@ -7,10 +7,14 @@
                 <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                     <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 p-1">
                         <div class="col-md-12 d-flex">
-                            <div class="col-md-12">
+                            <div class="col-md-11">
                                 <h6 class="text-white text-capitalize ps-3">@Html.Translate("قائمة المستخدمين","List Users")</h6>
                             </div>
-
+                            <div class="col-md-1">
+                                <button class="btn bg-gradient-info mb-0" onclick="AddNewUser()">
+                                    @Html.Translate("اضافة جديد","Add new")
+                                </button>
+                            </div>
 
                         </div>
                     </div>
@@ -29,5 +33,11 @@
     $('#ListUsersDiv').html('');
     var url = '@Url.Action("ListUsers", "Users")';
     $('#ListUsersDiv').load(url);
+    function AddNewUser() {
+        $('#allUsersDiv').html('');
 
+        var url = '@Url.Action("AddNewUser", "Users")';
+        $('#allUsersDiv').load(url);
+
+    }
 </script>

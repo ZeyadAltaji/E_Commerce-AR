@@ -91,7 +91,9 @@
             .then(response => response.json())
             .then(data => {
                  if (data.success) {
-                     console.log(data.message);
+                    $('#allProdictsDiv').html('');
+                    var url = '@Url.Action("Index", "Products")';
+                    $('#allProdictsDiv').load(url);
                 } else {
                      console.error(data.message);
                 }

@@ -82,5 +82,29 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
                 return new List<UsersViewModel>();
             }
         }
+
+        [Route("Users/AddNewUser")]
+
+        public IActionResult AddNewUser()
+        {
+            return PartialView();
+        }
+        [Route("Users/EditUser")]
+        public IActionResult EditUser(string DocumentId, bool Edit)
+        {
+            CollectionReference UsersCollection = firestoreDb.Collection("user");
+
+            DocumentReference UsersDocument = UsersCollection.Document(DocumentId);
+
+            DocumentSnapshot snapshot = UsersDocument.GetSnapshotAsync().Result;
+
+
+            Users product = snapshot.ConvertTo<Users>();
+            ViewBag.Edit = Edit;
+            ViewBag.DocumentId = DocumentId;
+
+            return PartialView(product);
+        }
+
     }
 }

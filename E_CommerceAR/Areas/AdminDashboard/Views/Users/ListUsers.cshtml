@@ -77,8 +77,14 @@
                 </td>
                 <td class="text-center">
 
+                    <button onclick="EditUsers('@item.DocumentId')" class="btn btn-outline-success" style="padding: 9px;">
+                        <i class="fa fa-pen"></i>
+                    </button>
+                    <button onclick="DeleteUsers('@item.DocumentId')" class="btn btn-outline-danger" style="padding: 9px;">
+                        <i class="fa fa-trash"></i>
 
-                    <button onclick="ViewOrder('@item.DocumentId')" class="btn btn-outline-info " style="padding: 9px;">
+                    </button>
+                    <button onclick="ViewUsers('@item.DocumentId')" class="btn btn-outline-info " style="padding: 9px;">
                         <i class="fa fa-info"></i>
                     </button>
 
@@ -96,12 +102,45 @@
         responsive: true,
 
     })
-    function ViewOrder(DocumentId) {
-        var Edit = false;
-        $('#allOrdersDiv').html('');
+    function EditUsers(DocumentId) {
+        var Edit = true;
+        $('#allUsersDiv').html('');
 
-        var url = '/Orders/ViewOrder?DocumentId=' + DocumentId;
-        $('#allOrdersDiv').load(url);
+        var url = '/Users/EditUser?DocumentId=' + DocumentId + '&Edit=' + Edit;
+        $('#allUsersDiv').load(url);
     }
+    function ViewUsers(DocumentId) {
+        var Edit = false;
+        $('#allUsersDiv').html('');
+
+        var url = '/Users/EditUser?DocumentId=' + DocumentId + '&Edit=' + Edit;
+        $('#allUsersDiv').load(url);
+    }
+    function DeleteUsers(DocumentId) {
+
+        var url = '/Users/DeleteProduct?DocumentId=' + DocumentId;
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    $('#allUsersDiv').html('');
+
+                    var url = '@Url.Action("Index", "Users")';
+                    $('#allUsersDiv').load(url);
+                } else {
+                    console.error(data.message);
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+
 
 </script>

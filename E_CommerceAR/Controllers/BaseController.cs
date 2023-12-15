@@ -27,8 +27,8 @@ namespace E_CommerceAR.Controllers
                     return Lang;
                 }
             }
-            private User user;
-            public User me
+            private Users user;
+            public Users me
             {
                 get
                 {

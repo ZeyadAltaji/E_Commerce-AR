@@ -1,4 +1,4 @@
-﻿using E_CommerceAR.Domain.ModalsViews;
+﻿using E_CommerceAR.Domain.ModalsBase;
 using E_CommerceAR.Extensions;
 using Firebase.Auth;
 using Google.Cloud.Firestore;

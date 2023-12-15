@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace E_CommerceAR.Domain.ModalsViews
+namespace E_CommerceAR.Domain.ModalsBase
 {
     [FirestoreData]
     public partial class Login

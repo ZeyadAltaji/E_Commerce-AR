@@ -12,7 +12,7 @@ namespace E_CommerceAR.Domain.ModalsBase
 {
     [FirestoreData]
 
-    public partial class User : BaseEntity
+        public partial class Users : BaseEntity
         {
             [Required]
             [FirestoreProperty("UserName")]
@@ -40,15 +40,22 @@ namespace E_CommerceAR.Domain.ModalsBase
             [Compare("Password")]
 
             public string ComfirmPassword { get; set; }
-            public string PasswordKey { get; set; }
+            [FirestoreProperty("Role")]
+            public int Role { get; set; }
+
+            [FirestoreProperty("ISActive")]
+            public bool IsActive { get; set; }
+
+            [FirestoreProperty("IsDeleted")]
+            public bool IsDeleted { get; set; }
+        public string PasswordKey { get; set; }
             [Required]
             public string Phone1 { get; set; } = string.Empty;
             [Required]
             public string Phone2 { get; set; } = string.Empty;
             [Required]
             public string Address { get; set; } = string.Empty;
-            public int Role { get; set; }
-
+ 
             [NotMapped]
             public IFormFile Image_userUrl { get; set; }
             public string Public_id { get; set; } = string.Empty;

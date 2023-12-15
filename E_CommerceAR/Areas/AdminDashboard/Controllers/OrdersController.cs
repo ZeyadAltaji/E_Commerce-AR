@@ -1,4 +1,5 @@
 ﻿using E_CommerceAR.Controllers;
+using E_CommerceAR.Domain.ModalsBase;
 using E_CommerceAR.Domain.ModalsViews;
 using Firebase.Auth;
 using Google.Cloud.Firestore;
@@ -37,7 +38,7 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
         {
 			try
 			{
-                List<OrdersViewModel> productDataList = await FetchProductsFromDatabase();
+                List<OrdersViewModel> productDataList = await FetchOrdersFromDatabase();
 
                  
 
@@ -50,7 +51,7 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
 				return StatusCode(500, "Internal Server Error");
 			}
 		}
-        private async Task<List<OrdersViewModel>> FetchProductsFromDatabase()
+        private async Task<List<OrdersViewModel>> FetchOrdersFromDatabase()
         {
             try
             {

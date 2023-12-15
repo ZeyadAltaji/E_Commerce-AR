@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace E_CommerceAR.Domain.ModalsViews
+namespace E_CommerceAR.Domain.ModalsBase
 {
     [FirestoreData]
     public class Products
@@ -37,8 +37,8 @@ namespace E_CommerceAR.Domain.ModalsViews
         public int Price { get; set; }
 
     }
-  
 
-    
-    
+
+
+
 }

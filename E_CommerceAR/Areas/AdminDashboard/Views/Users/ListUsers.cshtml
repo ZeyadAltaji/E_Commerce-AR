@@ -1,0 +1,107 @@
+﻿@model List<E_CommerceAR.Domain.ModalsViews.UsersViewModel>
+@using E_CommerceAR.Extensions;
+
+@{
+    int count = 1;
+    string UserRole = null;
+}
+<style>
+    table.dataTable thead th, table.dataTable thead td, table.dataTable tfoot th, table.dataTable tfoot td, div.dataTables_wrapper div.dataTables_filter {
+        text-align: @Html.Translate("left","right");
+    }
+</style>
+<table class="table align-items-center mb-0" id="OrdersTable">
+    <thead>
+        <tr>
+            <th class="text-center">#</th>
+            <th class="text-center">
+                @Html.Translate("الاسم الأول","First Name")</th>
+            <th class="text-center">
+                @Html.Translate("الاسم الأخير","Last Name")</th>
+            <th class="text-center">
+                @Html.Translate("البريد الإلكتروني","Email")</th>
+            <th class="text-center">@Html.Translate("دور","Role")</th>
+            <th class="text-center">@Html.Translate("نشط","Is Active")</th>
+            <th class="text-center">@Html.Translate("محذوف","Is Deleted")</th>
+
+            <th class="text-center"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td class="text-center">@count</td>
+                <td class="text-center">@item.Users.Frist_Name</td>
+                <td class="text-center">@item.Users.Last_Name</td>
+                <td class="text-center">@item.Users.Email</td>
+                <td class="text-center">
+                    @if (item.Users.Role ==1)
+                    {
+                        UserRole = Html.Translate("مسؤول", "Admin").ToString();
+                        <span>@UserRole</span>
+                    }
+                    else if (item.Users.Role == 2)
+                    {
+                        UserRole = Html.Translate("تاجر", "Dealer").ToString();
+                        <span>@UserRole</span>
+                    }
+                    else
+                    {
+                        UserRole = Html.Translate("عميل", "Customer").ToString();
+                        <span>@UserRole</span>
+                    }
+                </td>
+                <td class="text-center">
+                    @if (item.Users.IsActive == true)
+                    {
+                        <span class="badge badge-sm bg-gradient-success">@Html.Translate("نشط","Is Active")</span>
+                    }
+                    else
+                    {
+                        <span class="badge badge-sm bg-gradient-danger ">@Html.Translate("غير نشط","Non Active")</span>
+
+                    }
+                </td>
+                <td class="text-center">
+                    @if (item.Users.IsDelete == true)
+                    {
+                        <span class="badge badge-sm bg-gradient-danger ">@Html.Translate("محذوف","Is Deleted")</span>
+
+                    }
+                    else
+                    {
+                        <span class="badge badge-sm bg-gradient-success">@Html.Translate("غير محذوف","Non Active")</span>
+
+                    }
+                </td>
+                <td class="text-center">
+
+
+                    <button onclick="ViewOrder('@item.DocumentId')" class="btn btn-outline-info " style="padding: 9px;">
+                        <i class="fa fa-info"></i>
+                    </button>
+
+                </td>
+            </tr>
+            count++;
+        }
+    </tbody>
+</table>
+
+
+
+<script>
+    $('#OrdersTable').DataTable({
+        responsive: true,
+
+    })
+    function ViewOrder(DocumentId) {
+        var Edit = false;
+        $('#allOrdersDiv').html('');
+
+        var url = '/Orders/ViewOrder?DocumentId=' + DocumentId;
+        $('#allOrdersDiv').load(url);
+    }
+
+</script>

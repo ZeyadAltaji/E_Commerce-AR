@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace E_CommerceAR.Domain.ModalsViews
+namespace E_CommerceAR.Domain.ModalsBase
 {
-	public class Images
-	{
-		public string Url { get; set; }
+    public class Images
+    {
+        public string Url { get; set; }
 
-	}
+    }
 }

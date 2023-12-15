@@ -1,4 +1,6 @@
-﻿@model E_CommerceAR.Domain.ModalsViews.Login
+﻿@using E_CommerceAR.Domain.ModalsBase;
+
+@model Login
 @{
     ViewData["Title"] = Html.Translate("تسجيل دخول", "Sign In");
     string lang = Context.Session.GetString("language") ?? "en"; ;

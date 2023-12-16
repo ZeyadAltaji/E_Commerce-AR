@@ -169,13 +169,13 @@
                                                 <div class="col-md-auto  mt-2" style="@Html.Translate("margin-left: 1.5rem;","margin-right: 1.5rem;")">
                                                     <div class="card card-body d-flex align-items-center flex-row">
                                                         <h6 class="mb-0">@Html.Translate("نسبة الخصم","Offer Percentage") </h6>
-                                                        <h6 class="mb-0">@item.Product.OfferPercentage </h6>
+                                                        <h6 class="mb-0">%@item.Product.OfferPercentage.Value.ToString("n2") </h6>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-auto  mt-2" style="@Html.Translate("margin-left: 1.5rem;","margin-right: 1.5rem;")">
                                                     <div class="card card-body d-flex align-items-center flex-row">
                                                         <h6 class="mb-0">@Html.Translate("السعر","Price") </h6>
-                                                        <h6 class="mb-0">@item.Product.Price </h6>
+                                                        <h6 class="mb-0">$@item.Product.Price </h6>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-auto  mt-2" style="@Html.Translate("margin-left: 1.5rem;","margin-right: 1.5rem;")">

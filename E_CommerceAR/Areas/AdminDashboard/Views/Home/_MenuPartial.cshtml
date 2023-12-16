@@ -47,7 +47,7 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-white " href="../pages/sign-in.html">
+            <a class="nav-link text-white" onclick="clickUserApproval()">
                 <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                     <i class="material-icons opacity-10">login</i>
                 </div>
@@ -75,6 +75,9 @@
                         url = '@Url.Action("Index", "Orders", new { area = "AdminDashboard" })';
                     } else if ($(this).index() === 4) {
                         url = '@Url.Action("Index", "Users", new { area = "AdminDashboard" })';
+                    }
+                    else if ($(this).index() === 5) {
+                    url = '@Url.Action("Index", "UserApproval", new { area = "AdminDashboard" })';
                     }
                 }
 

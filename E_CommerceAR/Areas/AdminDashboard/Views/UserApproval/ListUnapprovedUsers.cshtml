@@ -1,4 +1,4 @@
-﻿@model List<E_CommerceAR.Domain.ModalsViews.UsersViewModel>
+﻿@model List<E_CommerceAR.Domain.ModalsViews.AttachmentViewModel>
 @using E_CommerceAR.Extensions;
 
 @{
@@ -10,19 +10,21 @@
         text-align: @Html.Translate("left","right");
     }
 </style>
-<table class="table align-items-center mb-0" id="UsersTable">
+<table class="table align-items-center mb-0" id="UserApprovalTable">
     <thead>
         <tr>
             <th class="text-center">#</th>
             <th class="text-center">
-                @Html.Translate("الاسم الأول","First Name")</th>
+                @Html.Translate("الاسم الكامل","Full Name")
+            </th>
+           
             <th class="text-center">
-                @Html.Translate("الاسم الأخير","Last Name")</th>
-            <th class="text-center">
-                @Html.Translate("البريد الإلكتروني","Email")</th>
+                @Html.Translate("البريد الإلكتروني","Email")
+            </th>
             <th class="text-center">@Html.Translate("دور","Role")</th>
             <th class="text-center">@Html.Translate("نشط","Is Active")</th>
             <th class="text-center">@Html.Translate("محذوف","Is Deleted")</th>
+            <th class="text-center">@Html.Translate("مرفقات","Attachments")</th>
 
             <th class="text-center"></th>
         </tr>
@@ -32,16 +34,15 @@
         {
             <tr>
                 <td class="text-center">@count</td>
-                <td class="text-center">@item.Users.Frist_Name</td>
-                <td class="text-center">@item.Users.Last_Name</td>
-                <td class="text-center">@item.Users.Email</td>
+                <td class="text-center">@(item.UsersViewModel.Users.Frist_Name + " " + item.UsersViewModel.Users.Last_Name)</td>
+                <td class="text-center">@item.UsersViewModel.Users.Email</td>
                 <td class="text-center">
-                    @if (item.Users.Role ==1)
+                    @if (item.UsersViewModel.Users.Role == 1)
                     {
                         UserRole = Html.Translate("مسؤول", "Admin").ToString();
                         <span>@UserRole</span>
                     }
-                    else if (item.Users.Role == 2)
+                    else if (item.UsersViewModel.Users.Role == 2)
                     {
                         UserRole = Html.Translate("تاجر", "Dealer").ToString();
                         <span>@UserRole</span>
@@ -53,7 +54,7 @@
                     }
                 </td>
                 <td class="text-center">
-                    @if (item.Users.IsActive == true)
+                    @if (item.UsersViewModel.Users.IsActive == true)
                     {
                         <span class="badge badge-sm bg-gradient-success">@Html.Translate("نشط","Is Active")</span>
                     }
@@ -64,7 +65,7 @@
                     }
                 </td>
                 <td class="text-center">
-                    @if (item.Users.IsDelete == true)
+                    @if (item.UsersViewModel.Users.IsDelete == true)
                     {
                         <span class="badge badge-sm bg-gradient-danger ">@Html.Translate("محذوف","Is Deleted")</span>
 
@@ -75,16 +76,17 @@
 
                     }
                 </td>
+
                 <td class="text-center">
 
-                    <button onclick="EditUsers('@item.DocumentId')" class="btn btn-outline-success" style="padding: 9px;">
+                    <button class="btn btn-outline-success" style="padding: 9px;">
                         <i class="fa fa-pen"></i>
                     </button>
-                    <button onclick="DeleteUsers('@item.DocumentId')" class="btn btn-outline-danger" style="padding: 9px;">
+                    <button class="btn btn-outline-danger" style="padding: 9px;">
                         <i class="fa fa-trash"></i>
 
                     </button>
-                    <button onclick="ViewUsers('@item.DocumentId')" class="btn btn-outline-info " style="padding: 9px;">
+                    <button class="btn btn-outline-info " style="padding: 9px;">
                         <i class="fa fa-info"></i>
                     </button>
 
@@ -98,24 +100,11 @@
 
 
 <script>
-    $('#UsersTable').DataTable({
+    $('#UserApprovalTable').DataTable({
         responsive: true,
 
     })
-    function EditUsers(DocumentId) {
-        var Edit = true;
-        $('#allUsersDiv').html('');
 
-        var url = '/Users/EditUser?DocumentId=' + DocumentId + '&Edit=' + Edit;
-        $('#allUsersDiv').load(url);
-    }
-    function ViewUsers(DocumentId) {
-        var Edit = false;
-        $('#allUsersDiv').html('');
-
-        var url = '/Users/EditUser?DocumentId=' + DocumentId + '&Edit=' + Edit;
-        $('#allUsersDiv').load(url);
-    }
     function DeleteUsers(DocumentId) {
 
         var url = '/Users/DeleteProduct?DocumentId=' + DocumentId;

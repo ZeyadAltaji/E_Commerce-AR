@@ -14918,11 +14918,11 @@ fieldset:disabled .btn {
 
 @media (min-width: 992px) {
     .float-lg-start {
-        float: left !important;
+        float: right !important;
     }
 
     .float-lg-end {
-        float: right !important;
+        float: left !important;
     }
 
     .float-lg-none {
@@ -21795,7 +21795,9 @@ fieldset:disabled .btn {
     .dark-version .form-control {
         color: rgba(255, 255, 255, 0.8) !important;
     }
-
+    .dark-version .select2-selection__rendered {
+        color: rgba(255, 255, 255, 0.8) !important;
+    }
 body.dark-version {
     color: rgba(255, 255, 255, 0.8) !important;
 }

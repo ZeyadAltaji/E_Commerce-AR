@@ -13,10 +13,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - @Html.Translate("متجرنا", "E-Commerce") </title>
-
      <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
-    @if (dir == "rtl")
+    <link href="~/css/select2.min.css" rel="stylesheet" />
+
+     @if (dir == "rtl")
     {
         <link id="pagestyle" href="~/assets/css/material-dashboardAr.css?v=3.1.0" rel="stylesheet" />
 
@@ -43,7 +44,7 @@
     <script src="~/assets/js/plugins/perfect-scrollbar.min.js"></script>
     <script src="~/assets/js/plugins/smooth-scrollbar.min.js"></script>
 	<script src="~/assets/js/material-dashboard.min.js?v=3.1.0"></script>
-	
+ 	<script src="~/js/select2.min.js"></script>
     @if (dir == "rtl")
     {
         <script src="~/js/jquery.datatablesar.js"></script>

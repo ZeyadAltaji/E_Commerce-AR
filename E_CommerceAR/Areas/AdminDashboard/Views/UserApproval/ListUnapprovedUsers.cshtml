@@ -76,19 +76,22 @@
 
                     }
                 </td>
-
+                <td class="text-center">
+                    <button onclick="openAttachments('@item.FileName')" class="badge badge-sm bg-gradient-secondary" style="border:none !important;">
+                             @Html.Translate("عرض المرفق","Show Attachment")
+                            <i class="fa fa-info"></i>
+                      
+                    </button>
+                </td>
                 <td class="text-center">
 
-                    <button class="btn btn-outline-success" style="padding: 9px;">
-                        <i class="fa fa-pen"></i>
+                    <button class="btn btn-outline-success" style="padding: 9px;" onclick="UnapprovedUser('@item.UsersViewModel.DocumentId','@item.UsersViewModel.Users.Frist_Name+@item.UsersViewModel.Users.Last_Name','@item.UsersViewModel.Users.Email')">
+                        <i class="fa fa-check"></i>
                     </button>
-                    <button class="btn btn-outline-danger" style="padding: 9px;">
-                        <i class="fa fa-trash"></i>
-
+                    <button class="btn btn-outline-danger" style="padding: 9px;" onclick="NoneUnapprovedUser('@item.UsersViewModel.DocumentId','@item.UsersViewModel.Users.Frist_Name+@item.UsersViewModel.Users.Last_Name','@item.UsersViewModel.Users.Email')">
+                        <i class="">×</i>
                     </button>
-                    <button class="btn btn-outline-info " style="padding: 9px;">
-                        <i class="fa fa-info"></i>
-                    </button>
+               
 
                 </td>
             </tr>
@@ -130,6 +133,52 @@
                 console.error('Error:', error);
             });
     }
+    function openAttachments(AttachmentId) {
+        debugger
+        var fileFormat = AttachmentId.split('.').pop().toLowerCase();
 
+        var ContentType = fileFormat;
+        var GetattachmentId = AttachmentId;
+        var attachmentId = GetattachmentId.replace(/ /g, '%20');
 
+        var Url = "https://firebasestorage.googleapis.com/v0/b/finalprojectar-d85ea.appspot.com/o/Attachments%2FgsuQQAw74z7l02QAbD8R%2F" + attachmentId + "?alt=media&token=de4be60e-2bc4-43ca-a891-88a2980907c5";
+
+        if (ContentType == "jpeg" || ContentType == "png" || ContentType == "jpg" || ContentType == "gif" || ContentType == "svg") {
+             let Window = window.open("");
+            Window.document.write("<body><img style='display: block;-webkit-user-select: none;width: 50%;zoom: 100%' src='" + Url + "'></body>");
+        } else if (ContentType == "pdf") {
+            let Window = window.open("");
+            Window.document.write("<body><iframe src='" + Url + "' style='width: 100%; height: 100%;' frameborder='0'></iframe></body>");
+        } else {
+            DownloadFilesAttachments(AttachmentId);
+        }
+    }
+
+    function DownloadFilesAttachments(AttachmentId) {
+        
+
+        saveByteArray(FileName, bytes);
+    }
+
+    function saveByteArray(reportName, byte) {
+        var blob = new Blob([byte], { type: "application/octet-stream" }); // Change the content type accordingly
+        var link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        var fileName = reportName;
+        link.download = fileName;
+        link.click();
+    }
+    function UnapprovedUser(DocumentId, Full_Name, Email) {
+        $('#allListUnapprovedUsersDiv').html('');
+
+        var url = '/UserApproval/UnapprovedUser?DocumentId=' + DocumentId + '&Full_Name=' + Full_Name + '&Email=' + Email;
+        $('#allListUnapprovedUsersDiv').load(url);
+    }
+    function NoneUnapprovedUser(DocumentId, Full_Name, Email) {
+        var Edit = true;
+        $('#allListUnapprovedUsersDiv').html('');
+
+        var url = '/UserApproval/NoneUnapprovedUser?DocumentId=' + DocumentId + '&Full_Name=' + Full_Name + '&Email=' + Email;
+        $('#allListUnapprovedUsersDiv').load(url);
+    }
 </script>

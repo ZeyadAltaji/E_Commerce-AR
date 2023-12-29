@@ -2,9 +2,15 @@
  using E_CommerceAR.Domain.ModalsBase;
 using E_CommerceAR.Domain.ModalsViews;
 using Firebase.Auth;
+using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Firestore;
 using Google.Cloud.Storage.V1;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+  using System.Configuration;
+using System.Net;
+using System.Net.Mail;
+using System.Reactive.Subjects;
 
 namespace E_CommerceAR.Areas.AdminDashboard.Controllers
 {
@@ -14,8 +20,9 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
         FirebaseAuthProvider auth;
         private readonly FirestoreDb firestoreDb;
         private readonly StorageClient storageClient = StorageClient.Create();
+        private readonly IConfiguration _configuration;
 
-        public UserApprovalController()
+        public UserApprovalController(IConfiguration Configuration)
         {
             auth = new FirebaseAuthProvider(
                     new FirebaseConfig(ApiKey));
@@ -23,6 +30,8 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
                 "C:\\Users\\ziada\\Source\\repos\\E_CommerceAR\\E_CommerceAR\\Extensions\\" +
                      "finalprojectar-d85ea-firebase-adminsdk-9x4fl-3f47b05b2e.json");
             firestoreDb = FirestoreDb.Create(PorjectId);
+            _configuration = Configuration;
+
         }
         [Route("UserApproval/Index")]
         public IActionResult Index()
@@ -58,8 +67,7 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
             }
             catch (Exception ex)
             {
-                // Log the error or handle it accordingly
-                Console.WriteLine($"Error fetching unapproved users: {ex.Message}");
+                 Console.WriteLine($"Error fetching unapproved users: {ex.Message}");
                 return StatusCode(500, "Internal Server Error");
             }
         }
@@ -134,6 +142,80 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
                 return new List<AttachmentViewModel>();
             }
         }
+        [Route("UserApproval/UnapprovedUser")]
 
+        public IActionResult UnapprovedUser(string DocumentId, string Full_Name, string Email)
+        {
+            ViewBag.DocumentId= DocumentId;
+            ViewBag.Full_Name= Full_Name;
+            ViewBag.Email= Email;
+            return PartialView();
+        }
+        [Route("UserApproval/NoneUnapprovedUser")]
+
+        public IActionResult NoneUnapprovedUser(string DocumentId, string Full_Name, string Email)
+        {
+            ViewBag.DocumentId = DocumentId;
+            ViewBag.Full_Name = Full_Name;
+            ViewBag.Email = Email;
+            return PartialView();
+        }
+        [Route("UserApproval/SendUnapprovedUser")]
+
+        public async Task<IActionResult> SendUnapprovedUser(string DocumentId)
+        {
+            try
+            {
+ 
+                var userCollectionReference = firestoreDb.Collection("user");
+
+                var existingProductDocument = await userCollectionReference.Document(DocumentId).GetSnapshotAsync();
+
+                var updateData = new Dictionary<string, object>
+            {
+                { "IsActive", true }
+            };
+
+                await userCollectionReference.Document(DocumentId).UpdateAsync(updateData);
+
+
+                return View("Index");
+            }
+            catch (Exception ex)
+            {
+                // Handle the exception
+                return RedirectToAction("UnapprovedUser", "UserApproval");
+            }
+        }
+        [Route("UserApproval/SendNoneUnapprovedUser")]
+
+        public async Task<IActionResult> SendNoneUnapprovedUser(string DocumentId)
+        {
+            try
+            {
+                 
+                var userCollectionReference = firestoreDb.Collection("user");
+
+                var existingProductDocument = await userCollectionReference.Document(DocumentId).GetSnapshotAsync();
+
+                var updateData = new Dictionary<string, object>
+            {
+                { "IsActive", false }
+            };
+
+                await userCollectionReference.Document(DocumentId).UpdateAsync(updateData);
+
+
+                return View("Index");
+            }
+            catch (Exception ex)
+            {
+                // Handle the exception
+                return RedirectToAction("Unapproved", "Unapproved");
+            }
+        }
+        
     }
+
+       
 }

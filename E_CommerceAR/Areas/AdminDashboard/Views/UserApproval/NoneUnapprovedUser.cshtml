@@ -1,0 +1,97 @@
+﻿@using E_CommerceAR.Extensions;
+@{
+    string DocumentId = ViewBag.DocumentId;
+    string Full_Name = ViewBag.Full_Name;
+    string Email = ViewBag.Email;
+}
+
+
+<style>
+    input, textarea {
+        border: 1px solid !important
+    }
+
+
+
+
+    .form-control:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+</style>
+<div class="row">
+    <div class="col-12">
+        <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 p-1">
+                    <div class="col-md-12 d-flex">
+                        <div class="col-md-10">
+                            <h6 class="text-white text-capitalize ps-3">@Html.Translate("رفض المستخدم","None Unapproved User")</h6>
+                        </div>
+                        <div class="col-md-2" style="text-align: end !important;">
+                            <button class="btn bg-gradient-info mb-0" onclick="ListUnapprovedUsers()">
+                                @Html.Translate(" عودة الى القائمة","Back to list")
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <form role="form" action="@Url.Action("SendNoneUnapprovedUser", "UserApproval")" class="text-start">
+                    <div class="row">
+                        <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
+                            <label class="form-label">@Html.Translate("اسم البائع","Name Dealer")</label>
+                            <input type="text" class="form-control" name="Full_Name" value="@Full_Name" readonly>
+                            <input type="hidden" class="form-control" name="DocumentId" value="@DocumentId" readonly>
+
+                        </div>
+                        <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
+                            <label class="form-label">@Html.Translate("رسائل جاهزة","Ready Messages")</label>
+                            <select class="form-select " id="MessageSelect">
+                                <option selected>@Html.Translate("--يرجى الاختيار--","Plases Select")</option>
+                                <option value="1"> </option>
+                                <option value="2"> </option>
+                                <option value="3"> </option>
+                            </select>
+                        </div>
+
+                    </div>
+                    <br />
+                    <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
+                        <label class="form-label">@Html.Translate("تفاصيل الرسالة :","Message Details : ")</label>
+                    </div>
+                    <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
+                        <textarea rows="1" name="message" class="form-control"></textarea>
+                    </div>
+                    <br />
+                    <div class="col-md-12">
+                        <button type="submit" class="btn bg-gradient-success  mb-0"> @Html.Translate("حفظ","Save")</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $('#MessageSelect').select2();
+    $(document).ready(function () {
+        $('.form-control').focus(function () {
+            $(this).addClass('focused');
+        });
+
+        $('.form-control').blur(function () {
+            if (!$(this).val()) {
+                $(this).removeClass('focused');
+            }
+        });
+    });
+
+    function ListUnapprovedUsers() {
+        debugger
+        $('#allListUnapprovedUsersDiv').html('');
+        var url = '@Url.Action("Index", "UserApproval")';
+        $('#allListUnapprovedUsersDiv').load(url);
+    }
+</script>

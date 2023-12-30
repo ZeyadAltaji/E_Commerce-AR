@@ -1,9 +1,18 @@
 ﻿@using E_CommerceAR.Extensions;
-
+@using E_CommerceAR.Domain.ModalsViews;
 @{
     string lang = Context.Session.GetString("E-CommerceAR_Lang") ?? "en";
     string language = lang == "ar-Pl" ? "ar" : "en";
     string dir = lang == "ar-Pl" ? "rtl" : "ltr";
+    // int DealerCount = ViewBag.DealerCount;
+    // int ClientCount = ViewBag.ClientCount;
+    // int OrderCount = ViewBag.OrderCount;
+    // int ProductCount = ViewBag.ProductCount;
+    // decimal ProfitRatio = ViewBag.ProfitRatio;
+    // int deliveredOrdersCount = ViewBag.DeliveredOrdersCount;
+    // List<OrdersViewModel> deliveredOrders = ViewBag.DeliveredOrders;
+    int count = 1;
+
 }
 <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3   bg-gradient-dark" id="sidenav-main" style="@(dir=="rtl" ? "right:0 !important" : "left:0 !important")">
 
@@ -15,7 +24,218 @@
 
     </nav>
     <!-- End Navbar -->
-    <div class="container-fluid">
+    <div class="container-fluid py-4">
+        <div id="ContainerDiv">
+            <div class="row">
+
+                <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+                    <div class="card">
+                        <div class="card-header p-3 pt-2">
+                            <div class="icon icon-lg icon-shape bg-gradient-primary shadow-primary text-center border-radius-xl mt-n4 position-absolute" style="@(lang == "en" ? "":"left:1rem")">
+                                <i class="material-icons opacity-10">person</i>
+                            </div>
+                            <div class="text-end pt-1">
+                                <p class="text-sm mb-0 text-capitalize">@Html.Translate("تجار اليوم","Today's Dealers")</p>
+                                <h4 class="mb-0">432432</h4>
+                            </div>
+                        </div>
+                        <hr class="dark horizontal my-0">
+                        <div class="card-footer p-3">
+                            <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+3% </span>than last month</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+                    <div class="card">
+                        <div class="card-header p-3 pt-2">
+                            <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute" style="@(lang == "en" ? "":"left:1rem")">
+                                <i class="material-icons opacity-10">person</i>
+                            </div>
+                            <div class="text-end pt-1">
+                                <p class="text-sm mb-0 text-capitalize">@Html.Translate("عملاء اليوم","Today's Clients")</p>
+                                <h4 class="mb-0">t65</h4>
+                            </div>
+                        </div>
+                        <hr class="dark horizontal my-0">
+                        <div class="card-footer p-3">
+                            <p class="mb-0"><span class="text-danger text-sm font-weight-bolder">-2%</span> than yesterday</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-sm-6">
+                    <div class="card">
+                        <div class="card-header p-3 pt-2">
+                            <div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute" style="@(lang == "en" ? "":"left:1rem")">
+                                <i class="material-icons opacity-10">weekend</i>
+                            </div>
+                            <div class="text-end pt-1">
+                                <p class="text-sm mb-0 text-capitalize">@Html.Translate("عدد المنتجات","No of products")</p>
+                                <h4 class="mb-0">sfdsdsf</h4>
+                            </div>
+                        </div>
+                        <hr class="dark horizontal my-0">
+                        <div class="card-footer p-3">
+                            <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+5% </span>than yesterday</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-sm-6">
+                    <div class="card">
+                        <div class="card-header p-3 pt-2">
+                            <div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute" style="@(lang == "en" ? "":"left:1rem")">
+                                <i class="material-icons opacity-10">weekend</i>
+                            </div>
+                            <div class="text-end pt-1">
+                                <p class="text-sm mb-0 text-capitalize">@Html.Translate("نسبة الربح","Profit Ratio")</p>
+@*                                 <h4 class="mb-0">% @ProfitRatio.ToString("n3").Replace("٫",".")</h4>
+ *@                            
+                                <h4 class="mb-0">% dsadsasda</h4>
+
+</div>
+                        </div>
+                        <hr class="dark horizontal my-0">
+                        <div class="card-footer p-3">
+                            <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+5% </span>than yesterday</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-lg-8 col-md-6 mb-md-0 mb-4">
+                    <div class="card">
+                        <div class="card-header pb-0">
+                            <div class="row">
+                                <div class="col-lg-6 col-7">
+                                    <h6>@Html.Translate("عدد الطلبات التي تم توصيلها ","No. of orders delivered")</h6>
+                                    <p class="text-sm mb-0">
+                                        <i class="fa fa-check text-info" aria-hidden="true"></i>
+                                        <span class="font-weight-bold ms-1">dsadsa @Html.Translate("القيام به","Done") </span> this month
+                                    </p>
+                                </div>
+                                <div class="col-lg-6 col-5 my-auto text-end">
+                                    <div class="dropdown float-lg-end pe-4">
+                                        <a class="cursor-pointer" id="dropdownTable" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fa fa-ellipsis-v text-secondary"></i>
+                                        </a>
+                                        <ul class="dropdown-menu px-2 py-3 ms-sm-n4 ms-n5" aria-labelledby="dropdownTable">
+                                            <li><a class="dropdown-item border-radius-md" href="javascript:;">Action</a></li>
+                                            <li><a class="dropdown-item border-radius-md" href="javascript:;">Another action</a></li>
+                                            <li><a class="dropdown-item border-radius-md" href="javascript:;">Something else here</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body px-0 pb-2">
+                            <div class="table-responsive">
+                                <table id="deliveredOrdersTable" class="table align-items-center mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">#</th>
+
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">@Html.Translate("رقم الطلب","No Order")</th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">@Html.Translate("تاريخ الطلب","Date Order")</th>
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">@Html.Translate("حالة الطلب","Status Order")</th>
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">@Html.Translate("اسم العميل","Name Customer")</th>
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">@Html.Translate("موقع العميل","Address Order")</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                      @*   @foreach (var item in deliveredOrders)
+                                        {
+                                            <tr>
+                                                <td class="text-center">@count</td>
+                                                <td class="text-center">@item.Orders.OrderId</td>
+                                                <td class="text-center">@item.Orders.Date</td>
+                                                <td class="text-center">@item.Orders.OrderStatus</td>
+                                                <td class="text-center">@item.Orders.Address.FullName</td>
+                                                <td class="text-center">
+                                                    @(item.Orders.Address.AddressTitle + Html.Translate("الشارع", "Street") + item.Orders.Address.Street)
+                                                </td>
+
+
+                                            </tr>
+                                            count++;
+                                        }
+ *@
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header pb-0">
+                            <h6>Orders overview</h6>
+                            <p class="text-sm">
+                                <i class="fa fa-arrow-up text-success" aria-hidden="true"></i>
+                                <span class="font-weight-bold">24%</span> this month
+                            </p>
+                        </div>
+                        <div class="card-body p-3">
+                            <div class="timeline timeline-one-side">
+                                <div class="timeline-block mb-3">
+                                    <span class="timeline-step">
+                                        <i class="material-icons text-success text-gradient">notifications</i>
+                                    </span>
+                                    <div class="timeline-content">
+                                        <h6 class="text-dark text-sm font-weight-bold mb-0">$2400, Design changes</h6>
+                                        <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">22 DEC 7:20 PM</p>
+                                    </div>
+                                </div>
+                                <div class="timeline-block mb-3">
+                                    <span class="timeline-step">
+                                        <i class="material-icons text-danger text-gradient">code</i>
+                                    </span>
+                                    <div class="timeline-content">
+                                        <h6 class="text-dark text-sm font-weight-bold mb-0">New order #1832412</h6>
+                                        <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">21 DEC 11 PM</p>
+                                    </div>
+                                </div>
+                                <div class="timeline-block mb-3">
+                                    <span class="timeline-step">
+                                        <i class="material-icons text-info text-gradient">shopping_cart</i>
+                                    </span>
+                                    <div class="timeline-content">
+                                        <h6 class="text-dark text-sm font-weight-bold mb-0">Server payments for April</h6>
+                                        <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">21 DEC 9:34 PM</p>
+                                    </div>
+                                </div>
+                                <div class="timeline-block mb-3">
+                                    <span class="timeline-step">
+                                        <i class="material-icons text-warning text-gradient">credit_card</i>
+                                    </span>
+                                    <div class="timeline-content">
+                                        <h6 class="text-dark text-sm font-weight-bold mb-0">New card added for order #4395133</h6>
+                                        <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">20 DEC 2:20 AM</p>
+                                    </div>
+                                </div>
+                                <div class="timeline-block mb-3">
+                                    <span class="timeline-step">
+                                        <i class="material-icons text-primary text-gradient">key</i>
+                                    </span>
+                                    <div class="timeline-content">
+                                        <h6 class="text-dark text-sm font-weight-bold mb-0">Unlock packages for development</h6>
+                                        <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">18 DEC 4:54 AM</p>
+                                    </div>
+                                </div>
+                                <div class="timeline-block">
+                                    <span class="timeline-step">
+                                        <i class="material-icons text-dark text-gradient">payments</i>
+                                    </span>
+                                    <div class="timeline-content">
+                                        <h6 class="text-dark text-sm font-weight-bold mb-0">New order #9583120</h6>
+                                        <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">17 DEC</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
 </main>
@@ -43,9 +263,9 @@
                 <h6 class="mb-0">@Html.Translate("لون الشريط الجانبي","Sidebar Color")</h6>
             </div>
             <div class="d-flex">
-                <button class="btn bg-gradient-dark px-3 mb-2 active" data-class="bg-gradient-dark" onclick="sidebarType(this)">@Html.Translate("مظلم","Dark")</button>
-                <button class="btn bg-gradient-dark px-3 mb-2 ms-2" data-class="bg-transparent" onclick="sidebarType(this)">@Html.Translate("شفاف","Transparent")</button>
-                <button class="btn bg-gradient-dark px-3 mb-2 ms-2" data-class="bg-white" onclick="sidebarType(this)">@Html.Translate("أبيض","White")</button>
+                <button class="btn bg-gradient-dark px-3 mb-2 active" id="sidebarType" data-class="bg-gradient-dark" onclick="funsidebarType(this)">@Html.Translate("مظلم","Dark")</button>
+                <button class="btn bg-gradient-dark px-3 mb-2 ms-2" id="sidebarType" data-class="bg-transparent" onclick="funsidebarType(this)">@Html.Translate("شفاف","Transparent")</button>
+                <button class="btn bg-gradient-dark px-3 mb-2 ms-2" id="sidebarType" data-class="bg-white" onclick="funsidebarType(this)">@Html.Translate("أبيض","White")</button>
             </div>
             <hr class="horizontal dark my-3">
 
@@ -54,14 +274,14 @@
             <div class="mt-3 d-flex">
                 <h6 class="mb-0">@Html.Translate("تثبيت الشريط العلوي","Navbar Fixed")</h6>
                 <div class="form-check form-switch ps-0 ms-auto my-auto">
-                    <input class="form-check-input mt-1 ms-auto" type="checkbox" id="navbarFixed" onclick="navbarFixed(this)" style="@(dir == "en"? "right: 12rem;" : "")">
+                    <input class="form-check-input mt-1 ms-auto" type="checkbox" id="navbarFixed" onchange="funNavbarFixed(this)" style="@(dir == "en"? "right: 12rem;" : "")">
                 </div>
             </div>
             <hr class="horizontal dark my-3">
             <div class="mt-2 d-flex">
                 <h6 class="mb-0">@Html.Translate("فاتح/مظلم","Light / Dark")</h6>
                 <div class="form-check form-switch ps-0 ms-auto my-auto">
-                    <input class="form-check-input mt-1 ms-auto" type="checkbox" id="dark-version" onclick="darkMode(this)" style="@(dir == "en" ? "right: 12rem;" : "")">
+                    <input class="form-check-input mt-1 ms-auto" type="checkbox" id="dark-version" onchange="darkMode(this)" style="@(dir == "en" ? "right: 12rem;" : "")">
                 </div>
             </div>
             <hr class="horizontal dark my-3">
@@ -86,8 +306,18 @@
 
 <script src="~/lib/jquery/dist/jquery.js"></script>
 <script>
-    $('#sidenav-main').load('https://localhost:7251/AdminDashboard/Home/Menu')
-    $('#navbarBlur').load('https://localhost:7251/AdminDashboard/Home/NavBar')
+    $(document).ready(function () {
+        $('#deliveredOrdersTable').DataTable({
+            responsive: true,
+            pageLength: 10,
+            lengthChange: false,
+            searching: false,
+            dom: '<"row"<"col-sm-6"l><"col-sm-6"f>>tip',
+
+        });
+    });
+    $('#sidenav-main').load('https://localhost:7251/DealerAreas/Home/Menu')
+    $('#navbarBlur').load('https://localhost:7251/DealerAreas/Home/NavBar')
 
 
     function ChangeLangauge() {
@@ -100,7 +330,74 @@
         });
     }
 
-    // Function to set a cookie with a given name, value, and expiration date
+ 
+    setCookie('sidebarClass', dataClass, 10);
+    }
+
+     $(document).ready(function () {
+        loadSettingsFromCookies();
+    });
+ 
+    function loadSettingsFromCookies() {
+        var navbarFixedCheckbox = $("#navbarFixed");
+        var navbarFixedValue = getCookie("navbarFixed");
+        var dark_versionCheckbox = $("#dark-version");
+        var dark_versionValue = getCookie("dark-version");
+        const storedClass = getCookie('sidebarClass');
+
+         if (navbarFixedValue !== null && navbarFixedValue !== undefined) {
+             navbarFixedCheckbox.prop("checked", navbarFixedValue === "true");
+
+             funNavbarFixed(navbarFixedCheckbox);
+        }
+        if (dark_versionValue !== null && dark_versionValue !== undefined) {
+            dark_versionCheckbox.prop("checked", navbarFixedValue === "true");
+
+            darkMode(dark_versionCheckbox);
+        }
+        if (storedClass) {
+            const buttons = document.querySelectorAll('.d-flex button');
+            buttons.forEach(btn => {
+                if (btn.getAttribute('data-class') === storedClass) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+    }
+    function funNavbarFixed(checkbox) {
+        debugger
+        var navbarBlur = $("#navbarBlur");
+
+        if ($(checkbox).prop("checked")) {
+            navbarBlur.addClass("position-sticky blur shadow-blur mt-4 left-auto top-1 z-index-sticky");
+            setCookie("navbarFixed", $(checkbox).prop("checked"), 10);
+        } else {
+            navbarBlur.removeClass("position-sticky blur shadow-blur mt-4 left-auto top-1 z-index-sticky");
+            setCookie("navbarFixed", $(checkbox).prop("checked"), 10);
+        }
+    }
+    function darkMode(checkbox) {
+        debugger
+        var body = $("body");
+
+        if ($(checkbox).prop("checked")) {
+            body.addClass("dark-mode dark-version");
+            setCookie("dark-version", $(checkbox).prop("checked"), 10);
+        } else {
+            body.removeClass("dark-mode dark-version");
+            setCookie("dark-version", $(checkbox).prop("checked"), 10);
+        }
+    }
+    function funsidebarType(button) {
+        const buttons = document.querySelectorAll('.d-flex button');
+        buttons.forEach(btn => btn.classList.remove('active'));
+
+        button.classList.add('active');
+
+        const dataClass = button.getAttribute('data-class');
+
+
+        // Function to set a cookie with a given name, value, and expiration date
     function setCookie(name, value, expirationYears) {
         const date = new Date();
         date.setFullYear(date.getFullYear() + expirationYears);
@@ -119,64 +416,4 @@
         }
         return "";
     }
-
-    // Save settings to cookies
-    function saveSettingsToCookies() {
-        debugger
-        const sidebarColor = $("#sidebarColorInput").val();
-        const sidenavType = $("#sidenavTypeInput").val();
-        const navbarFixed = $("#navbarFixed").prop('checked');
-        const darkMode = $("#dark-version").prop('checked');
-
-        setCookie("sidebarColor", sidebarColor, 10);
-        setCookie("sidenavType", sidenavType, 10);
-        setCookie("navbarFixed", navbarFixed, 10);
-        setCookie("dark-version", darkMode, 10);
-    }
-
-    // Load settings from cookies
-    function loadSettingsFromCookies() {
-        debugger
-        const sidebarColor = getCookie("sidebarColor");
-        const sidenavType = getCookie("sidenavType");
-        const navbarFixed = getCookie("navbarFixed");
-        const darkMode = getCookie("dark-version");
-
-        // Apply loaded settings to your UI elements
-        $("#darkMode").val(sidebarColor);
-        $("#navbarFixed").val(sidenavType);
-        $("#navbarFixed").prop('checked', navbarFixed === "true"); // Convert string to boolean
-        $("#dark-version").prop('checked', darkMode === "true"); // Convert string to boolean
-        if (sidebarColor) {
-            $(".badge.filter.active").removeClass("active"); // Clear previous active state
-            $(`.badge.filter[data-color="${sidebarColor}"]`).addClass("active");
-        }
-
-        if (sidenavType) {
-            // Assuming you have a div with an ID of "sidenav" that you want to change
-            $("#sidenav").removeClass().addClass(sidenavType);
-        }
-
-        if (navbarFixed === "true") {
-            // Assuming you have a navbar with an ID of "navbar" that you want to change
-            $("#navbar").addClass("navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl position-sticky blur shadow-blur mt-4 left-auto top-1 z-index-sticky");
-        }
-
-        if (darkMode === "true") {
-            // Assuming you have a body tag that you want to add a dark mode class
-            $("body").addClass("dark-mode dark-version");
-        }
-    }
-
-    // Event listener for when the page loads
-    $(document).ready(function () {
-        loadSettingsFromCookies();
-    });
-
-    // Event listener for when the settings change
-    $(document).on("change", "#sidebarColorInput, #sidenavTypeInput, #navbarFixed, #dark-version", function () {
-        debugger
-        saveSettingsToCookies();
-    });
-
 </script>

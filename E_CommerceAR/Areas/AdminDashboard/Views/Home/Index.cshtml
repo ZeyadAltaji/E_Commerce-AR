@@ -260,9 +260,9 @@
                 <h6 class="mb-0">@Html.Translate("لون الشريط الجانبي","Sidebar Color")</h6>
              </div>
             <div class="d-flex">
-                <button class="btn bg-gradient-dark px-3 mb-2 active" data-class="bg-gradient-dark" onclick="sidebarType(this)">@Html.Translate("مظلم","Dark")</button>
-                <button class="btn bg-gradient-dark px-3 mb-2 ms-2" data-class="bg-transparent" onclick="sidebarType(this)">@Html.Translate("شفاف","Transparent")</button>
-                <button class="btn bg-gradient-dark px-3 mb-2 ms-2" data-class="bg-white" onclick="sidebarType(this)">@Html.Translate("أبيض","White")</button>
+                <button class="btn bg-gradient-dark px-3 mb-2 active" id="sidebarType" data-class="bg-gradient-dark" onclick="funsidebarType(this)">@Html.Translate("مظلم","Dark")</button>
+                <button class="btn bg-gradient-dark px-3 mb-2 ms-2" id="sidebarType" data-class="bg-transparent" onclick="funsidebarType(this)">@Html.Translate("شفاف","Transparent")</button>
+                <button class="btn bg-gradient-dark px-3 mb-2 ms-2" id="sidebarType" data-class="bg-white" onclick="funsidebarType(this)">@Html.Translate("أبيض","White")</button>
             </div>
             <hr class="horizontal dark my-3">
 
@@ -271,7 +271,7 @@
             <div class="mt-3 d-flex">
                 <h6 class="mb-0">@Html.Translate("تثبيت الشريط العلوي","Navbar Fixed")</h6>
                 <div class="form-check form-switch ps-0 ms-auto my-auto">
-                    <input class="form-check-input mt-1 ms-auto" type="checkbox" id="navbarFixed" onclick="navbarFixed(this)" style="@(dir == "en"? "right: 12rem;" : "")">
+                    <input class="form-check-input mt-1 ms-auto" type="checkbox" id="navbarFixed" onclick="funNavbarFixed(this)" style="@(dir == "en"? "right: 12rem;" : "")">
                 </div>
             </div>
             <hr class="horizontal dark my-3">
@@ -326,7 +326,72 @@
             },
         });
     }
-  
+    
+
+    $(document).ready(function () {
+        loadSettingsFromCookies();
+    });
+
+    function loadSettingsFromCookies() {
+        var navbarFixedCheckbox = $("#navbarFixed");
+        var navbarFixedValue = getCookie("navbarFixed");
+        var dark_versionCheckbox = $("#dark-version");
+        var dark_versionValue = getCookie("dark-version");
+        const storedClass = getCookie('sidebarClass');
+
+        if (navbarFixedValue !== null && navbarFixedValue !== undefined) {
+            navbarFixedCheckbox.prop("checked", navbarFixedValue === "true");
+
+            funNavbarFixed(navbarFixedCheckbox);
+        }
+        if (dark_versionValue !== null && dark_versionValue !== undefined) {
+            dark_versionCheckbox.prop("checked", navbarFixedValue === "true");
+
+            darkMode(dark_versionCheckbox);
+        }
+        if (storedClass) {
+            const buttons = document.querySelectorAll('.d-flex button');
+            buttons.forEach(btn => {
+                if (btn.getAttribute('data-class') === storedClass) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+    }
+    function funNavbarFixed(checkbox) {
+        debugger
+        var navbarBlur = $("#navbarBlur");
+
+        if ($(checkbox).prop("checked")) {
+            navbarBlur.addClass("position-sticky blur shadow-blur mt-4 left-auto top-1 z-index-sticky");
+            setCookie("navbarFixed", $(checkbox).prop("checked"), 10);
+        } else {
+            navbarBlur.removeClass("position-sticky blur shadow-blur mt-4 left-auto top-1 z-index-sticky");
+            setCookie("navbarFixed", $(checkbox).prop("checked"), 10);
+        }
+    }
+    function darkMode(checkbox) {
+        debugger
+        var body = $("body");
+
+        if ($(checkbox).prop("checked")) {
+            body.addClass("dark-mode dark-version");
+            setCookie("dark-version", $(checkbox).prop("checked"), 10);
+        } else {
+            body.removeClass("dark-mode dark-version");
+            setCookie("dark-version", $(checkbox).prop("checked"), 10);
+        }
+    }
+    function funsidebarType(button) {
+        const buttons = document.querySelectorAll('.d-flex button');
+        buttons.forEach(btn => btn.classList.remove('active'));
+
+        button.classList.add('active');
+
+        const dataClass = button.getAttribute('data-class');
+
+        setCookie('sidebarClass', dataClass, 10);
+    }
     // Function to set a cookie with a given name, value, and expiration date
     function setCookie(name, value, expirationYears) {
         const date = new Date();
@@ -346,64 +411,4 @@
         }
         return "";
     }
-
-    // Save settings to cookies
-    function saveSettingsToCookies() {
-        debugger
-        const sidebarColor = $("#sidebarColorInput").val();
-        const sidenavType = $("#sidenavTypeInput").val();
-        const navbarFixed = $("#navbarFixed").prop('checked');
-        const darkMode = $("#dark-version").prop('checked');
-
-        setCookie("sidebarColor", sidebarColor, 10);
-        setCookie("sidenavType", sidenavType, 10);
-        setCookie("navbarFixed", navbarFixed, 10);
-        setCookie("dark-version", darkMode, 10);
-    }
-
-    // Load settings from cookies
-    function loadSettingsFromCookies() {
-        debugger
-        const sidebarColor = getCookie("sidebarColor");
-        const sidenavType = getCookie("sidenavType");
-        const navbarFixed = getCookie("navbarFixed");
-        const darkMode = getCookie("dark-version");
-
-        // Apply loaded settings to your UI elements
-        $("#darkMode").val(sidebarColor);
-        $("#navbarFixed").val(sidenavType);
-        $("#navbarFixed").prop('checked', navbarFixed === "true"); // Convert string to boolean
-        $("#dark-version").prop('checked', darkMode === "true"); // Convert string to boolean
-        if (sidebarColor) {
-            $(".badge.filter.active").removeClass("active"); // Clear previous active state
-            $(`.badge.filter[data-color="${sidebarColor}"]`).addClass("active");
-        }
-
-        if (sidenavType) {
-            // Assuming you have a div with an ID of "sidenav" that you want to change
-            $("#sidenav").removeClass().addClass(sidenavType);
-        }
-
-        if (navbarFixed === "true") {
-            // Assuming you have a navbar with an ID of "navbar" that you want to change
-            $("#navbar").addClass("navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl position-sticky blur shadow-blur mt-4 left-auto top-1 z-index-sticky");
-        }
-
-        if (darkMode === "true") {
-            // Assuming you have a body tag that you want to add a dark mode class
-            $("body").addClass("dark-mode dark-version");
-        }
-    }
-
-    // Event listener for when the page loads
-    $(document).ready(function () {
-        loadSettingsFromCookies();
-    });
-
-    // Event listener for when the settings change
-    $(document).on("change", "#sidebarColorInput, #sidenavTypeInput, #navbarFixed, #dark-version", function () {
-        debugger
-        saveSettingsToCookies();
-    });
-
  </script>

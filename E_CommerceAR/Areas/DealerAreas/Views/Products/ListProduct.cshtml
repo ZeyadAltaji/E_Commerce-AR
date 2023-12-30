@@ -1,0 +1,107 @@
+﻿@model List<E_CommerceAR.Domain.ModalsViews.ProductViewModel>
+@using E_CommerceAR.Extensions;
+
+@{
+    int count = 1;
+}
+<style>
+    table.dataTable thead th, table.dataTable thead td, table.dataTable tfoot th, table.dataTable tfoot td, div.dataTables_wrapper div.dataTables_filter {
+        text-align: @Html.Translate("left","right");
+    }
+</style>
+<table class="table align-items-center mb-0" id="Prodcuts">
+    <thead>
+        <tr>
+            <th class="text-center">#</th>
+            <th class="text-center">@Html.Translate("اسم المنتج","Name Product")</th>
+            <th class="text-center">@Html.Translate("الفئة","category")</th>
+            <th class="text-center">@Html.Translate("اسم البائع","Name Dealer")</th>
+            <th class="text-center"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td class="text-center">
+                    @count
+
+                </td>
+                <td class="text-center">
+                    @item.Product.Name
+                </td>
+                <td class="text-center">
+                    @item.Product.Category
+                </td>
+                <td class="text-center">
+                    @(item.FirstName + item.LastName)
+                </td>
+
+                <td class="text-center">
+                    <button onclick="EditProducts('@item.DocumentId')" class="btn btn-outline-success" style="padding: 9px;">
+                        <i class="fa fa-pen"></i>
+                    </button>
+                    <button onclick="DeleteProducts('@item.DocumentId')" class="btn btn-outline-danger" style="padding: 9px;">
+                        <i class="fa fa-trash"></i>
+
+                    </button>
+
+                    <button onclick="ViewProducts('@item.DocumentId')" class="btn btn-outline-info " style="padding: 9px;">
+                        <i class="fa fa-info"></i>
+                    </button>
+
+                </td>
+            </tr>
+            count++;
+        }
+    </tbody>
+</table>
+
+
+
+<script>
+    $('#Prodcuts').DataTable({
+        responsive: true,
+
+    })
+    function EditProducts(DocumentId) {
+        var Edit = true;
+        $('#allProdictsDiv').html('');
+
+        var url = '/DealerAreas/Products/EditProduct?DocumentId=' + DocumentId + '&Edit=' + Edit;
+        $('#allProdictsDiv').load(url);
+    }
+    function ViewProducts(DocumentId) {
+        var Edit = false;
+        $('#allProdictsDiv').html('');
+
+        var url = '/DealerAreas/Products/EditProduct?DocumentId=' + DocumentId + '&Edit=' + Edit;
+        $('#allProdictsDiv').load(url);
+    }
+    function DeleteProducts(DocumentId) {
+
+        var url = '/DealerAreas/Products/DeleteProduct?DocumentId=' + DocumentId;
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    $('#allProdictsDiv').html('');
+                    var url = '@Url.Action("Index", "Products", new { area = "DealerAreas" })';
+
+                     $('#allProdictsDiv').load(url);
+                } else {
+                    console.error(data.message);
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+
+</script>

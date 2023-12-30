@@ -69,7 +69,10 @@
 
                  var url;
                 if ($(this).hasClass('nav-item')) {
-                    if ($(this).index() === 1) {
+                    if ($(this).index() === 0) {
+                        url = '@Url.Action("Index", "Home", new { area = "AdminDashboard" })';
+                    }
+                    else if ($(this).index() === 1) {
                         url = '@Url.Action("Index", "Products", new { area = "AdminDashboard" })';
                     } else if ($(this).index() === 2) {
                         url = '@Url.Action("Index", "Orders", new { area = "AdminDashboard" })';

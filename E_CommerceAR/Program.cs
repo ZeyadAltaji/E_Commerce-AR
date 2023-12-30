@@ -47,10 +47,14 @@ app.MapControllerRoute(
 
 app.MapControllerRoute(
     name: "DealerAreas",
-    pattern: "DealerAreas/{controller=index}/{action=Home}/{id?}",
+    pattern: "DealerAreas/{controller=Home}/{action=Index}/{id?}",
     defaults:new { area= "DealerAreas" }
     );
 
+app.MapControllerRoute(
+    name: "DealerAreasProductsSpecific",
+    pattern: "DealerAreas/Products/{action}",
+    defaults: new { area = "DealerAreas", controller = "Products" });
 
 
 app.Run();

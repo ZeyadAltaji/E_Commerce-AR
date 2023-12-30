@@ -1,19 +1,22 @@
 ﻿using E_CommerceAR.Domain.ModalsBase;
 using E_CommerceAR.UI.Extensions;
+using Google.Api;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.CodeAnalysis;
 using System.Globalization;
 
 namespace E_CommerceAR.Controllers
 {
     public class BaseController : Controller
     {
-    
-            public readonly static string ApiKey = "AIzaSyBSjwMDM_Cf4STiMVKqCqDXziCvFis3fQU";
-            public readonly static string Bucket = "gs://finalprojectar-d85ea.appspot.com/";
-            public readonly static string PorjectId = "finalprojectar-d85ea";
-       
-            public string Title { get; set; }
+        HttpContext context;
+        public readonly static string ApiKey = "AIzaSyBSjwMDM_Cf4STiMVKqCqDXziCvFis3fQU";
+        public readonly static string Bucket = "gs://finalprojectar-d85ea.appspot.com/";
+        public readonly static string PorjectId = "finalprojectar-d85ea";
+        private static string documentId;
+
+        public string Title { get; set; }
             private string Lang;
  
             public string Language
@@ -39,7 +42,12 @@ namespace E_CommerceAR.Controllers
                     return user;
                 }
             }
-            public override void OnActionExecuting(ActionExecutingContext filterContext)
+        public string DocumentId
+        {
+            get { return documentId; }
+            set { documentId = context.Session.GetString("UserId"); }
+        }
+        public override void OnActionExecuting(ActionExecutingContext filterContext)
             {
                 string CuurentURL = filterContext.Controller.ToString();
                 string originAction = filterContext.RouteData.Values["action"].ToString();

@@ -263,9 +263,9 @@
                 <h6 class="mb-0">@Html.Translate("لون الشريط الجانبي","Sidebar Color")</h6>
             </div>
             <div class="d-flex">
-                <button class="btn bg-gradient-dark px-3 mb-2 active" id="sidebarType" data-class="bg-gradient-dark" onclick="funsidebarType(this)">@Html.Translate("مظلم","Dark")</button>
-                <button class="btn bg-gradient-dark px-3 mb-2 ms-2" id="sidebarType" data-class="bg-transparent" onclick="funsidebarType(this)">@Html.Translate("شفاف","Transparent")</button>
-                <button class="btn bg-gradient-dark px-3 mb-2 ms-2" id="sidebarType" data-class="bg-white" onclick="funsidebarType(this)">@Html.Translate("أبيض","White")</button>
+                <button class="btn bg-gradient-dark px-3 mb-2 active" id="darkButton" data-class="bg-gradient-dark" >@Html.Translate("مظلم","Dark")</button>
+                <button class="btn bg-gradient-dark px-3 mb-2 ms-2" id="transparentButton" data-class="bg-transparent"  >@Html.Translate("شفاف","Transparent")</button>
+                <button class="btn bg-gradient-dark px-3 mb-2 ms-2" id="whiteButton" data-class="bg-white" >@Html.Translate("أبيض","White")</button>
             </div>
             <hr class="horizontal dark my-3">
 
@@ -331,8 +331,8 @@
     }
 
  
-    setCookie('sidebarClass', dataClass, 10);
-    }
+    // 
+    
 
      $(document).ready(function () {
         loadSettingsFromCookies();
@@ -388,15 +388,22 @@
             setCookie("dark-version", $(checkbox).prop("checked"), 10);
         }
     }
-    function funsidebarType(button) {
-        const buttons = document.querySelectorAll('.d-flex button');
-        buttons.forEach(btn => btn.classList.remove('active'));
+    // function funsidebarType(button) {
+    //     const buttons = document.querySelectorAll('.d-flex button');
+    //     buttons.forEach(btn => btn.classList.remove('active'));
 
-        button.classList.add('active');
+    //     button.classList.add('active');
 
-        const dataClass = button.getAttribute('data-class');
+    //     var dataClass = button.getAttribute('data-class');
+     
+    // }
+    $('.d-flex button').click(function () {
+        $('.d-flex button').removeClass('active');
+        $(this).addClass('active');
 
-
+        dataClass = $(this).data('class');
+        setCookie('sidebarClass', dataClass, 10);
+    });
         // Function to set a cookie with a given name, value, and expiration date
     function setCookie(name, value, expirationYears) {
         const date = new Date();

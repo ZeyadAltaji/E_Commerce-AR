@@ -173,7 +173,7 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
 
                 var updateData = new Dictionary<string, object>
             {
-                { "IsActive", true }
+                { "ISActive", true }
             };
 
                 await userCollectionReference.Document(DocumentId).UpdateAsync(updateData);
@@ -200,7 +200,7 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
 
                 var updateData = new Dictionary<string, object>
             {
-                { "IsActive", false }
+                { "ISActive", false }
             };
 
                 await userCollectionReference.Document(DocumentId).UpdateAsync(updateData);

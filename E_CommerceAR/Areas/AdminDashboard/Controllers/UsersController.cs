@@ -112,8 +112,8 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
           
                 try
                 {
-                    SignupModel.IsActive = true;
-                    SignupModel.IsDeleted = false;
+                    SignupModel.ISActive = true;
+                    SignupModel.ISDeleted = false;
                     SignupModel.Role = 2;
 
                     var user = new Signup
@@ -123,8 +123,8 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
                         email = SignupModel.email,
                         password = SignupModel.password,
                         Role = SignupModel.Role,
-                        IsActive = SignupModel.IsActive,
-                        IsDeleted = SignupModel.IsDeleted
+                        ISActive = SignupModel.ISActive,
+                        ISDeleted = SignupModel.ISDeleted
                     };
                     await auth
                         .CreateUserWithEmailAndPasswordAsync(SignupModel.email, SignupModel.password);

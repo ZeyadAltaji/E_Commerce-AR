@@ -28,8 +28,8 @@ namespace E_CommerceAR.Domain.ModalsBase
         [FirestoreProperty("Role")]
         public int Role { get; set; }
         [FirestoreProperty("ISActive")]
-        public bool IsActive { get; set; }
+        public bool ISActive { get; set; }
         [FirestoreProperty("IsDeleted")]
-        public bool IsDeleted { get; set; }
+        public bool ISDeleted { get; set; }
     }
 }

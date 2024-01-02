@@ -78,7 +78,8 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
             {
                 CollectionReference UsersCollection = firestoreDb.Collection("user");
                 QuerySnapshot querySnapshot = await UsersCollection
-                    .WhereEqualTo("ISActive", false)  
+                .WhereEqualTo("ISActive", false)
+                .WhereEqualTo("ISDeleted", false)
                     .GetSnapshotAsync();
 
                 List<UsersViewModel> usersList = new List<UsersViewModel>();
@@ -200,7 +201,8 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
 
                 var updateData = new Dictionary<string, object>
             {
-                { "ISActive", false }
+                { "ISActive", false },
+                { "ISDeleted", true }
             };
 
                 await userCollectionReference.Document(DocumentId).UpdateAsync(updateData);

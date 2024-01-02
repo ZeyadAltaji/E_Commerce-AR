@@ -46,7 +46,7 @@ namespace E_CommerceAR.Domain.ModalsBase
             [FirestoreProperty("ISActive")]
             public bool IsActive { get; set; }
 
-            [FirestoreProperty("IsDeleted")]
+            [FirestoreProperty("ISDeleted")]
             public bool IsDeleted { get; set; }
         public string PasswordKey { get; set; }
             [Required]

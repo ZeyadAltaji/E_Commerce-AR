@@ -70,7 +70,8 @@
                  var url;
                 if ($(this).hasClass('nav-item')) {
                     if ($(this).index() === 0) {
-                        url = '@Url.Action("Index", "Home", new { area = "AdminDashboard" })';
+                     window.location.assign('https://localhost:7251/AdminDashboard/Home/Index');
+
                     }
                     else if ($(this).index() === 1) {
                         url = '@Url.Action("Index", "Products", new { area = "AdminDashboard" })';

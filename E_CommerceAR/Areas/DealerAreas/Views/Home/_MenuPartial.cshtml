@@ -49,7 +49,8 @@
             var url;
             if ($(this).hasClass('nav-item')) {
                 if ($(this).index() === 0) {
-                    url = '@Url.Action("Index", "Home", new { area = "DealerAreas" })';
+                     window.location.assign('https://localhost:7251/DealerAreas/Home/Index');
+
                 }
                 else if ($(this).index() === 1) {
                     url = '/DealerAreas/Products/Index';

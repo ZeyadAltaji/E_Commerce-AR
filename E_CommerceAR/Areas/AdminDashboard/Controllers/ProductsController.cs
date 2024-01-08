@@ -8,6 +8,7 @@ using Google.Cloud.Storage.V1;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Newtonsoft.Json;
 using System.Net.Mail;
 
 namespace E_CommerceAR.Areas.AdminDashboard.Controllers
@@ -33,6 +34,8 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
         [HttpGet]
         public IActionResult Index()
         {
+            HttpContext.Session.Remove("Upload");
+
             return View();
         }
         [Route("Products/ListProduct")]
@@ -40,6 +43,8 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
         [HttpGet]
         public async Task<IActionResult> ListProduct()
         {
+            HttpContext.Session.Remove("Upload");
+
             List<ProductViewModel> productDataList = await FetchProductsFromDatabase();
 
             // Fetch user names for each product concurrently
@@ -119,7 +124,24 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
 
         public IActionResult AddNewProduct()
         {
+            HttpContext.Session.Remove("Upload");
+
+            string wwwrootPath = Path.Combine(Directory.GetCurrentDirectory() , "wwwroot");
+            string jsonFilePath = Path.Combine(wwwrootPath , "Colors" , "colors.json");
+
+             string jsonContent = System.IO.File.ReadAllText(jsonFilePath);
+
+             List<Colorslist> colorsList = JsonConvert.DeserializeObject<List<Colorslist>>(jsonContent);
+
+             ViewBag.ColorsList = colorsList;
             return PartialView();
+        }
+        [Route("Products/ShowFileProduct")]
+
+        public IActionResult ShowFileProduct ()
+        {
+            List<Upload> uol = JsonConvert.DeserializeObject<List<Upload>>(HttpContext.Session.GetString("Upload"));
+             return PartialView(uol);
         }
         [Route("Products/EditProduct")]
         public IActionResult EditProduct(string DocumentId ,bool Edit)
@@ -232,6 +254,69 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
             {
                  return Json(new { success = false, message = $"Error deleting product: {ex.Message}" });
             }
+        }
+        [Route("Products/ArchiveFile")]
+
+        public JsonResult ArchiveFile ()
+        {
+
+            List<Upload> uol = new List<Upload>();
+            var ProductId = Convert.ToInt32(Request.Form["ProductId"]);
+
+            int i = 1;
+            if ((string)HttpContext.Session.GetString("Upload") == null)
+            {
+                if (Request.Form.Files.Count > 0)
+                {
+
+                    foreach (IFormFile file in Request.Form.Files)
+                    {
+                        Upload b = new Upload();
+                        var _file = file.OpenReadStream();
+                        BinaryReader rdr = new BinaryReader(_file);
+                        byte[] FileByte = rdr.ReadBytes((int)file.Length);
+                        b.Id = i;
+                        b.ProductId = Convert.ToInt64(ProductId);
+                        b.ext = file.FileName.Split('.')[1];
+                        b.Name = file.FileName;
+                        b.ContentType = file.ContentType;
+                        b.base64 = Convert.ToBase64String(FileByte);
+      
+                        uol.Add(b);
+                        i++;
+                    }
+                }
+            }
+            else
+            {
+                uol = JsonConvert.DeserializeObject<List<Upload>>(HttpContext.Session.GetString("Upload"));
+                i = uol.Count() + 1;
+                if (Request.Form.Files.Count > 0)
+                {
+                    foreach (IFormFile file in Request.Form.Files)
+                    {
+                        Upload s = uol.Where(x => x.Name == file.FileName && x.ProductId == ProductId).FirstOrDefault();
+                        if (s == null)
+                        {
+                            Upload b = new Upload();
+                            var _file = file.OpenReadStream();
+                            BinaryReader rdr = new BinaryReader(_file);
+                            byte[] FileByte = rdr.ReadBytes((int)file.Length);
+                            b.Id = i;
+                            b.ProductId = Convert.ToInt64(ProductId);
+                            b.ext = file.FileName.Split('.')[1];
+                            b.Name = file.FileName;
+                            b.ContentType = file.ContentType;
+                             b.base64 = Convert.ToBase64String(FileByte);
+                             uol.Add(b);
+                            i++;
+                        }
+                    }
+                }
+            }
+            string Upload = JsonConvert.SerializeObject(uol);
+            HttpContext.Session.SetString("Upload" , Upload);
+            return Json("Ok");
         }
     }
 }

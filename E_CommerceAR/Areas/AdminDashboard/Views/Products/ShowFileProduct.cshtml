@@ -1,0 +1,111 @@
+﻿@using E_CommerceAR.Domain.ModalsBase
+
+@model IEnumerable<Upload>
+
+<style>
+    .info-box {
+        box-shadow: 0 0 1px rgba(0, 0, 0, 0.125), 0 1px 3px rgba(0, 0, 0, 0.2);
+        border-radius: 0.25rem;
+        background-color: #fff;
+        display: -ms-flexbox;
+        display: flex;
+        margin-bottom: 1rem;
+        min-height: 80px;
+        padding: 0.5rem;
+        position: relative;
+        width: 100%;
+    }
+
+        .info-box .info-box-icon {
+            border-radius: 0.25rem;
+            -ms-flex-align: center;
+            align-items: center;
+            display: -ms-flexbox;
+            display: flex;
+            font-size: 1.875rem;
+            -ms-flex-pack: center;
+            justify-content: center;
+            text-align: center;
+            width: 70px;
+        }
+
+        .info-box .info-box-content {
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-direction: column;
+            flex-direction: column;
+            -ms-flex-pack: center;
+            justify-content: center;
+            line-height: 1.8;
+            -ms-flex: 1;
+            flex: 1;
+            padding: 0 10px;
+            overflow: hidden;
+        }
+</style>
+
+<div class="row g-3">
+    @foreach (var item in Model)
+    {
+        
+        var base64 = "data:" + item.ContentType + ";base64," + item.base64;
+        <div class="col-4">
+            <div class="info-box" data-bs-toggle="dropdown" aria-expanded="false" style="box-shadow: 0 1px 1px rgba(0, 0, 0, 0.48);height:130px;">
+                <span class="info-box-icon" style="width: 120px !important;">
+                    @if (item.ext == "png" || item.ext == "jpg" || item.ext == "jpeg" || item.ext == "gif" || item.ext == "svg")
+                    {
+                        <img id="image_@item.Id" href="" src="@base64" alt="@item.Name" data-dz-thumbnail="" style="width:85%;">
+                    }
+                    
+                    <input id="base64_@item.Id" value="@item.base64" type="text" style="width: 95px;text-align: center !important" hidden />
+                    <input id="ContentType_@item.Id" value="@item.ext" type="text" style="width: 95px;text-align: center !important" hidden />
+                    <input id="FileName_@item.Id" value="@item.Name" type="text" style="width: 95px;text-align: center !important" hidden />
+                </span>
+                <div class="info-box-content">
+                    <span class="info-box-number">@item.Name</span>
+                </div>
+            </div>
+            <div class="dropdown">
+                <ul class="dropdown-menu border-0 shadow p-3" style="">
+                    <li><a onclick="OpenImageProducts(@item.Id)" class="dropdown-item py-2 rounded" href="#">Open</a></li>
+                    <li><a onclick="DownloadFileProducts(@item.Id)" class="dropdown-item py-2 rounded" href="#">Download</a></li>
+                    <li><a onclick="DeleteImageProducts(@item.Id)" class="dropdown-item py-2 rounded" href="#">Delete</a></li>
+                </ul>
+            </div>
+        </div>
+    }
+</div>
+
+<script>
+    function OpenImageProducts(e) {
+        var choicedPhoto = "image_" + e;
+        var ContentType = "ContentType_" + e;
+        ContentType = document.getElementById(ContentType).value;
+        if (ContentType == "jpeg" || ContentType == "png" || ContentType == "jpg" || ContentType == "gif" || ContentType == "svg") {
+            var data = document.getElementById(choicedPhoto).getAttribute("src");
+            let Window = window.open("")
+            Window.document.write("<body><img style='display: block;-webkit-user-select: none;width: 50%;zoom: 100%' src='" + data + "'></body>")
+        }
+        else if (ContentType == "pdf") {
+            var base64 = "base64_" + e;
+            base64 = document.getElementById(base64).value;
+            var FileName = "FileName_" + e;
+            FileName = document.getElementById(FileName).value;
+            var binaryString = window.atob(base64);
+            var binaryLen = binaryString.length;
+            var bytes = new Uint8Array(binaryLen);
+            for (var i = 0; i < binaryLen; i++) {
+                var ascii = binaryString.charCodeAt(i);
+                bytes[i] = ascii;
+            }
+
+            var blob = new Blob([bytes], { type: "application/pdf" });
+            var link = window.URL.createObjectURL(blob);
+            window.open(link, '', 'height=650,width=840');
+        }
+        else {
+            DownloadFileProducts(e)
+        }
+    }
+
+</script>

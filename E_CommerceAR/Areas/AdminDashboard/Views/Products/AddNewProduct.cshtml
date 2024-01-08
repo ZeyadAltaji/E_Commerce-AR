@@ -102,10 +102,7 @@
                                         <label class="form-label">@Html.Translate("صورة المنتج بامتداد .glb","Product Image Extension.glb")</label>
                                         <input type="file" name="Attachments" class="form-control">
                                          
-                                      @*   @if (ViewData["ErrorMessage"] != null)
-                                        {
-                                            <span class="text-danger">@Html.Translate("هذا الحقل الزامي", "This field is required")</span>
-                                        } *@
+                                      
                                     </div>
                                     <form id="uploader" style="display:none">
                                     <input type="file" accept="*" multiple style="display:none" id="UploadFileProduct" onchange="UploadProduct(this)" />
@@ -276,20 +273,65 @@
         link.click();
     }
     function SaveProducts() {
+        debugger
+        var name = $("input[name='Name']").val();
+        var category = $("input[name='Category']").val();
+        var price = $("input[name='Price']").val();
+        var offerPercentage = $("input[name='OfferPercentage']").val();
+        var coloresSelect = $("#ColoresSelect").val();
+        var attachments = $("input[name='Attachments']").val();
+        var Products = [];
+
+        // Perform validation
+        if (name === '') {
+            alert('Please enter a valid Name.');
+            return;
+        }
+
+        if (category === '') {
+            alert('Please enter a valid Category.');
+            return;
+        }
+
+        if (price === '' || isNaN(price)) {
+            alert('Please enter a valid Price.');
+            return;
+        }
+
+         if (offerPercentage.trim() === '' || isNaN(offerPercentage)) {
+            offerPercentage = 0;
+        }
+
+         if (!coloresSelect) {
+            coloresSelect = [];
+        }
+
+         if (!attachments) {
+            attachments = null;
+        }
         var formData = {
-            Name: $("input[name='Name']").val(),
-            Category: $("input[name='Category']").val(),
+            Name: name,
+            Category: category,
             Description: $("input[name='Description']").val(),
-            Price: $("input[name='Price']").val(),
-            OfferPercentage: $("input[name='OfferPercentage']").val(),
-            ProductDetails: $("input[name='ProductDetails']").val()
+            Price: price,
+            OfferPercentage: offerPercentage,
+            ColorValues: coloresSelect,
+            Model: attachments
         };
+        Products.push(formData);
 
          $.ajax({
             url: '/Products/SaveNewProducts',   
             type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(formData),
+            data: {
+                Name: name,
+                Category: category,
+                Description: $("input[name='Description']").val(),
+                Price: price,
+                OfferPercentage: offerPercentage,
+                ColorValues: coloresSelect,
+                Model: attachments
+            },
             success: function (data) {
                  console.log("Data saved successfully");
             },

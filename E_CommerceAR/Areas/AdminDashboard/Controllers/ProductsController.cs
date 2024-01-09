@@ -201,11 +201,17 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
                  string modelFolderName = $"products/images/";
                 string modelBucketName = "finalprojectar-d85ea.appspot.com";
                 var modelStorage = StorageClient.Create();
-                string modelFileName = $"{modelFolderName}{Model}";
+                //string modelFileName = $"{modelFolderName}{Model}";
+                string modelFileName = $"{modelFolderName}{Guid.NewGuid()}";
 
                 using (var modelStream = new MemoryStream(Encoding.UTF8.GetBytes(Model)))
                 {
-                    modelStorage.UploadObject(modelBucketName , modelFileName , null , modelStream);
+                    var modelUploadOptions = new UploadObjectOptions
+                    {
+                        PredefinedAcl = PredefinedObjectAcl.PublicRead ,
+                    };
+
+                    modelStorage.UploadObject(modelBucketName , modelFileName , "application/octet-stream" , modelStream , options: modelUploadOptions);
                 }
                 uol = JsonConvert.DeserializeObject<List<Upload>>(HttpContext.Session.GetString("Upload"));
                 foreach (var images in uol)
@@ -217,7 +223,12 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
 
                     using (var imageStream = new MemoryStream(Encoding.UTF8.GetBytes(images.ContentType)))
                     {
-                        imageStorage.UploadObject(imageBucketName , imageFileName , null , imageStream);
+                        var imageUploadOptions = new UploadObjectOptions
+                        {
+                            PredefinedAcl = PredefinedObjectAcl.PublicRead ,  
+                        };
+
+                        imageStorage.UploadObject(imageBucketName , imageFileName , images.ContentType , imageStream , options: imageUploadOptions);
                     }
                 }
 

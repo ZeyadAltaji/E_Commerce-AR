@@ -114,6 +114,8 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
                 {
                     SignupModel.ISActive = true;
                     SignupModel.ISDeleted = false;
+                    SignupModel.Unapproved = false;
+
                     SignupModel.Role = 2;
 
                     var user = new Signup
@@ -122,9 +124,14 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
                         lastName = SignupModel.lastName,
                         email = SignupModel.email,
                         password = SignupModel.password,
+                        ComfirmPassword = SignupModel.password ,
+                        MobileNo = SignupModel.MobileNo ,
                         Role = SignupModel.Role,
                         ISActive = SignupModel.ISActive,
-                        ISDeleted = SignupModel.ISDeleted
+                        ISDeleted = SignupModel.ISDeleted ,
+                        Unapproved = SignupModel.Unapproved ,
+                        Address = SignupModel.Address ,
+
                     };
                     await auth
                         .CreateUserWithEmailAndPasswordAsync(SignupModel.email, SignupModel.password);
@@ -137,8 +144,8 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
 
 
 
-                string indexUrl = Url.Action("Index", "Users");
-                return Redirect(indexUrl);
+                return RedirectToAction("Index" , "Users");
+
             }
             catch (Exception ex)
                 {
@@ -173,15 +180,17 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("EditUser", "Users");
+                     return RedirectToAction("Index" , "Users");
                 }
 
-                return View(Index);
+                return RedirectToAction("Index" , "Users");
+
             }
             catch (Exception ex)
             {
                 // Handle the exception
-                return RedirectToAction("EditUser", "Users");
+                return RedirectToAction("Index" , "Users");
+
             }
         }
         [Route("Users/DeleteUsers")]

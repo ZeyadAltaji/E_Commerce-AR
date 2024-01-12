@@ -158,8 +158,11 @@ namespace E_CommerceAR.Controllers
             {
                 try
                 {
+                    
                     SignupModel.ISActive = false;
                     SignupModel.ISDeleted = false;
+                    SignupModel.Unapproved = true;
+
                     SignupModel.Role = 2;
 
                     var user = new Signup
@@ -168,9 +171,16 @@ namespace E_CommerceAR.Controllers
                         lastName = SignupModel.lastName,
                         email = SignupModel.email,
                         password = SignupModel.password,
+                        ComfirmPassword = SignupModel.ComfirmPassword ,
+                        MobileNo = SignupModel.MobileNo ,
+
                         Role = SignupModel.Role,
                         ISActive = SignupModel.ISActive,
-                        ISDeleted = SignupModel.ISDeleted
+                        ISDeleted = SignupModel.ISDeleted,
+                        Unapproved= SignupModel.Unapproved,
+                        Address = SignupModel.Address ,
+
+
                     };
                     await auth
                         .CreateUserWithEmailAndPasswordAsync(SignupModel.email, SignupModel.password);
@@ -211,6 +221,10 @@ namespace E_CommerceAR.Controllers
 
 
                 }
+               else if (SignupModel.password != SignupModel.ComfirmPassword)
+               {
+                    ViewData["ErrorMessageConfirmPassword"] = "The password and confirmation password do not match.";
+               }
                 ViewData["ErrorMessage"] = Translate("هذا الحقل الزامي", "This field is required");
 
                 return View("Signup", SignupModel);

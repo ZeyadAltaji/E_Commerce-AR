@@ -1,7 +1,10 @@
 ﻿@using E_CommerceAR.Extensions;
 @using E_CommerceAR.Domain.ModalsBase;
+@using E_CommerceAR.Domain.ModalsViews;
 @{
     List<Colorslist> colorsList = ViewBag.ColorsList;
+    List<SizeList> SizeList = ViewBag.SizeList;
+
 }
 <style>
     input {
@@ -72,9 +75,15 @@
                         </div>
                         <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
                             <label class="form-label">
-                                 @Html.Translate("تفاصيل المنتج :","Products Details : ")
+                                @Html.Translate("الحجم المنتج :","Products Sizes : ")
                             </label>
-                            <input type="text" class="form-control" placeholder="@Html.Translate("الحجم | الاستحدام","Sizes | use")">
+                            <select class="form-select " id="SizeListSelect" multiple="multiple">
+                                <option disabled>@Html.Translate("--يرجى الاختيار--","Plases Select")</option>
+                                @foreach (var item in SizeList)
+                                {
+                                    <option value="@item.Key">@item.name</option>
+                                }
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -105,7 +114,7 @@
                                       
                                     </div>
                                     <form id="uploader" style="display:none">
-                                    <input type="file" accept="*" multiple style="display:none" id="UploadFileProduct" onchange="UploadProduct(this)" />
+                                    <input type="file" accept="*" multiple style="display:none" name="UploadFileProduct" id="UploadFileProduct" onchange="UploadProduct(this)" />
                                     </form>
                                     <div class="col-md-12" style="height:300px; overflow-y:auto">
                                         <article>
@@ -141,6 +150,7 @@
 </div>
 <script>
     $('#ColoresSelect').select2();
+    $('#SizeListSelect').select2();
 
     $(document).ready(function () {
         $('.form-control').focus(function () {
@@ -280,6 +290,8 @@
         var offerPercentage = $("input[name='OfferPercentage']").val();
         var coloresSelect = $("#ColoresSelect").val();
         var attachments = $("input[name='Attachments']").val();
+        var SizeListSelect = $("#SizeListSelect").val();
+
         var Products = [];
 
         // Perform validation
@@ -309,29 +321,30 @@
          if (!attachments) {
             attachments = null;
         }
-        var formData = {
-            Name: name,
-            Category: category,
-            Description: $("input[name='Description']").val(),
-            Price: price,
-            OfferPercentage: offerPercentage,
-            ColorValues: coloresSelect,
-            Model: attachments
-        };
-        Products.push(formData);
+        var formData = new FormData();
 
+        formData.append("Name", $("input[name='Name']").val());
+        formData.append("Category", $("input[name='Category']").val());
+        formData.append("Description", $("input[name='Description']").val());
+        formData.append("Price", $("input[name='Price']").val());
+        formData.append("OfferPercentage", $("input[name='OfferPercentage']").val());
+        formData.append("ColorValues", $("#ColoresSelect").val());
+ 
+        formData.append("Model", $("input[name='Attachments']")[0].files[0]);
+        var fileInput = $("input[name='UploadFileProduct']")[0];
+
+         for (var i = 0; i < fileInput.files.length; i++) {
+            formData.append("images", fileInput.files[i]);
+        }
+        $.each(SizeListSelect, function (index, size) {
+            formData.append("sizes[" + index + "]", size);
+        });
          $.ajax({
             url: '/Products/SaveNewProducts',   
             type: 'POST',
-            data: {
-                Name: name,
-                Category: category,
-                Description: $("input[name='Description']").val(),
-                Price: price,
-                OfferPercentage: offerPercentage,
-                ColorValues: coloresSelect,
-                Model: attachments
-            },
+            data: formData,
+            processData: false,
+            contentType: false,
             success: function (data) {
                  console.log("Data saved successfully");
             },

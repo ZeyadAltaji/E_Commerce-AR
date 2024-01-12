@@ -25,11 +25,23 @@ namespace E_CommerceAR.Domain.ModalsBase
         [FirestoreProperty("password")]
         [Required(ErrorMessage = "his field is required")]
         public string password { get; set; } = string.Empty;
+        [FirestoreProperty("ComfirmPassword")]
+        [Required]
+        [Compare("password")]
+        public string ComfirmPassword { get; set; }
+        [FirestoreProperty("MobileNo")]
+        [Required]
+        public string MobileNo { get; set; } = string.Empty;
+        [FirestoreProperty("Address")]
+        [Required]
+        public string Address { get; set; } = string.Empty;
         [FirestoreProperty("Role")]
         public int Role { get; set; }
         [FirestoreProperty("ISActive")]
         public bool ISActive { get; set; }
         [FirestoreProperty("IsDeleted")]
         public bool ISDeleted { get; set; }
+        [FirestoreProperty("Unapproved")]
+        public bool Unapproved { get; set; }
     }
 }

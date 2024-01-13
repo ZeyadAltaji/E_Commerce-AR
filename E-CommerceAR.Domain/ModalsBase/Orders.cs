@@ -99,5 +99,7 @@ namespace E_CommerceAR.Domain.ModalsBase
 
         [FirestoreProperty("updateTime")]
         public DateTime UpdateTime { get; set; }
+        [FirestoreProperty("dealerId")]
+        public string dealerId { get; set; }
     }
 }

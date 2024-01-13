@@ -38,6 +38,8 @@ namespace E_CommerceAR.Domain.ModalsBase
 
         [FirestoreProperty("price")]
         public int? Price { get; set; }
+        [FirestoreProperty("Attachments_Id")]
+        public string Attachments_Id { get; set; }
 
     }
 

@@ -51,8 +51,13 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
         {
             try
             {
-                CollectionReference productsCollection = firestoreDb.Collection("orders");
-                QuerySnapshot querySnapshot = await productsCollection.GetSnapshotAsync();
+                string dealerId = HttpContext.Session.GetString("UserId");
+
+                CollectionReference ordersCollection = firestoreDb.Collection("orders");
+
+                 Query ordersQuery = ordersCollection.WhereEqualTo("DealerId" , dealerId);
+
+                QuerySnapshot querySnapshot = await ordersQuery.GetSnapshotAsync();
 
                 List<OrdersViewModel> OrdersList = new List<OrdersViewModel>();
 

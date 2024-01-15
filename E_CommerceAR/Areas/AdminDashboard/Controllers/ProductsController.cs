@@ -10,10 +10,12 @@ using Google.Cloud.Storage.V1;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Differencing;
 using Newtonsoft.Json;
 using System.Net.Mail;
 using System.Security.Policy;
 using System.Text;
+using System.Web;
 
 namespace E_CommerceAR.Areas.AdminDashboard.Controllers
 {
@@ -153,9 +155,23 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
             List<Upload> uol = JsonConvert.DeserializeObject<List<Upload>>(HttpContext.Session.GetString("Upload"));
              return PartialView(uol);
         }
+
         [Route("Products/EditProduct")]
         public IActionResult EditProduct(string DocumentId ,bool Edit)
         {
+            string wwwrootPath = Path.Combine(Directory.GetCurrentDirectory() , "wwwroot");
+            string jsonFilePath = Path.Combine(wwwrootPath , "Colors" , "colors.json");
+
+            string jsonContent = System.IO.File.ReadAllText(jsonFilePath);
+
+            List<Colorslist> colorsList = JsonConvert.DeserializeObject<List<Colorslist>>(jsonContent);
+            string jsonSizeList = Path.Combine(wwwrootPath , "Size" , "SizeList.json");
+
+            string jsonContentSizeList = System.IO.File.ReadAllText(jsonSizeList);
+
+            List<SizeList> SizeList = JsonConvert.DeserializeObject<List<SizeList>>(jsonContentSizeList);
+            ViewBag.ColorsList = colorsList;
+            ViewBag.SizeList = SizeList;
             CollectionReference productsCollection = firestoreDb.Collection("Products");
 
             DocumentReference productDocument = productsCollection.Document(DocumentId);
@@ -169,6 +185,66 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
 
             return PartialView(product);
         }
+        [Route("Products/eShowFileProduct")]
+
+        public IActionResult eShowFileProduct (string DocumentId , bool Edit)
+        {
+            CollectionReference productsCollection = firestoreDb.Collection("Products");
+
+            DocumentReference productDocument = productsCollection.Document(DocumentId);
+
+            DocumentSnapshot snapshot = productDocument.GetSnapshotAsync().Result;
+
+            Products product = snapshot.ConvertTo<Products>();
+            ViewBag.Edit = Edit;
+            ViewBag.DocumentId = DocumentId;
+
+            List<Upload> uol = ConvertImagesToUploadList(product.images);
+            HttpContext.Session.SetString("Upload" , JsonConvert.SerializeObject(uol));
+
+            return PartialView(uol);
+        }
+
+        public List<Upload> ConvertImagesToUploadList (List<string> imageUrls)
+        {
+            List<Upload> uploadList = new List<Upload>();
+
+            foreach (var imageUrl in imageUrls)
+            {
+                // Decode the URL-encoded string
+                string decodedImageUrl = HttpUtility.UrlDecode(imageUrl);
+                string[] urlParts = decodedImageUrl.Split('?');
+
+                string imageNameWithExtension = urlParts[0];
+
+                string[] parts = decodedImageUrl.Split('/');
+                 string[] namePartss = imageNameWithExtension.Split('/');
+                string imageName = namePartss[namePartss.Length - 1];
+
+
+                string[] nameParts = imageName.Split('.');
+                string formatType = nameParts[nameParts.Length - 1];
+                formatType = formatType.Split('?')[0];
+
+                 string base64 = decodedImageUrl;
+                string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(imageName);
+
+                Upload upload = new Upload
+                {
+                    ProductId = 1 , 
+                    Id = uploadList.Count + 1 , 
+                    Name = fileNameWithoutExtension ,  
+                    ext = formatType ,
+                    base64 = imageUrl ,
+                    ImageName = imageName ,
+                };
+
+                uploadList.Add(upload);
+            }
+
+            return uploadList;
+        }
+
         [Route("Products/SaveNewProducts")]
         public async Task<IActionResult> SaveNewProducts (
         string Name ,

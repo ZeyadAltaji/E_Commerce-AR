@@ -1,5 +1,81 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using E_CommerceAR.Domain.ModalsBase
+
+@model IEnumerable<Upload>
 @{
+    string DocumentId = ViewBag.DocumentId;
+    bool Edit = ViewBag.Edit;
+
 }
+<style>
+    .info-box {
+        box-shadow: 0 0 1px rgba(0, 0, 0, 0.125), 0 1px 3px rgba(0, 0, 0, 0.2);
+        border-radius: 0.25rem;
+        background-color: #fff;
+        display: -ms-flexbox;
+        display: flex;
+        margin-bottom: 1rem;
+        min-height: 80px;
+        padding: 0.5rem;
+        position: relative;
+        width: 100%;
+    }
+
+        .info-box .info-box-icon {
+            border-radius: 0.25rem;
+            -ms-flex-align: center;
+            align-items: center;
+            display: -ms-flexbox;
+            display: flex;
+            font-size: 1.875rem;
+            -ms-flex-pack: center;
+            justify-content: center;
+            text-align: center;
+            width: 70px;
+        }
+
+        .info-box .info-box-content {
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-direction: column;
+            flex-direction: column;
+            -ms-flex-pack: center;
+            justify-content: center;
+            line-height: 1.8;
+            -ms-flex: 1;
+            flex: 1;
+            padding: 0 10px;
+            overflow: hidden;
+        }
+</style>
+
+<div class="row g-3">
+    @foreach (var item in Model)
+    {
+       
+        var base64 = "data:" + item.ContentType + ";base64," + item.base64;
+        <div class="col-4">
+            <div class="info-box" data-bs-toggle="dropdown" style="box-shadow: 0 1px 1px rgba(0, 0, 0, 0.48);height:130px;">
+                <span class="info-box-icon" style="width: 120px !important;">
+                    @if (item.ext == "png" || item.ext == "jpg" || item.ext == "jpeg" || item.ext == "gif" || item.ext == "svg")
+                    {
+                        <img id="eimage_@item.Id" href="" src="@item.base64" alt="@item.Name" data-dz-thumbnail="" style="width:85%;">
+                    }
+ 
+                    <input id="ebase64_@item.Id" value="@item.base64" type="text" style="width: 95px;text-align: center !important" hidden />
+                    <input id="eContentType_@item.Id" value="@item.ext" type="text" style="width: 95px;text-align: center !important" hidden />
+                    <input id="eFileName_@item.Id" value="@item.Name" type="text" style="width: 95px;text-align: center !important" hidden />
+                </span>
+                <div class="info-box-content">
+                    <span class="info-box-number">@item.Name</span>
+                </div>
+            </div>
+            <div class="dropdown">
+                <ul class="dropdown-menu border-0 shadow p-3" style="">
+                    <li><a onclick="eOpenImageInsertAllowAndDeduct(@item.Id)" class="dropdown-item py-2 rounded" href="#">Open</a></li>
+                    <li><a onclick="eDownloadFileInsertAllowAndDeduct(@item.Id)" class="dropdown-item py-2 rounded" href="#">Download</a></li>
+                    <li><a onclick="eDeleteImageInsertAllowAndDeduct(@item.Id,@DocumentId)" class="dropdown-item py-2 rounded" href="#">Delete</a></li>
+                </ul>
+            </div>
+        </div>
+    }
+</div>

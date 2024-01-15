@@ -1,5 +1,11 @@
 ﻿@using E_CommerceAR.Extensions;
+@using E_CommerceAR.Domain.ModalsBase;
+@using E_CommerceAR.Domain.ModalsViews;
+@{
+    List<Colorslist> colorsList = ViewBag.ColorsList;
+    List<SizeList> SizeList = ViewBag.SizeList;
 
+}
 
 <style>
     input {
@@ -34,7 +40,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <form role="form" action="@Url.Action("SaveNewProducts", "Products")" class="text-start">
+                <div class="text-start">
                     <div class="row">
                         <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
                             <label class="form-label">@Html.Translate("اسم المنتج","Name Products")</label>
@@ -57,24 +63,96 @@
                             <label class="form-label">@Html.Translate("الخصم &","Offer %")</label>
                             <input type="number" class="form-control" name="OfferPercentage">
                         </div>
+                        <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
+
+                            <label class="form-label">@Html.Translate("الالوان ","Colores")</label>
+                            <select class="form-select " id="ColoresSelect" multiple="multiple">
+                                <option disabled>@Html.Translate("--يرجى الاختيار--","Plases Select")</option>
+                                @foreach (var item in colorsList)
+                                {
+                                    <option value="@item.hex">@item.name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
+                            <label class="form-label">
+                                @Html.Translate("الحجم المنتج :","Products Sizes : ")
+                            </label>
+                            <select class="form-select " id="SizeListSelect" multiple="multiple">
+                                <option disabled>@Html.Translate("--يرجى الاختيار--","Plases Select")</option>
+                                @foreach (var item in SizeList)
+                                {
+                                    <option value="@item.Key">@item.name</option>
+                                }
+                            </select>
+                        </div>
                     </div>
-                    <br />
-                    <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
-                        <label class="form-label">@Html.Translate("تفاصيل المنتج :","Products Details : ")</label>
+                </div>
+
+                <br />
+                <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
+                    <label class="form-label">@Html.Translate("مرفقات المنتج :","Products Attachments : ")</label>
+                </div>
+                <div class="col-md-12" style="text-align: @Html.Translate("right","left");">
+                    <div>
+                        <div class="card mt-4">
+                            <div class="card-header pb-0 p-3">
+                                <div class="row">
+                                    <div class="col-10 d-flex align-items-center">
+                                        @Html.Translate("صور المنتج","Products Photos")
+                                    </div>
+                                    <div class="col-2  " style="text-align: end;">
+                                        <a class="btn bg-gradient-dark mb-0" onclick="AddPhotos()"><i class="material-icons text-sm">add</i>@Html.Translate("اضافة صور ","Add Photos")</a>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="card-body p-3">
+                                <div class="col-md-auto mb-3">
+                                    <label class="form-label">@Html.Translate("صورة المنتج بامتداد .glb","Product Image Extension.glb")</label>
+                                    <input type="file" name="Attachments" class="form-control">
+
+
+                                </div>
+                                <form id="uploader" style="display:none">
+                                    <input type="file" accept="*" multiple style="display:none" name="UploadFileProduct" id="UploadFileProduct" onchange="UploadProduct(this)" />
+                                </form>
+                                <div class="col-md-12" style="height:300px; overflow-y:auto">
+                                    <article>
+                                        <div class="content container-fluid">
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <section class="content-max-width">
+                                                            <section id="info-box">
+                                                                <div class="row" id="AllFiles">
+                                                                </div>
+                                                            </section>
+                                                        </section>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </article>
+                                </div>
+                            </div>
+
+                        </div>
+
                     </div>
-                    <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
-                        <input type="text" class="form-control" placeholder="@Html.Translate("الحجم | الاستحدام","Sizes | use")">
-                    </div>
-                    <br />
-                    <div class="col-md-12">
-                        <button type="submit" class="btn bg-gradient-success  mb-0"> @Html.Translate("حفظ","Save")</button>
-                    </div>
-                </form>
+                </div>
+                <br />
+                <div class="col-md-12">
+                    <button type="submit" onclick="SaveProducts()" class="btn bg-gradient-success  mb-0"> @Html.Translate("حفظ","Save")</button>
+                </div>
             </div>
-        </div>
+         </div>
     </div>
 </div>
 <script>
+    $('#ColoresSelect').select2();
+    $('#SizeListSelect').select2();
+
     $(document).ready(function () {
         $('.form-control').focus(function () {
             $(this).addClass('focused');
@@ -88,8 +166,194 @@
     });
     function ListProducts() {
         debugger
-        $('#allProdictsDiv').html('');
+         $('#allProdictsDiv').html('');
         var url = '@Url.Action("Index", "Products", new { area = "DealerAreas" })';
         $('#allProdictsDiv').load(url);
     }
+    function AddPhotos() {
+        $("#UploadFileProduct").wrap('<form>').closest('form').get(0).reset();
+        $("#UploadFileProduct").click();
+    }
+    function UploadProduct(Elem) {
+        var uploadDate = new Date();
+        var day = ('0' + uploadDate.getDate()).slice(-2);
+        var month = ('0' + (uploadDate.getMonth() + 1)).slice(-2);
+        var year = uploadDate.getFullYear();
+
+        var shortDate = day + '/' + month + '/' + year;
+
+        var file_size = $(Elem)[0].files[0].size;
+        var fileName = $("#UploadFileProduct").val().replace(/C:\\fakepath\\/i, '');
+        var filetype = fileName.split('.').pop();
+        var InputID = $(Elem).attr("id");
+
+        var $file = document.getElementById(InputID);
+        var ContentType = $file.files[0].type;
+        $formData = new FormData();
+        if ($file.files.length > 0) {
+            for (var i = 0; i < $file.files.length; i++) {
+                $formData.append('file-' + i, $file.files[i]);
+            }
+        }
+        $formData.append('ProductId', 0);
+        $.ajax({
+   
+            url: ' @Url.Action("ArchiveFile", "Products", new { area = "DealerAreas" })',
+            type: 'POST',
+            data: $formData,
+            contentType: false,
+            processData: false,
+            success: function (r) {
+                ReloadImages();
+            },
+            error: function (error) {
+            }
+        });
+    }
+    function ReloadImages() {
+             var url = '@Url.Action("ShowFileProduct", "Products", new { area = "DealerAreas" })';
+
+        $('#AllFiles').load(url);
+    }
+    function OpenImageProducts(e) {
+        var choicedPhoto = "image_" + e;
+        var ContentType = "ContentType_" + e;
+        ContentType = document.getElementById(ContentType).value;
+        if (ContentType == "image/jpeg" || ContentType == "image/png" || ContentType == "image/jpg") {
+            var data = document.getElementById(choicedPhoto).getAttribute("src");
+            let Window = window.open("")
+            Window.document.write("<body style='margin: 0px; height: 100%;zoom: 50%;'><img style='display: block;-webkit-user-select: none;zoom: 50%;' src='" + data + "'></body>")
+        }
+        else if (ContentType == "application/pdf") {
+            var base64 = "base64_" + e;
+            base64 = document.getElementById(base64).value;
+            var FileName = "FileName_" + e;
+            FileName = document.getElementById(FileName).value;
+            var binaryString = window.atob(base64);
+            var binaryLen = binaryString.length;
+            var bytes = new Uint8Array(binaryLen);
+            for (var i = 0; i < binaryLen; i++) {
+                var ascii = binaryString.charCodeAt(i);
+                bytes[i] = ascii;
+            }
+
+            var blob = new Blob([bytes], { type: "application/pdf" });
+            var link = window.URL.createObjectURL(blob);
+            window.open(link, '', 'height=650,width=840');
+        }
+        else {
+            var data = document.getElementById(choicedPhoto).getAttribute("src");
+            let Window = window.open("")
+            Window.document.write("<iframe width='100%' height='100% ' src='" + data + "'></iframe>")
+        }
+    }
+    function DownloadFileProducts(e) {
+
+        var base64 = "base64_" + e;
+        base64 = document.getElementById(base64).value;
+        var FileName = "FileName_" + e;
+        FileName = document.getElementById(FileName).value;
+        var binaryString = window.atob(base64);
+        var binaryLen = binaryString.length;
+        var bytes = new Uint8Array(binaryLen);
+        for (var i = 0; i < binaryLen; i++) {
+            var ascii = binaryString.charCodeAt(i);
+            bytes[i] = ascii;
+        }
+        saveByteArray(FileName, bytes)
+    }
+    function DeleteImageProducts(ids) {
+        $.ajax({
+            url: '@Url.Action("DeleteFile", "Products")',
+            type: 'POST',
+            data: {
+                id: ids
+            },
+            success: function (r) {
+                ReloadImages();
+            },
+            error: function (error) {
+            }
+        });
+    }
+    function saveByteArray(reportName, byte) {
+        var blob = new Blob([byte], { type: "application/pdf" });
+        var link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        var fileName = reportName;
+        link.download = fileName;
+        link.click();
+    }
+    function SaveProducts() {
+        debugger
+        var name = $("input[name='Name']").val();
+        var category = $("input[name='Category']").val();
+        var price = $("input[name='Price']").val();
+        var offerPercentage = $("input[name='OfferPercentage']").val();
+        var coloresSelect = $("#ColoresSelect").val();
+        var attachments = $("input[name='Attachments']").val();
+        var SizeListSelect = $("#SizeListSelect").val();
+
+        var Products = [];
+
+        // Perform validation
+        if (name === '') {
+            alert('Please enter a valid Name.');
+            return;
+        }
+
+        if (category === '') {
+            alert('Please enter a valid Category.');
+            return;
+        }
+
+        if (price === '' || isNaN(price)) {
+            alert('Please enter a valid Price.');
+            return;
+        }
+
+        if (offerPercentage.trim() === '' || isNaN(offerPercentage)) {
+            offerPercentage = 0;
+        }
+
+        if (!coloresSelect) {
+            coloresSelect = [];
+        }
+
+        if (!attachments) {
+            attachments = null;
+        }
+        var formData = new FormData();
+
+        formData.append("Name", $("input[name='Name']").val());
+        formData.append("Category", $("input[name='Category']").val());
+        formData.append("Description", $("input[name='Description']").val());
+        formData.append("Price", $("input[name='Price']").val());
+        formData.append("OfferPercentage", $("input[name='OfferPercentage']").val());
+        formData.append("ColorValues", $("#ColoresSelect").val());
+
+        formData.append("Model", $("input[name='Attachments']")[0].files[0]);
+        var fileInput = $("input[name='UploadFileProduct']")[0];
+
+        for (var i = 0; i < fileInput.files.length; i++) {
+            formData.append("images", fileInput.files[i]);
+        }
+        $.each(SizeListSelect, function (index, size) {
+            formData.append("sizes[" + index + "]", size);
+        });
+        $.ajax({
+            url: '/DealerAreas/Products/SaveNewProducts',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                console.log("Data saved successfully");
+            },
+            error: function (error) {
+                console.error("Error saving data: ", error);
+            }
+        });
+    }
+ 
 </script>

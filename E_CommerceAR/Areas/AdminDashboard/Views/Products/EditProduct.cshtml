@@ -1,9 +1,13 @@
 ﻿@using E_CommerceAR.Extensions;
 @using E_CommerceAR.Domain.ModalsBase;
+@using E_CommerceAR.Domain.ModalsViews;
+
 @model Products;
 @{
     bool Edit = ViewBag.Edit;
     string DocumentId = ViewBag.DocumentId;
+    List<Colorslist> colorsList = ViewBag.ColorsList;
+    List<SizeList> SizeList = ViewBag.SizeList;
 }
 
 <style>
@@ -39,12 +43,11 @@
                 </div>
             </div>
             <div class="card-body">
-                <form role="form" action="@Url.Action("SaveEditProducts", "Products")" class="text-start">
+                <div class="text-start">
                     <div class="row">
                         <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
                             <label class="form-label">@Html.Translate("اسم المنتج","Name Products")</label>
                             <input type="text" class="form-control" name="Name" value="@Model.Name" @(Edit == true ? "" : "readonly")>
-                            <input type="hidden" name="DocumentId" value="@DocumentId">
 
                         </div>
                         <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
@@ -57,30 +60,127 @@
                         </div>
                         <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
                             <label class="form-label">@Html.Translate("السعر","Price")</label>
-                            <input type="number" class="form-control" name="Price" value="@Model.Price" @(Edit == true ? "" : "readonly")>
+                            <input type="number" class="form-control" name="Price" value="@Model.Price.ToString().Replace('٫','.')" @(Edit == true ? "" : "readonly")>
                         </div>
                         <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
                             <label class="form-label">@Html.Translate("الخصم &","Offer %")</label>
-                            <input type="number" class="form-control" name="OfferPercentage" value="@Model.OfferPercentage" @(Edit == true ? "" : "readonly")>
+                            <input type="number" class="form-control" name="OfferPercentage" value="@Model.OfferPercentage.ToString().Replace('٫','.')" @(Edit == true ? "" : "readonly")>
+                        </div>
+                        <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
+
+                            <label class="form-label">@Html.Translate("الالوان ","Colores")</label>
+                            <select class="form-select " id="ColoresSelect" multiple="multiple">
+                                <option disabled>@Html.Translate("--يرجى الاختيار--","Plases Select")</option>
+                                @foreach (var item in colorsList)
+                                {
+                                  @*   if (Model.ColorValues.Contains(item.hex))
+                                    {
+                                        <option selected value="@item.hex">@item.name</option>
+                                    }
+                                    else *@
+                                    @* { *@
+                                        <option value="@item.hex">@item.name</option>
+                                    @* } *@
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
+                            <label class="form-label">
+                                @Html.Translate("الحجم المنتج :","Products Sizes : ")
+                            </label>
+                            <select class="form-select " id="SizeListSelect" multiple="multiple">
+                                <option disabled>@Html.Translate("--يرجى الاختيار--","Plases Select")</option>
+                                @foreach (var item in SizeList)
+                                {
+                                if (Model.sizes.Contains(item.Key))
+                                {
+                                    <option selected value="@item.Key">@item.name</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Key">@item.name</option>
+                                }
+                                }
+                            </select>
                         </div>
                     </div>
-                    <br />
-                    <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
-                        <label class="form-label">@Html.Translate("تفاصيل المنتج :","Products Details : ")</label>
+                </div>
+
+                <br />
+                <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
+                    <label class="form-label">@Html.Translate("مرفقات المنتج :","Products Attachments : ")</label>
+                </div>
+                <div class="col-md-12" style="text-align: @Html.Translate("right","left");">
+                    <div>
+                        <div class="card mt-4">
+                            <div class="card-header pb-0 p-3">
+                                <div class="row">
+                                    <div class="col-10 d-flex align-items-center">
+                                        @Html.Translate("صور المنتج","Products Photos")
+                                    </div>
+                                    <div class="col-2  " style="text-align: end;">
+                                        <a class="btn bg-gradient-dark mb-0" onclick="AddPhotos()"><i class="material-icons text-sm">add</i>@Html.Translate("اضافة صور ","Add Photos")</a>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="card-body p-3">
+                                <div class="col-md-auto mb-3">
+                                    <label class="form-label">@Html.Translate("صورة المنتج بامتداد .glb","Product Image Extension.glb")</label>
+                                    <input type="file" name="Attachments" value="@Model.Model" class="form-control">
+
+
+                                </div>
+                                <form id="uploader" style="display:none">
+                                    <input type="file" accept="*" multiple style="display:none" name="UploadFileProduct" id="UploadFileProduct" onchange="UploadProduct(this)" />
+                                </form>
+                                <div class="col-md-12" style="height:300px; overflow-y:auto">
+                                    <article>
+                                        <div class="content container-fluid">
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <section class="content-max-width">
+                                                            <section id="info-box">
+                                                                <div class="row" id="eAllFiles">
+                                                                </div>
+                                                            </section>
+                                                        </section>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </article>
+                                </div>
+                            </div>
+
+                        </div>
+
                     </div>
-                    <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
-                        <input type="text" class="form-control" placeholder="@Html.Translate("الحجم | الاستحدام","Sizes | use")" @(Edit == true ? "" : "readonly")>
-                    </div>
+                </div>
+                <br />
                     <br />
                     <div class="col-md-12">
                         <button type="submit" class="btn bg-gradient-success  mb-0" @(Edit == true ? "" : "hidden")> @Html.Translate("حفظ","Save")</button>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<script>
+ <script>
+    $('#ColoresSelect').select2();
+    $('#SizeListSelect').select2();
+    var edit = '@Edit';
+    var documentId = '@DocumentId'
+    $(document).ready(function () {
+        debugger
+        var url = '@Url.Action("eShowFileProduct", "Products", new { DocumentId = "__documentId__", Edit = "__edit__" })';
+
+        url = url.replace('__documentId__', documentId).replace('__edit__', edit);
+
+        $('#eAllFiles').html("");  
+        $('#eAllFiles').load(url);
+     })
     $(document).ready(function () {
         $('.form-control').focus(function () {
             $(this).addClass('focused');

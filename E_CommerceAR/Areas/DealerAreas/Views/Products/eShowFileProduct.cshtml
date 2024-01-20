@@ -1,7 +1,12 @@
 ﻿@using E_CommerceAR.Domain.ModalsBase
 
 @model IEnumerable<Upload>
+@{
+    string DocumentId = ViewBag.DocumentId;
+    bool Edit = ViewBag.Edit;
+    string id = ViewBag.Id;
 
+}
 <style>
     .info-box {
         box-shadow: 0 0 1px rgba(0, 0, 0, 0.125), 0 1px 3px rgba(0, 0, 0, 0.2);
@@ -52,48 +57,76 @@
         <div class="col-4">
             <div class="info-box" style="box-shadow: 0 1px 1px rgba(0, 0, 0, 0.48);height:130px;">
                 <span class="info-box-icon" style="width: 120px !important;">
-                    @if (item.ext == "png" || item.ext == "jpg" || item.ext == "jpeg" || item.ext == "gif" || item.ext == "svg")
+
+                    @if (!string.IsNullOrEmpty(item.linkDB))
                     {
-                        <img id="image_@item.Id" href="" src="@base64" alt="@item.Name" data-dz-thumbnail="" style="width:85%;">
+                        <img id="eimage_@item.Id" href="" src="@item.linkDB" alt="@item.Name" data-dz-thumbnail="" style="width:85%;">
+
+                    }
+                    else
+                    {
+                        <img id="eimage_@item.Id" href="" src="@base64" alt="@item.Name" data-dz-thumbnail="" style="width:85%;">
+
                     }
 
-                    <input id="base64_@item.Id" value="@item.base64" type="text" style="width: 95px;text-align: center !important" hidden />
-                    <input id="ContentType_@item.Id" value="@item.ext" type="text" style="width: 95px;text-align: center !important" hidden />
-                    <input id="FileName_@item.Id" value="@item.Name" type="text" style="width: 95px;text-align: center !important" hidden />
+
+                    <input id="ebase64_@item.Id" value="@item.base64" type="text" style="width: 95px;text-align: center !important" hidden />
+                    <input id="eContentType_@item.Id" value="@item.ext" type="text" style="width: 95px;text-align: center !important" hidden />
+                    <input id="eFileName_@item.Id" value="@item.Name" type="text" style="width: 95px;text-align: center !important" hidden />
+                    <input id="eId_@item.Id" value="@item.Id" type="text" style="width: 95px;text-align: center !important" hidden />
+
                 </span>
                 <div class="info-box-content">
                     <span class="info-box-number">@item.Name</span>
                 </div>
                 <div class="dropdown float-lg-end pe-4">
-                    <a class="cursor-pointer" id="dropdownProducts" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="cursor-pointer" id="dropdownProducts_@item.Id" onclick="handleDropdownClick('@item.Id')" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fa fa-ellipsis-v text-secondary" aria-hidden="true"></i>
                     </a>
-                    <ul class="dropdown-menu border-0 shadow p-3" style="">
-                        <li><a onclick="OpenImageProducts(@item.Id)" class="dropdown-item py-2 rounded" href="#">Open</a></li>
-                        <li><a onclick="DownloadFileProducts(@item.Id)" class="dropdown-item py-2 rounded" href="#">Download</a></li>
-                        <li><a onclick="DeleteImageProducts(@item.Id)" class="dropdown-item py-2 rounded" href="#">Delete</a></li>
+                    <ul class="dropdown-menu border-0 shadow p-3" aria-labelledby="dropdownProducts">
+                        <li><a onclick="eOpenImageProducts(@item.Id)" class="dropdown-item py-2 rounded" href="#">Open</a></li>
+                        <li><a onclick="eDownloadFileProducts(@item.Id)" class="dropdown-item py-2 rounded" href="#">Download</a></li>
+                        <li><a onclick="eDeleteImageProducts('@item.Id','@id')" class="dropdown-item py-2 rounded" href="#">Delete</a></li>
                     </ul>
                 </div>
             </div>
+
         </div>
     }
 </div>
-
 <script>
-    $("#dropdownProducts").on("click", function (e) {
-        e.preventDefault();
-        var dropdownMenu = $(this).next(".dropdown-menu");
-        dropdownMenu.toggleClass("show");
-    });
 
-    $(document).on("click", function (e) {
-        if (!$(e.target).closest("#dropdownProducts").length) {
-            $(".dropdown-menu").removeClass("show");
+    function handleDropdownClick(itemId) {
+        debugger
+        var allDropdowns = document.querySelectorAll('.dropdown-menu');
+        allDropdowns.forEach(function (dropdownMenu) {
+            dropdownMenu.classList.remove('show');
+        });
+
+        var dropdownMenu = document.querySelector('#dropdownProducts_' + itemId + ' + .dropdown-menu');
+        if (dropdownMenu) {
+            dropdownMenu.classList.toggle('show');
         }
-    });
-    function OpenImageProducts(e) {
-        var choicedPhoto = "image_" + e;
-        var ContentType = "ContentType_" + e;
+
+        document.addEventListener('click', closeDropdownOnClickOutside);
+    }
+
+    function closeDropdownOnClickOutside(event) {
+        debugger
+        var isDropdownClick = event.target.closest('.dropdown') !== null;
+        if (!isDropdownClick) {
+            var allDropdowns = document.querySelectorAll('.dropdown-menu');
+            allDropdowns.forEach(function (dropdownMenu) {
+                dropdownMenu.classList.remove('show');
+            });
+
+            document.removeEventListener('click', closeDropdownOnClickOutside);
+        }
+    }
+
+    function eOpenImageProducts(e) {
+        var choicedPhoto = "eimage_" + e;
+        var ContentType = "eContentType_" + e;
         ContentType = document.getElementById(ContentType).value;
         if (ContentType == "jpeg" || ContentType == "png" || ContentType == "jpg" || ContentType == "gif" || ContentType == "svg") {
             var data = document.getElementById(choicedPhoto).getAttribute("src");
@@ -101,9 +134,9 @@
             Window.document.write("<body><img style='display: block;-webkit-user-select: none;width: 50%;zoom: 100%' src='" + data + "'></body>")
         }
         else if (ContentType == "pdf") {
-            var base64 = "base64_" + e;
+            var base64 = "ebase64_" + e;
             base64 = document.getElementById(base64).value;
-            var FileName = "FileName_" + e;
+            var FileName = "eFileName_" + e;
             FileName = document.getElementById(FileName).value;
             var binaryString = window.atob(base64);
             var binaryLen = binaryString.length;
@@ -118,8 +151,7 @@
             window.open(link, '', 'height=650,width=840');
         }
         else {
-            DownloadFileProducts(e)
+            eDownloadFileProducts(e)
         }
     }
-
 </script>

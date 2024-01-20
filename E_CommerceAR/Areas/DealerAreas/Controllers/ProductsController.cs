@@ -4,9 +4,11 @@ using E_CommerceAR.Domain.ModalsViews;
 using Firebase.Auth;
 using Firebase.Storage;
 using Google.Cloud.Firestore;
+using Google.Cloud.Storage.V1;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Web;
 
 namespace E_CommerceAR.Areas.DealerAreas.Controllers
 {
@@ -17,31 +19,35 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
 
         FirebaseAuthProvider auth;
         private readonly FirestoreDb firestoreDb;
-        public ProductsController()
+        public ProductsController ()
         {
             auth = new FirebaseAuthProvider(
-                                      new FirebaseConfig(ApiKey));
-
+                    new FirebaseConfig(ApiKey));
+            System.Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS" ,
+                "C:\\Users\\ziada\\Source\\repos\\E_CommerceAR\\E_CommerceAR\\Extensions\\" +
+                     "finalprojectar-d85ea-firebase-adminsdk-9x4fl-3f47b05b2e.json");
             firestoreDb = FirestoreDb.Create(PorjectId);
         }
         [Route("DealerAreas/Products/Index")]
         [HttpGet]
         public IActionResult Index()
         {
+            HttpContext.Session.Remove("Upload");
+
             return View();
         }
         [Route("DealerAreas/Products/ListProduct")]
         [HttpGet]
         public async Task<IActionResult> ListProduct()
         {
+            HttpContext.Session.Remove("Upload");
+
             List<ProductViewModel> productDataList = await FetchProductsFromDatabase();
 
-            // Fetch user names for each product concurrently
-            var fetchUserTasks = productDataList.Select(product => FetchUserNamesFromDatabase(product.Product.DealerId));
+             var fetchUserTasks = productDataList.Select(product => FetchUserNamesFromDatabase(product.Product.DealerId));
             var userNames = await Task.WhenAll(fetchUserTasks);
 
-            // Add user names to each item in productDataList
-            for (int i = 0; i < productDataList.Count; i++)
+             for (int i = 0; i < productDataList.Count; i++)
             {
                 productDataList[i].FirstName = userNames[i].FristName;
                 productDataList[i].LastName = userNames[i].LastName;
@@ -153,18 +159,88 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
 
             return PartialView(product);
         }
-         [Route("DealerAreas/Products/SaveNewProducts")]
+        [Route("DealerAreas/Products/eShowFileProduct")]
 
-        public async Task<IActionResult> SaveNewProducts (
-        string Name ,
-        string Category ,
-        string Description ,
-        int Price ,
-        int OfferPercentage ,
-        IFormFile Model ,
-        List<IFormFile> images ,
-        List<string> sizes
-)
+        public async Task<IActionResult> eShowFileProduct (string DocumentId , bool Edit)
+        {
+            List<Upload> uol = new List<Upload>();
+            CollectionReference productsCollection = firestoreDb.Collection("Products");
+
+            DocumentReference productDocument = productsCollection.Document(DocumentId);
+
+            DocumentSnapshot snapshot = productDocument.GetSnapshotAsync().Result;
+
+            Products product = snapshot.ConvertTo<Products>();
+            ViewBag.Edit = Edit;
+            ViewBag.DocumentId = DocumentId;
+            ViewBag.Id = product.Id;
+            if (product.images.Count != 0)
+            {
+                uol = await ConvertImagesToUploadList(product.images , product.Id);
+            }
+            if ((string)HttpContext.Session.GetString("Upload") != null)
+            {
+                uol = JsonConvert.DeserializeObject<List<Upload>>(HttpContext.Session.GetString("Upload"));
+                uol = uol.Where(x => x.ProductId == product.Id).ToList();
+            }
+
+            HttpContext.Session.SetString("Upload" , JsonConvert.SerializeObject(uol));
+
+            return PartialView(uol);
+        }
+        public async Task<List<Upload>> ConvertImagesToUploadList (List<string> imageUrls , string Id)
+        {
+            try
+            {
+                List<Upload> uploadList = new List<Upload>();
+
+                using (HttpClient client = new HttpClient())
+                {
+                    foreach (var imageUrl in imageUrls)
+                    {
+                        string decodedImageUrl = HttpUtility.UrlDecode(imageUrl);
+                        string[] urlParts = decodedImageUrl.Split('?');
+                        string imageNameWithExtension = urlParts[0];
+
+                        string[] namePartss = imageNameWithExtension.Split('/');
+                        string imageName = namePartss[namePartss.Length - 1];
+
+                        string[] nameParts = imageName.Split('.');
+                        string formatType = nameParts[nameParts.Length - 1];
+                        formatType = formatType.Split('?')[0];
+
+
+                        byte[] imageBytes = await client.GetByteArrayAsync(imageUrl);
+
+                        string base64 = Convert.ToBase64String(imageBytes);
+
+                        string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(imageName);
+
+                        Upload upload = new Upload
+                        {
+                            ProductId = Id ,
+                            Id = uploadList.Count + 1 ,
+                            Name = fileNameWithoutExtension ,
+                            ext = formatType ,
+                            base64 = base64 ,
+                            linkDB = imageUrl ,
+                            ImageName = imageName ,
+                        };
+
+                        uploadList.Add(upload);
+                    }
+                }
+
+                return uploadList;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error removing existing files: {ex.Message}");
+                return null;
+            }
+        }
+        [Route("DealerAreas/Products/SaveNewProducts")]
+        public async Task<IActionResult> SaveNewProducts (string Name , string Category , string Description , double Price , double OfferPercentage , IFormFile Model , List<IFormFile> images , List<string> sizes)
         {
             try
             {
@@ -203,7 +279,7 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
                         {
                             await image.CopyToAsync(stream);
 
-                            stream.Position = 0; // Reset the stream position before uploading
+                            stream.Position = 0;
                             var firebaseStorage = new FirebaseStorage(bucketName , new FirebaseStorageOptions { ThrowOnCancel = true });
                             var task = firebaseStorage.Child(objectName).Child(image.FileName).PutAsync(stream);
 
@@ -250,31 +326,65 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
         }
         [Route("DealerAreas/Products/SaveEditProducts")]
 
-        public async Task<IActionResult> SaveEditProducts(Products products, string DocumentId)
+        public async Task<IActionResult> SaveEditProducts (List<IFormFile> images , string id , string Name , string Category , string Description , double Price , double OfferPercentage , IFormFile Model , List<string> sizes , string DocumentId)
         {
             try
             {
                 var userCollectionReference = firestoreDb.Collection("Products");
-
+                string folderName = $"products/images/{id}";
+                string bucketName = "finalprojectar-d85ea.appspot.com";
                 var existingProductDocument = await userCollectionReference.Document(DocumentId).GetSnapshotAsync();
+                var imageUrl = await UploadImageToFirebaseStorage(Model , folderName , Model.FileName , bucketName);
+                await RemoveExistingFiles(folderName , bucketName);
 
                 if (existingProductDocument.Exists)
                 {
-                    var updateData = new Dictionary<string, object>
-            {
-                { "name", products.Name },
-                { "category", products.Category },
-                { "description", products.Description },
-                { "price", products.Price },
-                { "offerPercentage", products.OfferPercentage },
-                { "dealerId", HttpContext.Session.GetString("UserId") }
-            };
 
-                    await userCollectionReference.Document(DocumentId).UpdateAsync(updateData);
+                    var updateData = new Products
+                    {
+                        Id = id ,
+                        Name = Name ,
+                        Category = Category ,
+                        Description = Description ,
+                        Price = Price ,
+                        OfferPercentage = OfferPercentage ,
+                        Model = imageUrl ,
+                        DealerId = HttpContext.Session.GetString("UserId") ,
+                        sizes = sizes.ToList() ,
+                        Attachments_Id = id.ToString()
+                    };
+                    if (images.Count != 0)
+                    {
+                        List<string> imagesUrls = new List<string>();
+
+                        foreach (var image in images)
+                        {
+                            var objectName = $"products/images/{id}";
+
+                            using (MemoryStream stream = new MemoryStream())
+                            {
+                                await image.CopyToAsync(stream);
+
+                                stream.Position = 0;
+                                var firebaseStorage = new FirebaseStorage(bucketName , new FirebaseStorageOptions { ThrowOnCancel = true });
+                                var task = firebaseStorage.Child(objectName).Child(image.FileName).PutAsync(stream);
+
+                                var downloadUrl = await task;
+
+                                imagesUrls.Add(downloadUrl);
+                            }
+                        }
+
+                        updateData.images = imagesUrls;
+                    }
+
+
+                    await userCollectionReference.Document(DocumentId).SetAsync(updateData);
+
                 }
                 else
                 {
-                    return RedirectToAction("AddNewProduct", "Products");
+                    return RedirectToAction("EditProduct" , "Products");
                 }
 
                 return View(Index);
@@ -282,14 +392,32 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
             catch (Exception ex)
             {
                 // Handle the exception
-                return RedirectToAction("AddNewProduct", "Products");
+                return RedirectToAction("EditProduct" , "Products");
             }
         }
+        private async Task RemoveExistingFiles (string folderName , string bucketName)
+        {
+            try
+            {
+                var storage = StorageClient.Create();
+                var bucket = storage.GetBucket(bucketName);
 
-                  [Route("DealerAreas/Products/DeleteProduct")]
+                var objects = storage.ListObjects(bucketName , folderName);
 
+                foreach (var obj in objects)
+                {
+                    storage.DeleteObject(bucketName , obj.Name);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error removing existing files: {ex.Message}");
+            }
+
+        }
+
+        [Route("DealerAreas/Products/DeleteProduct")]
         [HttpPost]
-
         public async Task<JsonResult> DeleteProduct(string DocumentId)
         {
             try
@@ -300,11 +428,11 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
 
                 await productRef.DeleteAsync();
 
-                return Json(new { success = true, message = "Product deleted successfully." });
+                return Json(new { success = true , message = "Product deleted successfully." });
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = $"Error deleting product: {ex.Message}" });
+                return Json(new { success = false , message = $"Error deleting product: {ex.Message}" });
             }
         }
         [Route("DealerAreas/Products/ArchiveFile")]
@@ -366,6 +494,23 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
                     }
                 }
             }
+            string Upload = JsonConvert.SerializeObject(uol);
+            HttpContext.Session.SetString("Upload" , Upload);
+            return Json("Ok");
+        }
+        [Route("DealerAreas/Products/DeleteFile")]
+
+        public JsonResult DeleteFile (int id , string ProductId)
+        {
+            List<Upload> uol = new List<Upload>();
+            uol = JsonConvert.DeserializeObject<List<Upload>>(HttpContext.Session.GetString("Upload"));
+            Upload s = uol.Where(x => x.Id == id && x.ProductId == ProductId).FirstOrDefault();
+            if (s != null)
+            {
+                uol.Remove(s);
+
+            }
+
             string Upload = JsonConvert.SerializeObject(uol);
             HttpContext.Session.SetString("Upload" , Upload);
             return Json("Ok");

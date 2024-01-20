@@ -37,7 +37,7 @@ namespace E_CommerceAR.Domain.ModalsBase
         public double? OfferPercentage { get; set; }
 
         [FirestoreProperty("price")]
-        public int? Price { get; set; }
+        public double? Price { get; set; }
         [FirestoreProperty("Attachments_Id")]
         public string Attachments_Id { get; set; }
 

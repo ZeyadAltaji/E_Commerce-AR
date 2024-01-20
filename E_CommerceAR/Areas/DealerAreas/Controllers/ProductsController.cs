@@ -313,7 +313,7 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
         {
 
             List<Upload> uol = new List<Upload>();
-            var ProductId = Convert.ToInt32(Request.Form["ProductId"]);
+            var ProductId = Request.Form["ProductId"];
 
             int i = 1;
             if ((string)HttpContext.Session.GetString("Upload") == null)
@@ -328,7 +328,7 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
                         BinaryReader rdr = new BinaryReader(_file);
                         byte[] FileByte = rdr.ReadBytes((int)file.Length);
                         b.Id = i;
-                        b.ProductId = Convert.ToInt64(ProductId);
+                        b.ProductId = ProductId;
                         b.ext = file.FileName.Split('.')[1];
                         b.Name = file.FileName;
                         b.ContentType = file.ContentType;
@@ -355,7 +355,7 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
                             BinaryReader rdr = new BinaryReader(_file);
                             byte[] FileByte = rdr.ReadBytes((int)file.Length);
                             b.Id = i;
-                            b.ProductId = Convert.ToInt64(ProductId);
+                            b.ProductId = ProductId;
                             b.ext = file.FileName.Split('.')[1];
                             b.Name = file.FileName;
                             b.ContentType = file.ContentType;

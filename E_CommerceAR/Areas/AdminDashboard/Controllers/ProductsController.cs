@@ -7,6 +7,7 @@ using Firebase.Storage;
 using Google.Api.Gax.ResourceNames;
 using Google.Cloud.Firestore;
 using Google.Cloud.Storage.V1;
+using Google.Protobuf.WellKnownTypes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -15,6 +16,7 @@ using Newtonsoft.Json;
 using System.Net.Mail;
 using System.Security.Policy;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 
 namespace E_CommerceAR.Areas.AdminDashboard.Controllers
@@ -53,12 +55,10 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
 
             List<ProductViewModel> productDataList = await FetchProductsFromDatabase();
 
-            // Fetch user names for each product concurrently
-            var fetchUserTasks = productDataList.Select(product => FetchUserNamesFromDatabase(product.Product.DealerId));
+             var fetchUserTasks = productDataList.Select(product => FetchUserNamesFromDatabase(product.Product.DealerId));
             var userNames = await Task.WhenAll(fetchUserTasks);
 
-            // Add user names to each item in productDataList
-            for (int i = 0; i < productDataList.Count; i++)
+             for (int i = 0; i < productDataList.Count; i++)
             {
                 productDataList[i].FirstName = userNames[i].FristName;
                 productDataList[i].LastName = userNames[i].LastName;
@@ -187,8 +187,9 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
         }
         [Route("Products/eShowFileProduct")]
 
-        public IActionResult eShowFileProduct (string DocumentId , bool Edit)
+        public async Task<IActionResult> eShowFileProduct (string DocumentId , bool Edit)
         {
+            List<Upload> uol = new List<Upload>();
             CollectionReference productsCollection = firestoreDb.Collection("Products");
 
             DocumentReference productDocument = productsCollection.Document(DocumentId);
@@ -198,64 +199,77 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
             Products product = snapshot.ConvertTo<Products>();
             ViewBag.Edit = Edit;
             ViewBag.DocumentId = DocumentId;
+            ViewBag.Id = product.Id;
+            if(product.images.Count != 0)
+            {
+                 uol = await  ConvertImagesToUploadList(product.images , product.Id);
+            }
+            if ((string)HttpContext.Session.GetString("Upload") != null)
+            {
+                uol = JsonConvert.DeserializeObject<List<Upload>>(HttpContext.Session.GetString("Upload"));
+                uol = uol.Where(x => x.ProductId == product.Id).ToList();
+            }
 
-            List<Upload> uol = ConvertImagesToUploadList(product.images);
             HttpContext.Session.SetString("Upload" , JsonConvert.SerializeObject(uol));
 
             return PartialView(uol);
         }
 
-        public List<Upload> ConvertImagesToUploadList (List<string> imageUrls)
+
+        public async Task<List<Upload>> ConvertImagesToUploadList (List<string> imageUrls , string Id)
         {
-            List<Upload> uploadList = new List<Upload>();
-
-            foreach (var imageUrl in imageUrls)
+            try
             {
-                // Decode the URL-encoded string
-                string decodedImageUrl = HttpUtility.UrlDecode(imageUrl);
-                string[] urlParts = decodedImageUrl.Split('?');
+                List<Upload> uploadList = new List<Upload>();
 
-                string imageNameWithExtension = urlParts[0];
-
-                string[] parts = decodedImageUrl.Split('/');
-                 string[] namePartss = imageNameWithExtension.Split('/');
-                string imageName = namePartss[namePartss.Length - 1];
-
-
-                string[] nameParts = imageName.Split('.');
-                string formatType = nameParts[nameParts.Length - 1];
-                formatType = formatType.Split('?')[0];
-
-                 string base64 = decodedImageUrl;
-                string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(imageName);
-
-                Upload upload = new Upload
+                using (HttpClient client = new HttpClient())
                 {
-                    ProductId = 1 , 
-                    Id = uploadList.Count + 1 , 
-                    Name = fileNameWithoutExtension ,  
-                    ext = formatType ,
-                    base64 = imageUrl ,
-                    ImageName = imageName ,
-                };
+                    foreach (var imageUrl in imageUrls)
+                    {
+                        string decodedImageUrl = HttpUtility.UrlDecode(imageUrl);
+                        string[] urlParts = decodedImageUrl.Split('?');
+                        string imageNameWithExtension = urlParts[0];
 
-                uploadList.Add(upload);
+                        string[] namePartss = imageNameWithExtension.Split('/');
+                        string imageName = namePartss[namePartss.Length - 1];
+
+                        string[] nameParts = imageName.Split('.');
+                        string formatType = nameParts[nameParts.Length - 1];
+                        formatType = formatType.Split('?')[0];
+
+
+                        byte[] imageBytes = await client.GetByteArrayAsync(imageUrl);
+
+                         string base64 = Convert.ToBase64String(imageBytes);
+
+                        string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(imageName);
+
+                        Upload upload = new Upload
+                        {
+                            ProductId = Id ,
+                            Id = uploadList.Count + 1 ,
+                            Name = fileNameWithoutExtension ,
+                            ext = formatType ,
+                            base64 = base64 ,
+                            linkDB = imageUrl ,
+                            ImageName = imageName ,
+                        };
+
+                        uploadList.Add(upload);
+                    }
+                }
+
+                return uploadList;
+            }   catch (Exception ex)
+            {
+                Console.WriteLine($"Error removing existing files: {ex.Message}");
+                return null;
             }
-
-            return uploadList;
         }
 
+        
         [Route("Products/SaveNewProducts")]
-        public async Task<IActionResult> SaveNewProducts (
-        string Name ,
-        string Category ,
-        string Description ,
-        int Price ,
-        int OfferPercentage ,
-        IFormFile Model ,
-        List<IFormFile> images,
-        List<string> sizes
-)
+        public async Task<IActionResult> SaveNewProducts (string Name ,string Category ,string Description , double Price , double OfferPercentage ,IFormFile Model ,List<IFormFile> images,List<string> sizes)
         {
             try
             {
@@ -294,7 +308,7 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
                         {
                             await image.CopyToAsync(stream);
 
-                            stream.Position = 0; // Reset the stream position before uploading
+                            stream.Position = 0;  
                             var firebaseStorage = new FirebaseStorage(bucketName , new FirebaseStorageOptions { ThrowOnCancel = true });
                             var task = firebaseStorage.Child(objectName).Child(image.FileName).PutAsync(stream);
 
@@ -341,31 +355,65 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
         }
 
         [Route("Products/SaveEditProducts")]
-        public async Task<IActionResult> SaveEditProducts(Products products, string DocumentId)
+        public async Task<IActionResult> SaveEditProducts (List<IFormFile> images,string id , string Name , string Category , string Description , double Price , double OfferPercentage , IFormFile Model , List<string> sizes , string DocumentId)
         {
             try
             {
                 var userCollectionReference = firestoreDb.Collection("Products");
-
-                 var existingProductDocument = await userCollectionReference.Document(DocumentId).GetSnapshotAsync();
+                string folderName = $"products/images/{id}";
+                string bucketName = "finalprojectar-d85ea.appspot.com";
+                var existingProductDocument = await userCollectionReference.Document(DocumentId).GetSnapshotAsync();
+                var imageUrl = await UploadImageToFirebaseStorage(Model , folderName , Model.FileName , bucketName);
+                await RemoveExistingFiles(folderName , bucketName);
 
                 if (existingProductDocument.Exists)
                 {
-                     var updateData = new Dictionary<string, object>
-            {
-                { "name", products.Name },
-                { "category", products.Category },
-                { "description", products.Description },
-                { "price", products.Price },
-                { "offerPercentage", products.OfferPercentage },
-                { "dealerId", HttpContext.Session.GetString("UserId") }
-            };
 
-                    await userCollectionReference.Document(DocumentId).UpdateAsync(updateData);
+                    var updateData = new Products
+                    {
+                        Id = id ,
+                        Name = Name ,
+                        Category = Category ,
+                        Description = Description ,
+                        Price = Price ,
+                        OfferPercentage = OfferPercentage ,
+                        Model = imageUrl ,
+                        DealerId = HttpContext.Session.GetString("UserId") ,
+                        sizes = sizes.ToList() ,
+                        Attachments_Id = id.ToString()
+                    };
+                    if (images.Count != 0)
+                    {
+                        List<string> imagesUrls = new List<string>();
+
+                        foreach (var image in images)
+                        {
+                            var objectName = $"products/images/{id}";
+
+                            using (MemoryStream stream = new MemoryStream())
+                            {
+                                await image.CopyToAsync(stream);
+
+                                stream.Position = 0; 
+                                var firebaseStorage = new FirebaseStorage(bucketName , new FirebaseStorageOptions { ThrowOnCancel = true });
+                                var task = firebaseStorage.Child(objectName).Child(image.FileName).PutAsync(stream);
+
+                                var downloadUrl = await task;
+
+                                imagesUrls.Add(downloadUrl);
+                            }
+                        }
+
+                        updateData.images = imagesUrls;
+                    }
+
+
+                    await userCollectionReference.Document(DocumentId).SetAsync(updateData);
+
                 }
                 else
                 {
-                     return RedirectToAction("AddNewProduct", "Products");
+                    return RedirectToAction("EditProduct" , "Products");
                 }
 
                 return View(Index);
@@ -373,10 +421,31 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
             catch (Exception ex)
             {
                 // Handle the exception
-                return RedirectToAction("AddNewProduct", "Products");
+                return RedirectToAction("EditProduct" , "Products");
             }
         }
 
+        private async Task RemoveExistingFiles (string folderName , string bucketName)
+        {
+            try
+            {
+                var storage = StorageClient.Create();
+                var bucket = storage.GetBucket(bucketName);
+
+                var objects = storage.ListObjects(bucketName , folderName);
+
+                 foreach (var obj in objects)
+                 {
+                    storage.DeleteObject(bucketName , obj.Name);
+                 }
+            }
+            catch (Exception ex)
+            {
+                 Console.WriteLine($"Error removing existing files: {ex.Message}");
+            }
+
+        }
+        
         [Route("Products/DeleteProduct")]
         [HttpPost]
 
@@ -403,7 +472,7 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
         {
 
             List<Upload> uol = new List<Upload>();
-            var ProductId = Convert.ToInt32(Request.Form["ProductId"]);
+            var ProductId = Request.Form["ProductId"];
 
             int i = 1;
             if ((string)HttpContext.Session.GetString("Upload") == null)
@@ -418,7 +487,7 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
                         BinaryReader rdr = new BinaryReader(_file);
                         byte[] FileByte = rdr.ReadBytes((int)file.Length);
                         b.Id = i;
-                        b.ProductId = Convert.ToInt64(ProductId);
+                        b.ProductId = ProductId;
                         b.ext = file.FileName.Split('.')[1];
                         b.Name = file.FileName;
                         b.ContentType = file.ContentType;
@@ -445,7 +514,7 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
                             BinaryReader rdr = new BinaryReader(_file);
                             byte[] FileByte = rdr.ReadBytes((int)file.Length);
                             b.Id = i;
-                            b.ProductId = Convert.ToInt64(ProductId);
+                            b.ProductId = ProductId;
                             b.ext = file.FileName.Split('.')[1];
                             b.Name = file.FileName;
                             b.ContentType = file.ContentType;
@@ -456,6 +525,23 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
                     }
                 }
             }
+            string Upload = JsonConvert.SerializeObject(uol);
+            HttpContext.Session.SetString("Upload" , Upload);
+            return Json("Ok");
+        }
+        [Route("Products/DeleteFile")]
+
+        public JsonResult DeleteFile (int id , string ProductId)
+        {
+            List<Upload> uol = new List<Upload>();
+            uol = JsonConvert.DeserializeObject<List<Upload>>(HttpContext.Session.GetString("Upload"));
+            Upload s = uol.Where(x => x.Id == id && x.ProductId == ProductId).FirstOrDefault();
+            if (s != null)
+            {
+                uol.Remove(s);
+
+            }
+
             string Upload = JsonConvert.SerializeObject(uol);
             HttpContext.Session.SetString("Upload" , Upload);
             return Json("Ok");

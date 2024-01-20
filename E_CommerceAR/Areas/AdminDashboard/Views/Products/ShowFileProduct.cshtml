@@ -50,7 +50,7 @@
         
         var base64 = "data:" + item.ContentType + ";base64," + item.base64;
         <div class="col-4">
-            <div class="info-box" data-bs-toggle="dropdown" aria-expanded="false" style="box-shadow: 0 1px 1px rgba(0, 0, 0, 0.48);height:130px;">
+            <div class="info-box" style="box-shadow: 0 1px 1px rgba(0, 0, 0, 0.48);height:130px;">
                 <span class="info-box-icon" style="width: 120px !important;">
                     @if (item.ext == "png" || item.ext == "jpg" || item.ext == "jpeg" || item.ext == "gif" || item.ext == "svg")
                     {
@@ -64,20 +64,34 @@
                 <div class="info-box-content">
                     <span class="info-box-number">@item.Name</span>
                 </div>
-            </div>
-            <div class="dropdown">
-                <ul class="dropdown-menu border-0 shadow p-3" style="">
-                    <li><a onclick="OpenImageProducts(@item.Id)" class="dropdown-item py-2 rounded" href="#">Open</a></li>
-                    <li><a onclick="DownloadFileProducts(@item.Id)" class="dropdown-item py-2 rounded" href="#">Download</a></li>
-                    <li><a onclick="DeleteImageProducts(@item.Id)" class="dropdown-item py-2 rounded" href="#">Delete</a></li>
-                </ul>
+                <div class="dropdown float-lg-end pe-4">
+                    <a class="cursor-pointer" id="dropdownProducts" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa fa-ellipsis-v text-secondary" aria-hidden="true"></i>
+                    </a>
+                    <ul class="dropdown-menu border-0 shadow p-3" style="">
+                        <li><a onclick="OpenImageProducts(@item.Id)" class="dropdown-item py-2 rounded" href="#">Open</a></li>
+                        <li><a onclick="DownloadFileProducts(@item.Id)" class="dropdown-item py-2 rounded" href="#">Download</a></li>
+                        <li><a onclick="DeleteImageProducts(@item.Id)" class="dropdown-item py-2 rounded" href="#">Delete</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
     }
 </div>
 
 <script>
-    function OpenImageProducts(e) {
+         $("#dropdownProducts").on("click", function (e) {
+            e.preventDefault();
+            var dropdownMenu = $(this).next(".dropdown-menu");
+            dropdownMenu.toggleClass("show");
+        });
+
+        $(document).on("click", function (e) {
+            if (!$(e.target).closest("#dropdownProducts").length) {
+                $(".dropdown-menu").removeClass("show");
+            }
+        });
+     function OpenImageProducts(e) {
         var choicedPhoto = "image_" + e;
         var ContentType = "ContentType_" + e;
         ContentType = document.getElementById(ContentType).value;

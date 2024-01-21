@@ -4,13 +4,12 @@
     string lang = Context.Session.GetString("E-CommerceAR_Lang") ?? "en";
     string language = lang == "ar-Pl" ? "ar" : "en";
     string dir = lang == "ar-Pl" ? "rtl" : "ltr";
-    // int DealerCount = ViewBag.DealerCount;
-    // int ClientCount = ViewBag.ClientCount;
-    // int OrderCount = ViewBag.OrderCount;
-    // int ProductCount = ViewBag.ProductCount;
-    // decimal ProfitRatio = ViewBag.ProfitRatio;
-    // int deliveredOrdersCount = ViewBag.DeliveredOrdersCount;
-    // List<OrdersViewModel> deliveredOrders = ViewBag.DeliveredOrders;
+ 
+    int OrderCount = ViewBag.OrderCount;
+    int ProductCount = ViewBag.ProductCount;
+    decimal ProfitRatio = ViewBag.ProfitRatio;
+    int deliveredOrdersCount = ViewBag.DeliveredOrdersCount;
+    List<OrdersViewModel> deliveredOrders = ViewBag.DeliveredOrders;
     int count = 1;
 
 }
@@ -28,23 +27,7 @@
         <div id="ContainerDiv">
             <div class="row">
 
-                <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-                    <div class="card">
-                        <div class="card-header p-3 pt-2">
-                            <div class="icon icon-lg icon-shape bg-gradient-primary shadow-primary text-center border-radius-xl mt-n4 position-absolute" style="@(lang == "en" ? "":"left:1rem")">
-                                <i class="material-icons opacity-10">person</i>
-                            </div>
-                            <div class="text-end pt-1">
-                                <p class="text-sm mb-0 text-capitalize">@Html.Translate("تجار اليوم","Today's Dealers")</p>
-                                <h4 class="mb-0">432432</h4>
-                            </div>
-                        </div>
-                        <hr class="dark horizontal my-0">
-                        <div class="card-footer p-3">
-                            <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+3% </span>than last month</p>
-                        </div>
-                    </div>
-                </div>
+                
                 <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
                     <div class="card">
                         <div class="card-header p-3 pt-2">
@@ -52,8 +35,8 @@
                                 <i class="material-icons opacity-10">person</i>
                             </div>
                             <div class="text-end pt-1">
-                                <p class="text-sm mb-0 text-capitalize">@Html.Translate("عملاء اليوم","Today's Clients")</p>
-                                <h4 class="mb-0">t65</h4>
+                                <p class="text-sm mb-0 text-capitalize">@Html.Translate("عدد الطلبات","No of Orders")</p>
+                                <h4 class="mb-0">@OrderCount</h4>
                             </div>
                         </div>
                         <hr class="dark horizontal my-0">
@@ -70,7 +53,7 @@
                             </div>
                             <div class="text-end pt-1">
                                 <p class="text-sm mb-0 text-capitalize">@Html.Translate("عدد المنتجات","No of products")</p>
-                                <h4 class="mb-0">sfdsdsf</h4>
+                                <h4 class="mb-0">@ProductCount</h4>
                             </div>
                         </div>
                         <hr class="dark horizontal my-0">
@@ -87,11 +70,7 @@
                             </div>
                             <div class="text-end pt-1">
                                 <p class="text-sm mb-0 text-capitalize">@Html.Translate("نسبة الربح","Profit Ratio")</p>
-@*                                 <h4 class="mb-0">% @ProfitRatio.ToString("n3").Replace("٫",".")</h4>
- *@                            
-                                <h4 class="mb-0">% dsadsasda</h4>
-
-</div>
+                                <h4 class="mb-0">% @ProfitRatio.ToString("n3").Replace("٫",".")</h4> </div>
                         </div>
                         <hr class="dark horizontal my-0">
                         <div class="card-footer p-3">
@@ -109,7 +88,7 @@
                                     <h6>@Html.Translate("عدد الطلبات التي تم توصيلها ","No. of orders delivered")</h6>
                                     <p class="text-sm mb-0">
                                         <i class="fa fa-check text-info" aria-hidden="true"></i>
-                                        <span class="font-weight-bold ms-1">dsadsa @Html.Translate("القيام به","Done") </span> this month
+                                        <span class="font-weight-bold ms-1">@deliveredOrdersCount @Html.Translate("القيام به","Done") </span> this month
                                     </p>
                                 </div>
                                 <div class="col-lg-6 col-5 my-auto text-end">
@@ -142,7 +121,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                      @*   @foreach (var item in deliveredOrders)
+                                        @foreach (var item in deliveredOrders)
                                         {
                                             <tr>
                                                 <td class="text-center">@count</td>
@@ -151,14 +130,14 @@
                                                 <td class="text-center">@item.Orders.OrderStatus</td>
                                                 <td class="text-center">@item.Orders.Address.FullName</td>
                                                 <td class="text-center">
-                                                    @(item.Orders.Address.AddressTitle + Html.Translate("الشارع", "Street") + item.Orders.Address.Street)
+                                                    @(item.Orders.Address.AddressTitle + Html.Translate("الشارع" , "Street") + item.Orders.Address.Street)
                                                 </td>
 
 
                                             </tr>
                                             count++;
                                         }
- *@
+
                                     </tbody>
                                 </table>
                             </div>
@@ -317,6 +296,7 @@
 
         });
     });
+  
     $('#sidenav-main').load('https://localhost:7251/DealerAreas/Home/Menu')
     $('#navbarBlur').load('https://localhost:7251/DealerAreas/Home/NavBar')
 

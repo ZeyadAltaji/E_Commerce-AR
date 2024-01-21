@@ -17,14 +17,29 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
 
         public HomeController()
         {
-            auth = new FirebaseAuthProvider(
-                                      new FirebaseConfig(ApiKey));
-
-            firestoreDb = FirestoreDb.Create(PorjectId);
+         {
+                auth = new FirebaseAuthProvider(
+                            new FirebaseConfig(ApiKey));
+                System.Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS",
+                    "C:\\Users\\ziada\\Source\\repos\\E_CommerceAR\\E_CommerceAR\\Extensions\\" +
+                         "finalprojectar-d85ea-firebase-adminsdk-9x4fl-3f47b05b2e.json");
+                firestoreDb = FirestoreDb.Create(PorjectId);
+            }
         }
         [Route("DealerAreas/Home/Index")]
-        public IActionResult Index()
+        public async Task<IActionResult> Index ()
         {
+            int orderCount = await CountOrders();
+            int productCount = await CountProducts();
+            decimal totalRevenue = await CalculateTotalRevenue();
+            decimal totalCost = await CalculateTotalCost();
+            decimal profitRatio = CalculateProfitRatio(totalRevenue , totalCost);
+            (int deliveredOrdersCount, List<OrdersViewModel> deliveredOrders) = await GetDeliveredOrders();
+            ViewBag.OrderCount = orderCount;
+            ViewBag.ProductCount = productCount;
+            ViewBag.ProfitRatio = profitRatio;
+            ViewBag.DeliveredOrdersCount = deliveredOrdersCount;
+            ViewBag.DeliveredOrders = deliveredOrders;
             return View();
         }
         public IActionResult Container()
@@ -62,7 +77,7 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
         {
             try
             {
-                Query ordersCollection = firestoreDb.Collection("orders");
+                Query ordersCollection = firestoreDb.Collection("orders").WhereEqualTo("dealerId" , DocumentId);
                 QuerySnapshot orderSnapshot = await ordersCollection.GetSnapshotAsync();
 
                 return orderSnapshot.Count;
@@ -81,11 +96,39 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
             return totalRevenue;
         }
 
-        private Task<List<Orders>> FetchOrdersFromDatabase()
+        private async Task<List<Orders>> FetchOrdersFromDatabase ()
         {
-            throw new NotImplementedException();
+
+            try
+            {
+                Query ordersQuery = firestoreDb.Collection("orders").WhereEqualTo("dealerId" , DocumentId);
+                QuerySnapshot querySnapshot = await ordersQuery.GetSnapshotAsync();
+
+
+                List<Orders> ordersList = new List<Orders>();
+
+                foreach (DocumentSnapshot documentSnapshot in querySnapshot.Documents)
+                {
+                    try
+                    {
+                        Orders order = documentSnapshot.ConvertTo<Orders>();
+                        ordersList.Add(order);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error converting document {documentSnapshot.Id}: {ex.Message}");
+                    }
+                }
+
+                return ordersList;
+            }
+            catch (Exception ex)
+            {
+                throw new NotImplementedException();
+            }
+
         }
-        private async Task<decimal> CalculateTotalCost()
+            private async Task<decimal> CalculateTotalCost()
         {
             List<Product> productsList = await FetchProductsFromDatabase();
             decimal totalCost = (decimal)productsList.Sum(product => product.Price ?? 0);
@@ -157,8 +200,10 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
         {
             try
             {
-                CollectionReference productsCollection = firestoreDb.Collection("orders");
-                QuerySnapshot querySnapshot = await productsCollection.GetSnapshotAsync();
+                Query ordersQuery = firestoreDb.Collection("orders").WhereEqualTo("dealerId" , DocumentId);
+                QuerySnapshot querySnapshot = await ordersQuery.GetSnapshotAsync();
+
+                 
 
                 List<OrdersViewModel> ordersList = new List<OrdersViewModel>();
 

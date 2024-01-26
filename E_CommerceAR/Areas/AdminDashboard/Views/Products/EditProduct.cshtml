@@ -34,7 +34,7 @@
                             <h6 class="text-white text-capitalize ps-3">@Html.Translate("قائمة المنتجات","List Products")</h6>
                         </div>
                         <div class="col-md-2" style="text-align: end !important;">
-                            <button class="btn bg-gradient-info mb-0" onclick="addnewProducts()">
+                            <button class="btn bg-gradient-info mb-0" onclick="ListProducts()">
                                 @Html.Translate(" عودة الى القائمة","Back to list")
                             </button>
                         </div>
@@ -161,7 +161,7 @@
                 <br />
                     <br />
                     <div class="col-md-12">
-                    <button type="submit" onclick="eSaveProducts()" class="btn bg-gradient-success  mb-0"> @Html.Translate("حفظ","Save")</button>
+                    <button type="submit" style="float:@Html.Translate("left","right") !important;" onclick="eSaveProducts()" class="btn bg-gradient-success  mb-0"> @Html.Translate("حفظ","Save")</button>
                 </div>
                 </div>
             </div>
@@ -428,7 +428,9 @@
             processData: false,
             contentType: false,
             success: function (data) {
-                console.log("Data saved successfully");
+                $('#allProdictsDiv').html('');
+                var url = '@Url.Action("Index", "Products")';
+                $('#allProdictsDiv').load(url);
             },
             error: function (error) {
                 console.error("Error saving data: ", error);

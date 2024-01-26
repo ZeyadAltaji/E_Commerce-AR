@@ -34,7 +34,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <form role="form" action="@Url.Action("CreateNewUsers", "Users")" class="text-start">
+                <form id="userForm" role="form" action="@Url.Action("CreateNewUsers", "Users")" class="text-start">
                     <div class="row">
                         <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
                             <label class="form-label"> @Html.Translate("الاسم الأول","First Name")</label>
@@ -65,7 +65,7 @@
                     <br />
                     
                     <div class="col-md-12">
-                        <button type="submit" class="btn bg-gradient-success  mb-0"> @Html.Translate("حفظ","Save")</button>
+                        <button type="button" style="float:@Html.Translate("left","right") !important;" id="submitForm" class="btn bg-gradient-success  mb-0"> @Html.Translate("حفظ","Save")</button>
                     </div>
                 </form>
             </div>
@@ -90,4 +90,23 @@
         var url = '@Url.Action("Index", "Users")';
         $('#allUsersDiv').load(url);
     }
+    $('#submitForm').click(function (e) {
+        e.preventDefault();
+
+        var formData = $('#userForm').serialize();
+
+        $.ajax({
+            type: 'POST',
+            url: $('#userForm').attr('action'),
+            data: formData,
+            success: function (response) {
+                $('#allUsersDiv').html('');
+                var url = '@Url.Action("Index", "Users")';
+                $('#allUsersDiv').load(url);
+            },
+            error: function (xhr, status, error) {
+                console.error(xhr.responseText);
+            }
+        });
+    });
 </script>

@@ -22,6 +22,9 @@
                 @Html.Translate("البريد الإلكتروني","Email")
             </th>
             <th class="text-center">@Html.Translate("دور","Role")</th>
+            <th class="text-center">@Html.Translate("العنوان","Address")</th>
+            <th class="text-center">@Html.Translate("رقم الهاتف","Mobile No")</th>
+
             <th class="text-center">@Html.Translate("نشط","Is Active")</th>
             <th class="text-center">@Html.Translate("محذوف","Is Deleted")</th>
             <th class="text-center">@Html.Translate("مرفقات","Attachments")</th>
@@ -53,6 +56,28 @@
                         <span>@UserRole</span>
                     }
                 </td>
+                
+                <td class="text-center">
+                    @if (item.UsersViewModel.Users.Address is not null || item.UsersViewModel.Users.Address != "")
+                    {
+                        @item.UsersViewModel.Users.Address
+                    }
+                    else{
+                         @Html.Translate("لا يوجد","Nothing")
+                    }
+                </td>
+                <td class="text-center">
+
+                    @if (item.UsersViewModel.Users.Phone1 is not null || item.UsersViewModel.Users.Phone1 != "")
+                    {
+                        @item.UsersViewModel.Users.Phone1
+                    
+                    }else{
+                    @Html.Translate("لا يوجد","Nothing")
+                    }
+                    
+ 
+              
                 <td class="text-center">
                     @if (item.UsersViewModel.Users.IsActive == true)
                     {

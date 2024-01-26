@@ -240,7 +240,9 @@ function sidebarType(a) {
       var navbarBrandImgNew = navbarBrandImg.replace("logo-ct", "logo-ct-dark");
       navbarBrand.src = navbarBrandImgNew;
     }
-  }
+    }
+    document.cookie = "sidebarClass=" + color + "; expires=Thu, 31 Dec 2099 23:59:59 UTC; path=/";
+
 }
 
 // Set Navbar Fixed

@@ -243,13 +243,7 @@
     <div class="card shadow-lg">
         <div class="card-header pb-0 pt-3" >
             <div class="float-start">
-                <h5 class="mt-3 mb-0">Material UI Configurator</h5>
-                <p>See our dashboard options.</p>
-            </div>
-            <div class="float-end mt-4">
-                <button class="btn btn-link text-dark p-0 fixed-plugin-close-button">
-                    <i class="material-icons">clear</i>
-                </button>
+                <h5 class="mt-3 mb-0">HOME SEWET</h5>
             </div>
             <!-- End Toggle Button -->
         </div>
@@ -260,25 +254,25 @@
                 <h6 class="mb-0">@Html.Translate("لون الشريط الجانبي","Sidebar Color")</h6>
              </div>
             <div class="d-flex">
-                <button class="btn bg-gradient-dark px-3 mb-2 active" data-class="bg-gradient-dark" onclick="sidebarType(this)">@Html.Translate("مظلم","Dark")</button>
-                <button class="btn bg-gradient-dark px-3 mb-2 ms-2" data-class="bg-transparent" onclick="sidebarType(this)">@Html.Translate("شفاف","Transparent")</button>
-                <button class="btn bg-gradient-dark px-3 mb-2 ms-2" data-class="bg-white" onclick="sidebarType(this)">@Html.Translate("أبيض","White")</button>
+                <button class="btn bg-gradient-dark px-3 mb-2 active" data-class="bg-gradient-dark" onclick="sidebarTypes(this)">@Html.Translate("مظلم","Dark")</button>
+                <button class="btn bg-gradient-dark px-3 mb-2 ms-2" data-class="bg-transparent" onclick="sidebarTypes(this)">@Html.Translate("شفاف","Transparent")</button>
+                <button class="btn bg-gradient-dark px-3 mb-2 ms-2" data-class="bg-white" onclick="sidebarTypes(this)">@Html.Translate("أبيض","White")</button>
             </div>
             <hr class="horizontal dark my-3">
 
             <p class="text-sm d-xl-none d-block mt-2">You can change the sidenav type just on desktop view.</p>
             <!-- Navbar Fixed -->
-            <div class="mt-3 d-flex">
+            <div class="mt-3  d-flex">
                 <h6 class="mb-0">@Html.Translate("تثبيت الشريط العلوي","Navbar Fixed")</h6>
-                <div class="form-check form-switch ps-0 ms-auto my-auto">
-                    <input class="form-check-input mt-1 ms-auto" type="checkbox" id="navbarFixed" onclick="funNavbarFixed(this)" style="@(dir == "en"? "right: 12rem;" : "")">
+                <div class="form-check form-switch @Html.Translate("pe-0 me-auto","ps-0 ms-auto") my-auto">
+                    <input class="form-check-input mt-1 @Html.Translate("me-auto","ms-auto")" type="checkbox" id="navbarFixed" onclick="funNavbarFixed(this)" style="@(dir == "en"? "right: 12rem;" : "")">
                 </div>
             </div>
             <hr class="horizontal dark my-3">
             <div class="mt-2 d-flex">
                 <h6 class="mb-0">@Html.Translate("فاتح/مظلم","Light / Dark")</h6>
-                <div class="form-check form-switch ps-0 ms-auto my-auto">
-                    <input class="form-check-input mt-1 ms-auto" type="checkbox" id="dark-version" onclick="darkeMode(this)" style="@(dir == "en" ? "right: 12rem;" : "")">
+                <div class="form-check form-switch @Html.Translate(" pe-0 me-auto","ps-0 ms-auto") my-auto">
+                    <input class="form-check-input mt-1  @Html.Translate("me-auto","ms-auto")" type="checkbox" id="dark-version" onclick="darkeMode(this)" style="@(dir == "en" ? "right: 12rem;" : "")">
                 </div>
             </div>
             <hr class="horizontal dark my-3">
@@ -405,7 +399,7 @@
         }
         return "";
     }
-    function sidebarColor(a) {
+    function sidebarTypes(a) {
         debugger
         var parent = a.parentElement.children;
         var color = a.getAttribute("data-class");

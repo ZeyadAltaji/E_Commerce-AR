@@ -142,7 +142,7 @@
                 </div>
                 <br />
                 <div class="col-md-12">
-                    <button type="submit" onclick="SaveProducts()" class="btn bg-gradient-success  mb-0"> @Html.Translate("حفظ","Save")</button>
+                    <button type="submit" style="float:@Html.Translate("left","right") !important;" onclick="SaveProducts()" class="btn bg-gradient-success  mb-0"> @Html.Translate("حفظ","Save")</button>
                 </div>
             </div>
         </div>
@@ -366,7 +366,9 @@
             processData: false,
             contentType: false,
             success: function (data) {
-                console.log("Data saved successfully");
+                $('#allProdictsDiv').html('');
+                var url = '@Url.Action("Index", "Products", new { area = "DealerAreas" })';
+                $('#allProdictsDiv').load(url);
             },
             error: function (error) {
                 console.error("Error saving data: ", error);

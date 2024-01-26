@@ -89,7 +89,16 @@
 }
 
 .select2-results {
-    display: block
+    display: block;
+    background-color: #f8f9fa;
+}
+.dark-version .select2-results {
+    display: block;
+    background-color: #1a2035;
+}
+.dark-version .select2-container--default .select2-results__option--selected {
+    background-color: #ddd;
+    color: black;
 }
 
 .select2-results__options {

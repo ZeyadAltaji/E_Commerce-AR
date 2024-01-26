@@ -209,7 +209,18 @@ namespace E_CommerceAR.Controllers
                 }
                 catch (Exception ex)
                 {
-                    // Handle the exception appropriately
+                    if (ex.Message.Contains("EMAIL_EXISTS"))
+                    {
+                        ViewData["EMAIL_EXISTS"] = "The email address is already in use.";
+                    }
+                   else if (ex.Message.Contains("WEAK_PASSWORD"))
+                    {
+                        ViewData["WEAK_PASSWORD"] = "The password is Weak .";
+                    }
+                    else
+                    {
+                         ViewData["ErrorMessage"] = "An error occurred while creating the account.";
+                    }         
                     return RedirectToAction("Signup", "Accounts");
                 }
             }

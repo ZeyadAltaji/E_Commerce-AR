@@ -56,15 +56,23 @@
                             <input type="email" class="form-control" name="email" value="@Model.Email" @(Edit == true ? "" : "readonly")>
                         </div>
                         <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
+                            <label class="form-label">@Html.Translate("رقم الهاتف","Mobile No")</label>
+                            <input type="text" class="form-control" name="MobileNo" value="@(Model.Phone1 != "" || Model.Phone1 != null ? Model.Phone1 : Html.Translate("لا يوجد","Nothing"))" @(Edit == true ? "" : "readonly")>
+                        </div>
+                        <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
+                            <label class="form-label">@Html.Translate("الموقع","Address")</label>
+                            <input type="text" class="form-control" name="Address" value="@(Model.Address != "" || Model.Address != null ? Model.Address : Html.Translate("لا يوجد","Nothing"))" @(Edit == true ? "" : "readonly")>
+                        </div>
+                        <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
                             <label class="form-label">@Html.Translate("كلمة المرور","Password")</label>
-                            <input type="password" class="form-control" name="password" value=" " @(Edit == true ? "" : "readonly")>
+                            <input type="password" class="form-control" name="password" value="@Model.Password" @(Edit == true ? "" : "readonly")>
                         </div>
                        
                     </div>
                     <br />
                   
                     <div class="col-md-12">
-                        <button type="submit" class="btn bg-gradient-success  mb-0" @(Edit == true ? "" : "hidden")> @Html.Translate("حفظ","Save")</button>
+                        <button type="submit" style="float:@Html.Translate("left","right") !important;" class="btn bg-gradient-success  mb-0" @(Edit == true ? "" : "hidden")> @Html.Translate("حفظ","Save")</button>
                     </div>
                 </form>
             </div>

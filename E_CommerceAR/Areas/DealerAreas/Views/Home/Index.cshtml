@@ -225,14 +225,9 @@
     <div class="card shadow-lg">
         <div class="card-header pb-0 pt-3">
             <div class="float-start">
-                <h5 class="mt-3 mb-0">Material UI Configurator</h5>
-                <p>See our dashboard options.</p>
+                <h5 class="mt-3 mb-0">HOME SEWET</h5>
             </div>
-            <div class="float-end mt-4">
-                <button class="btn btn-link text-dark p-0 fixed-plugin-close-button">
-                    <i class="material-icons">clear</i>
-                </button>
-            </div>
+      
             <!-- End Toggle Button -->
         </div>
         <hr class="horizontal dark my-1">
@@ -253,15 +248,15 @@
             <!-- Navbar Fixed -->
             <div class="mt-3 d-flex">
                 <h6 class="mb-0">@Html.Translate("تثبيت الشريط العلوي","Navbar Fixed")</h6>
-                <div class="form-check form-switch ps-0 ms-auto my-auto">
-                    <input class="form-check-input mt-1 ms-auto" type="checkbox" id="navbarFixed" onchange="funNavbarFixed(this)" style="@(dir == "en"? "right: 12rem;" : "")">
+                <div class="form-check form-switch @Html.Translate("pe-0 me-auto","ps-0 ms-auto") my-auto">
+                    <input class="form-check-input mt-1 @Html.Translate("me-auto","ms-auto")" type="checkbox" id="navbarFixed" onchange="funNavbarFixed(this)" style="@(dir == "en"? "right: 12rem;" : "")">
                 </div>
             </div>
-            <hr class="horizontal dark my-3">
+            <hr class="horizontal   dark my-3">
             <div class="mt-2 d-flex">
                 <h6 class="mb-0">@Html.Translate("فاتح/مظلم","Light / Dark")</h6>
-                <div class="form-check form-switch ps-0 ms-auto my-auto">
-                    <input class="form-check-input mt-1 ms-auto" type="checkbox" id="dark-version" onchange="darkeMode(this)" style="@(dir == "en" ? "right: 12rem;" : "")">
+                <div class="form-check form-switch @Html.Translate("pe-0 me-auto","ps-0 ms-auto") my-auto">
+                    <input class="form-check-input mt-1 @Html.Translate("me-auto","ms-auto")" type="checkbox" id="dark-version" onchange="darkeMode(this)" style="@(dir == "en" ? "right: 12rem;" : "")">
                 </div>
             </div>
             <hr class="horizontal dark my-3">
@@ -389,5 +384,89 @@
             }
         }
         return "";
+    }
+    function sidebarTypes(a) {
+        debugger
+        var parent = a.parentElement.children;
+        var color = a.getAttribute("data-class");
+        var body = document.querySelector("body");
+        var bodyWhite = document.querySelector("body:not(.dark-version)");
+        var bodyDark = body.classList.contains('dark-version');
+
+        var colors = [];
+
+        for (var i = 0; i < parent.length; i++) {
+            parent[i].classList.remove('active');
+            colors.push(parent[i].getAttribute('data-class'));
+        }
+
+        if (!a.classList.contains('active')) {
+            a.classList.add('active');
+        } else {
+            a.classList.remove('active');
+        }
+
+        var sidebar = document.querySelector('.sidenav');
+
+        for (var i = 0; i < colors.length; i++) {
+            sidebar.classList.remove(colors[i]);
+        }
+
+        sidebar.classList.add(color);
+
+
+        // Remove text-white/text-dark classes
+        if (color == 'bg-transparent' || color == 'bg-white') {
+            var textWhites = document.querySelectorAll('.sidenav .text-white');
+            for (let i = 0; i < textWhites.length; i++) {
+                textWhites[i].classList.remove('text-white');
+                textWhites[i].classList.add('text-dark');
+            }
+        } else {
+            var textDarks = document.querySelectorAll('.sidenav .text-dark');
+            for (let i = 0; i < textDarks.length; i++) {
+                textDarks[i].classList.add('text-white');
+                textDarks[i].classList.remove('text-dark');
+            }
+        }
+
+        if (color == 'bg-transparent' && bodyDark) {
+            var textDarks = document.querySelectorAll('.navbar-brand .text-dark');
+            for (let i = 0; i < textDarks.length; i++) {
+                textDarks[i].classList.add('text-white');
+                textDarks[i].classList.remove('text-dark');
+            }
+        }
+
+        // Remove logo-white/logo-dark
+
+        if ((color == 'bg-transparent' || color == 'bg-white') && bodyWhite) {
+            var navbarBrand = document.querySelector('.navbar-brand-img');
+            var navbarBrandImg = navbarBrand.src;
+
+            if (navbarBrandImg.includes('logo-ct.png')) {
+                var navbarBrandImgNew = navbarBrandImg.replace("logo-ct", "logo-ct-dark");
+                navbarBrand.src = navbarBrandImgNew;
+            }
+        } else {
+            var navbarBrand = document.querySelector('.navbar-brand-img');
+            var navbarBrandImg = navbarBrand.src;
+            if (navbarBrandImg.includes('logo-ct-dark.png')) {
+                var navbarBrandImgNew = navbarBrandImg.replace("logo-ct-dark", "logo-ct");
+                navbarBrand.src = navbarBrandImgNew;
+            }
+        }
+
+        if (color == 'bg-white' && bodyDark) {
+            var navbarBrand = document.querySelector('.navbar-brand-img');
+            var navbarBrandImg = navbarBrand.src;
+
+            if (navbarBrandImg.includes('logo-ct.png')) {
+                var navbarBrandImgNew = navbarBrandImg.replace("logo-ct", "logo-ct-dark");
+                navbarBrand.src = navbarBrandImgNew;
+            }
+        }
+        setCookie("sidebarClass", color, 10);
+
     }
 </script>

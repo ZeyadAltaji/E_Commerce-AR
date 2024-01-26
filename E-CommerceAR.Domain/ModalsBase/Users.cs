@@ -48,11 +48,13 @@ namespace E_CommerceAR.Domain.ModalsBase
 
             [FirestoreProperty("ISDeleted")]
             public bool IsDeleted { get; set; }
-        public string PasswordKey { get; set; }
+            public string PasswordKey { get; set; }
+            [FirestoreProperty("MobileNo")]
             [Required]
             public string Phone1 { get; set; } = string.Empty;
             [Required]
             public string Phone2 { get; set; } = string.Empty;
+            [FirestoreProperty("Address")]
             [Required]
             public string Address { get; set; } = string.Empty;
  

@@ -39,7 +39,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <form role="form" action="@Url.Action("SendNoneUnapprovedUser", "UserApproval")" class="text-start">
+                <form id="approvalForm" role="form" class="text-start">
                     <div class="row">
                         <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
                             <label class="form-label">@Html.Translate("اسم البائع","Name Dealer")</label>
@@ -67,7 +67,7 @@
                     </div>
                     <br />
                     <div class="col-md-12">
-                        <button type="submit" style="float:@Html.Translate("left","right") !important;" class="btn bg-gradient-success  mb-0"> @Html.Translate("حفظ","Save")</button>
+                        <button type="button" id="submitBtn" style="float:@Html.Translate("left","right") !important;" class="btn bg-gradient-success mb-0"> @Html.Translate("حفظ","Save")</button>
                     </div>
                 </form>
             </div>
@@ -94,4 +94,22 @@
         var url = '@Url.Action("Index", "UserApproval")';
         $('#allListUnapprovedUsersDiv').load(url);
     }
+    $('#submitBtn').click(function () {
+        var documentId = $('input[name="DocumentId"]').val();
+
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("SendNoneUnapprovedUser", "UserApproval")',
+            data: { DocumentId: documentId },
+            success: function (response) {
+                $('#allListUnapprovedUsersDiv').html('');
+                var url = '@Url.Action("Index", "UserApproval")';
+                $('#allListUnapprovedUsersDiv').load(url);
+            },
+            error: function (xhr, status, error) {
+                console.error(xhr.responseText);
+                // Handle error
+            }
+        });
+    });
 </script>

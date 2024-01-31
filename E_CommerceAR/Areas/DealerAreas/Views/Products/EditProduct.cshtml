@@ -175,7 +175,7 @@
 
     $(document).ready(function () {
         debugger
-        var url = '@Url.Action("eShowFileProduct", "Products", new { area = "DealerAreas", DocumentId = "" })' + documentId + '&Edit=' + edit;
+        var url = '/DealerAreas/Products/eShowFileProduct?DocumentId=' + documentId + '&Edit=' + edit;
 
 
  
@@ -242,7 +242,7 @@
         });
     }
     function eReloadImages() {
-        var url = '@Url.Action("eShowFileProduct", "Products", new { area = "DealerAreas", DocumentId = "" })' + documentId + '&Edit=' + edit;
+        var url = '/DealerAreas/Products/eShowFileProduct?DocumentId=' + documentId + '&Edit=' + edit;
 
  
         $('#eAllFiles').load(url);

@@ -62,6 +62,7 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
         {
             try
             {
+                var DocumentId = HttpContext.Session.GetString("UserId");
                 Query productsCollection = firestoreDb.Collection("Products").WhereEqualTo("dealerId", DocumentId);
                 QuerySnapshot querySnapshot = await productsCollection.GetSnapshotAsync();
 
@@ -151,7 +152,19 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
             DocumentReference productDocument = productsCollection.Document(DocumentId);
 
             DocumentSnapshot snapshot = productDocument.GetSnapshotAsync().Result;
+            string wwwrootPath = Path.Combine(Directory.GetCurrentDirectory() , "wwwroot");
+            string jsonFilePath = Path.Combine(wwwrootPath , "Colors" , "colors.json");
 
+            string jsonContent = System.IO.File.ReadAllText(jsonFilePath);
+
+            List<Colorslist> colorsList = JsonConvert.DeserializeObject<List<Colorslist>>(jsonContent);
+            string jsonSizeList = Path.Combine(wwwrootPath , "Size" , "SizeList.json");
+
+            string jsonContentSizeList = System.IO.File.ReadAllText(jsonSizeList);
+
+            List<SizeList> SizeList = JsonConvert.DeserializeObject<List<SizeList>>(jsonContentSizeList);
+            ViewBag.ColorsList = colorsList;
+            ViewBag.SizeList = SizeList;
 
             Products product = snapshot.ConvertTo<Products>();
             ViewBag.Edit = Edit;

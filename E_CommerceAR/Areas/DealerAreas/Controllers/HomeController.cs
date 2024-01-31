@@ -61,6 +61,8 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
         {
             try
             {
+                var DocumentId = HttpContext.Session.GetString("UserId");
+
                 Query productsCollection = firestoreDb.Collection("Products").WhereEqualTo("dealerId", DocumentId);
                 QuerySnapshot productSnapshot = await productsCollection.GetSnapshotAsync();
 
@@ -77,6 +79,8 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
         {
             try
             {
+                var DocumentId = HttpContext.Session.GetString("UserId");
+
                 Query ordersCollection = firestoreDb.Collection("orders").WhereEqualTo("dealerId" , DocumentId);
                 QuerySnapshot orderSnapshot = await ordersCollection.GetSnapshotAsync();
 
@@ -101,6 +105,8 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
 
             try
             {
+                var DocumentId = HttpContext.Session.GetString("UserId");
+
                 Query ordersQuery = firestoreDb.Collection("orders").WhereEqualTo("dealerId" , DocumentId);
                 QuerySnapshot querySnapshot = await ordersQuery.GetSnapshotAsync();
 
@@ -139,6 +145,8 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
         {
             try
             {
+                var DocumentId = HttpContext.Session.GetString("UserId");
+
                 Query productsCollection = firestoreDb.Collection("Products").WhereEqualTo("dealerId", DocumentId);
                 QuerySnapshot querySnapshot = await productsCollection.GetSnapshotAsync();
 
@@ -200,6 +208,8 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
         {
             try
             {
+                var DocumentId = HttpContext.Session.GetString("UserId");
+
                 Query ordersQuery = firestoreDb.Collection("orders").WhereEqualTo("dealerId" , DocumentId);
                 QuerySnapshot querySnapshot = await ordersQuery.GetSnapshotAsync();
 

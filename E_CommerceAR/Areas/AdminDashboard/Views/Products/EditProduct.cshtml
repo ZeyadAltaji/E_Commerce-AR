@@ -8,7 +8,7 @@
     string DocumentId = ViewBag.DocumentId;
     List<Colorslist> colorsList = ViewBag.ColorsList;
     List<SizeList> SizeList = ViewBag.SizeList;
-}
+ }
 
 <style>
     input {
@@ -127,10 +127,26 @@
                             <div class="card-body p-3">
                                 <div class="col-md-auto mb-3">
                                     <label class="form-label">@Html.Translate("صورة المنتج بامتداد .glb","Product Image Extension.glb")</label>
-                                    <input type="file" id="fileInput" name="Attachments" value="@Model.Model" accept=".glb" class="form-control">
 
+                                    <input type="file" id="fileInput" name="Attachments"  accept=".glb" class="form-control">
+                                    <label class="invalid-feedback" id="fileError"></label>
 
-                                </div>
+                                    <div class="row justify-content-center mt-3">
+                                        <div class="card p-3 col-md-6 text-center">
+                                            <div style="position: relative;@Html.Translate("right: 9rem;","left: 9rem;")">
+                                                 <model-viewer id="modelViewer"
+                                                              src=""
+                                                              
+                                                              alt="Model"
+                                                              auto-rotate
+                                                              camera-controls
+                                                              ar
+                                                              ar-modes="scene-viewer webxr quick-look"
+                                                              environment-image="neutral"></model-viewer>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 <form id="uploader" style="display:none">
                                     <input type="file" accept="*" multiple style="display:none" name="eUploadFileProduct" id="eUploadFileProduct" onchange="eUploadProduct(this)" />
                                 </form>
@@ -167,15 +183,47 @@
             </div>
         </div>
     </div>
+ 
  <script>
+        var edit = '@Edit';
+        var documentId = '@DocumentId'
+        $(document).ready(function () {
+            debugger
+            function getGLB(Attachments_Id) {
+                debugger;
+                $.ajax({
+                    url: '/Products/GetGLB',
+                    type: 'GET',
+                    data: { Attachments_Id: Attachments_Id },
+                    success: function (data) {
+                        debugger;
+                        if (data.success) {
+                             const url = data.url;
+                            const modelViewer = $('#modelViewer');
+
+                            if (url) {
+                                modelViewer.attr('src', url);
+                                modelViewer.attr('alt', "GLB file");
+                            }
+                        } else {
+                            alert('GLB file not found.');
+                        }
+                    },
+                    error: function () {
+                        alert('Error occurred while retrieving GLB file.');
+                    }
+                });
+            }
+
+            var Attachments_Id = '@Model.Attachments_Id';
+            getGLB(Attachments_Id);
+        });
     $('#ColoresSelect').select2();
     $('#SizeListSelect').select2();
-    var edit = '@Edit';
-    var documentId = '@DocumentId'
+
  
     $(document).ready(function () {
-        debugger
-        var url = '@Url.Action("eShowFileProduct", "Products", new { DocumentId = "__documentId__", Edit = "__edit__" })';
+         var url = '@Url.Action("eShowFileProduct", "Products", new { DocumentId = "__documentId__", Edit = "__edit__" })';
 
         url = url.replace('__documentId__', documentId).replace('__edit__', edit);
 
@@ -195,11 +243,44 @@
         });
     });
     function ListProducts(){
-        debugger
-        $('#allProdictsDiv').html('');
+         $('#allProdictsDiv').html('');
         var url = '@Url.Action("Index", "Products")';
         $('#allProdictsDiv').load(url);
     }
+    // $('#fileInput').change(function (event) {
+    //     const file = event.target.files[0];
+    //     const modelViewer = $('#modelViewer');
+
+    //     if (file) {
+    //         const url = URL.createObjectURL(file);
+    //         modelViewer.attr('src', url);
+    //         modelViewer.attr('alt', file.name);
+    //     }
+    // });
+        $('#fileInput').change(function (event) {
+            const file = event.target.files[0];
+            const modelViewer = $('#modelViewer');
+            var fileInput = this;
+            var fileError = $('#fileError');
+            if (file.size > 0) {
+                var allowedExtensions = ['.glb'];
+                var fileName = file.name;
+                var fileExtension = fileName.split('.').pop().toLowerCase();
+                const url = URL.createObjectURL(file);
+                if (allowedExtensions.indexOf('.' + fileExtension) === -1) {
+                    fileInput.value = ''; // Clear the file input
+                    fileError.text('@Html.Translate("تنسيق ملف غير صالح. يرجى تحميل ملف .glb.","Invalid file format. Please upload a .glb file.")');
+                    fileError.show();
+                } else {
+                    modelViewer.attr('src', url);
+                    modelViewer.attr('alt', file.name);
+                    fileError.text(''); // Clear any previous error message
+                    fileError.hide();
+
+                }
+
+            }
+        });
     function eAddPhotos() {
         $("#eUploadFileProduct").wrap('<form>').closest('form').get(0).reset();
         $("#eUploadFileProduct").click();
@@ -318,26 +399,25 @@
         link.download = fileName;
         link.click();
     }
-    $('#fileInput').on('change', function () {
-        var fileInput = this;
-        var fileError = $('#fileError');
+    // $('#fileInput').on('change', function () {
+    //     var fileInput = this;
+    //     var fileError = $('#fileError');
 
-        if (fileInput.files.length > 0) {
-            var allowedExtensions = ['.glb'];
-            var fileName = fileInput.files[0].name;
-            var fileExtension = fileName.split('.').pop().toLowerCase();
+    //     if (fileInput.files.length > 0) {
+    //         var allowedExtensions = ['.glb'];
+    //         var fileName = fileInput.files[0].name;
+    //         var fileExtension = fileName.split('.').pop().toLowerCase();
 
-            if (allowedExtensions.indexOf('.' + fileExtension) === -1) {
-                fileInput.value = ''; // Clear the file input
-                fileError.textContent = '@Html.Translate("تنسيق ملف غير صالح. يرجى تحميل ملف .glb.","Invalid file format. Please upload a .glb file.")';
-            } else {
-                fileError.text(''); // Clear any previous error message
-            }
-        }
-    });
+    //         if (allowedExtensions.indexOf('.' + fileExtension) === -1) {
+    //             fileInput.value = ''; // Clear the file input
+    //             fileError.textContent = '@Html.Translate("تنسيق ملف غير صالح. يرجى تحميل ملف .glb.","Invalid file format. Please upload a .glb file.")';
+    //         } else {
+    //             fileError.text(''); // Clear any previous error message
+    //         }
+    //     }
+    // });
     function eSaveProducts() {
-        debugger
-
+ 
         var name = $("input[name='Name']").val();
         var category = $("input[name='Category']").val();
         var price = $("input[name='Price']").val();
@@ -387,7 +467,7 @@
 
         formData.append("Model", $("input[name='Attachments']")[0].files[0]);
         $('.row.g-3 .info-box').each(function () {
-            debugger
+             
             var id = $(this).find('input[id^="eId_"]').val();
 
             var base64 = $('#ebase64_' + id).val();

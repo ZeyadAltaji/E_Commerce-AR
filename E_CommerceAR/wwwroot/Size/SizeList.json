@@ -1,18 +1,30 @@
 [
     {
-        "Key": "L",
-        "name": "L"
+        "Key": "H:1M",
+        "name": "H:1M"
     },
     {
-        "Key": "M",
-        "name": "M"
+        "Key": "H:2M",
+        "name": "H:2M"
     },
     {
-        "Key": "XL",
-        "name": "XL"
+        "Key": "W:3M",
+        "name": "W:3M"
     },
     {
-        "Key": "S",
-        "name": "S"
+        "Key": "H:4M",
+        "name": "H:4M"
+    },
+    {
+        "Key": "H:5M",
+        "name": "H:5M"
+    },
+    {
+        "Key": "H:6M",
+        "name": "H:6M"
+    },
+    {
+        "Key": "H:7M",
+        "name": "H:7M"
     }
 ]

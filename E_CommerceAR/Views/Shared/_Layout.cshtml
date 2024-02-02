@@ -17,6 +17,10 @@
     <title>@ViewData["Title"] - @Html.Translate("بيت الراحة", "HOME SEWET HOME") </title>
      <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <script type="module" src="~/lib/model-viewer/model-viewer.min.js"></script>
+
+    @* <script type="module" src="https://unpkg.com/@@google/model-viewer/dist/model-viewer.js"></script> *@
+
     <link href="~/css/select2.min.css" rel="stylesheet" />
 
      @if (dir == "rtl")
@@ -30,7 +34,8 @@
 
 	}
 	<link href="~/assets/css/datatables.min.css" rel="stylesheet" />
-    <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
+	<link href="~/css/sweetalert2.min.css" rel="stylesheet" />
+	<script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
 </head>
 
 <body dir="@dir" class="g-sidenav-show bg-gray-100">
@@ -48,6 +53,7 @@
     <script src="~/assets/js/plugins/smooth-scrollbar.min.js"></script>
 	<script src="~/assets/js/material-dashboard.js"></script>
  	<script src="~/js/select2.min.js"></script>
+
     @if (dir == "rtl")
     {
         <script src="~/js/jquery.datatablesar.js"></script>

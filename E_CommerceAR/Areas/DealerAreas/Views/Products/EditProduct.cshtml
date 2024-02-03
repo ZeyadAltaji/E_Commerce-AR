@@ -128,6 +128,9 @@
                                 <div class="col-md-auto mb-3">
                                     <label class="form-label">@Html.Translate("صورة المنتج بامتداد .glb","Product Image Extension.glb")</label>
                                     <input type="file" id="fileInput" name="Attachments" accept=".glb" class="form-control">
+                                    <input type="hidden" id="AttachmentsName" />
+                                    <input type="hidden" id="AttachmentsContentType" />
+                                    <input type="hidden" id="Attachmentsbase64" />
                                     <label class="invalid-feedback" id="fileError"></label>
                                     <div class="row justify-content-center mt-3">
                                         <div class="card p-3 col-md-6 text-center">
@@ -198,19 +201,22 @@
                     debugger;
                     if (data.success) {
                         const url = data.url;
+                        const AttachmentsName = data.attachmentsName;
+                        const AttachmentsContentType = data.attachmentsContentType;
+                        const Attachmentsbase64 = data.attachmentsbase64;
                         const modelViewer = $('#modelViewer');
-
                         if (url) {
                             modelViewer.attr('src', url);
                             modelViewer.attr('alt', "GLB file");
                         }
+                        $('#AttachmentsName').val(AttachmentsName);
+                        $('#AttachmentsContentType').val('.' + AttachmentsContentType);
+                        $('#Attachmentsbase64').val(Attachmentsbase64);
                     } else {
-                        alert('GLB file not found.');
-                    }
+                     }
                 },
                 error: function () {
-                    alert('Error occurred while retrieving GLB file.');
-                }
+                 }
             });
         }
 
@@ -362,23 +368,7 @@
         link.download = fileName;
         link.click();
     }
-    // $('#fileInput').on('change', function () {
-    //     var fileInput = this;
-    //     var fileError = $('#fileError');
-
-    //     if (fileInput.files.length > 0) {
-    //         var allowedExtensions = ['.glb'];
-    //         var fileName = fileInput.files[0].name;
-    //         var fileExtension = fileName.split('.').pop().toLowerCase();
-
-    //         if (allowedExtensions.indexOf('.' + fileExtension) === -1) {
-    //             fileInput.value = ''; // Clear the file input
-    //             fileError.textContent = '@Html.Translate("تنسيق ملف غير صالح. يرجى تحميل ملف .glb.","Invalid file format. Please upload a .glb file.")';
-    //         } else {
-    //             fileError.text(''); // Clear any previous error message
-    //         }
-    //     }
-    // });
+ 
     $('#fileInput').change(function (event) {
         const file = event.target.files[0];
         const modelViewer = $('#modelViewer');
@@ -390,13 +380,20 @@
             var fileExtension = fileName.split('.').pop().toLowerCase();
             const url = URL.createObjectURL(file);
             if (allowedExtensions.indexOf('.' + fileExtension) === -1) {
-                fileInput.value = ''; // Clear the file input
+                fileInput.value = ''; 
                 fileError.text('@Html.Translate("تنسيق ملف غير صالح. يرجى تحميل ملف .glb.","Invalid file format. Please upload a .glb file.")');
                 fileError.show();
             } else {
                 modelViewer.attr('src', url);
                 modelViewer.attr('alt', file.name);
-                fileError.text(''); // Clear any previous error message
+                $('#AttachmentsName').val(fileName);
+                $('#AttachmentsContentType').val('.' + fileExtension);
+                var reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = function () {
+                    $('#Attachmentsbase64').val(reader.result.split(',')[1]);
+                };
+                fileError.text('');
                 fileError.hide();
 
             }

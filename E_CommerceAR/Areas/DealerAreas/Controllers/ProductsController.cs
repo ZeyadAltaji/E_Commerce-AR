@@ -517,11 +517,25 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
         {
             List<Upload> uol = new List<Upload>();
             uol = JsonConvert.DeserializeObject<List<Upload>>(HttpContext.Session.GetString("Upload"));
-            Upload s = uol.Where(x => x.Id == id && x.ProductId == ProductId).FirstOrDefault();
-            if (s != null)
+            if (ProductId == null)
             {
-                uol.Remove(s);
+                Upload s = uol.Where(x => x.Id == id).FirstOrDefault();
+                if (s != null)
+                {
+                    uol.Remove(s);
 
+                }
+            }
+            else if (ProductId != null)
+            {
+                Upload s = uol.Where(x => x.Id == id && x.ProductId == ProductId).FirstOrDefault();
+                if (s != null)
+                {
+                    uol.Remove(s);
+
+                }
+
+            
             }
 
             string Upload = JsonConvert.SerializeObject(uol);

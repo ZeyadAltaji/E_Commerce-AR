@@ -110,10 +110,10 @@
                 </td>
                 <td class="text-center">
 
-                    <button class="btn btn-outline-success" style="padding: 9px;" onclick="UnapprovedUser('@item.UsersViewModel.DocumentId','@item.UsersViewModel.Users.Frist_Name+@item.UsersViewModel.Users.Last_Name','@item.UsersViewModel.Users.Email')">
+                    <button class="btn btn-outline-success" style="padding: 9px;" onclick="UnapprovedUser('@item.UsersViewModel.DocumentId')">
                         <i class="fa fa-check"></i>
                     </button>
-                    <button class="btn btn-outline-danger" style="padding: 9px;" onclick="NoneUnapprovedUser('@item.UsersViewModel.DocumentId','@item.UsersViewModel.Users.Frist_Name+@item.UsersViewModel.Users.Last_Name','@item.UsersViewModel.Users.Email')">
+                    <button class="btn btn-outline-danger" style="padding: 9px;" onclick="NoneUnapprovedUser('@item.UsersViewModel.DocumentId')">
                         <i class="">×</i>
                     </button>
                
@@ -193,17 +193,107 @@
         link.download = fileName;
         link.click();
     }
-    function UnapprovedUser(DocumentId, Full_Name, Email) {
-        $('#allListUnapprovedUsersDiv').html('');
+
+    function UnapprovedUser(DocumentId) {
+            var message = '@Html.Translate("هل انت متاكد من قبول الموافقة على المستخدم ","Are you sure to accept user approval")'
+        var cancel = '@Html.Translate("ألغاء","Cancel")'
+            var Save = '@Html.Translate("نعم، قبول المستخدم!","Yes, user acceptance!")'
+        var afterSave = '@Html.Translate("تم قبول المستخدم!","User accepted!")'
+        Swal.fire({
+            title: message,
+            showDenyButton: false,
+            showCancelButton: true,
+            confirmButtonText: Save,
+            cancelButtonText: cancel,
+            icon: "warning",
+            customClass: {
+                confirmButton: "btn btn-success m-2",
+                cancelButton: "btn btn-danger m-2"
+
+            },
+            buttonsStyling: false,
+
+            showClass: {
+                popup: `
+              animate__animated
+              animate__fadeInUp
+              animate__faster
+            `
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+            type: 'POST',
+            url: '@Url.Action("SendUnapprovedUser", "UserApproval")',
+            data: { DocumentId: DocumentId },
+            success: function (response) {
+                $('#allListUnapprovedUsersDiv').html('');
+                var url = '@Url.Action("Index", "UserApproval")';
+                $('#allListUnapprovedUsersDiv').load(url);
+            },
+            error: function (xhr, status, error) {
+                console.error(xhr.responseText);
+                // Handle error
+            }
+        });
+            }
+        });
+       
+       @*  $('#allListUnapprovedUsersDiv').html('');
 
         var url = '/UserApproval/UnapprovedUser?DocumentId=' + DocumentId + '&Full_Name=' + Full_Name + '&Email=' + Email;
-        $('#allListUnapprovedUsersDiv').load(url);
+        $('#allListUnapprovedUsersDiv').load(url); *@
     }
-    function NoneUnapprovedUser(DocumentId, Full_Name, Email) {
-        var Edit = true;
+    function NoneUnapprovedUser(DocumentId) {
+        var message = '@Html.Translate("هل انت متاكد من عدم الموافقة على المستخدم ","Are you sure not to approve the user")'
+        var cancel = '@Html.Translate("ألغاء","Cancel")'
+        var Save = '@Html.Translate("نعم، رفض المستخدم!","Yes, reject the user!")'
+        var afterSave = '@Html.Translate("تم رفض المستخدم!","The user was rejected!")'
+        Swal.fire({
+            title: message,
+            showDenyButton: false,
+            showCancelButton: true,
+            confirmButtonText: Save,
+            cancelButtonText: cancel,
+            icon: "warning",
+            customClass: {
+                confirmButton: "btn btn-success m-2",
+                cancelButton: "btn btn-danger m-2"
+
+            },
+            buttonsStyling: false,
+            showClass: {
+                popup: `
+          animate__animated
+          animate__fadeInUp
+          animate__faster
+        `
+            }
+         }).then((result) => {
+             if (result.isConfirmed) {
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("SendNoneUnapprovedUser", "UserApproval")',
+                    data: { DocumentId: DocumentId },
+                    success: function (response) {
+                        Swal.fire(afterSave, "", "success");
+
+                        $('#allListUnapprovedUsersDiv').html('');
+                        var url = '@Url.Action("Index", "UserApproval")';
+                        $('#allListUnapprovedUsersDiv').load(url);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(xhr.responseText);
+                        // Handle error
+                    }
+                });
+            }  
+        });
+       
+      @*   var Edit = true;
         $('#allListUnapprovedUsersDiv').html('');
 
         var url = '/UserApproval/NoneUnapprovedUser?DocumentId=' + DocumentId + '&Full_Name=' + Full_Name + '&Email=' + Email;
-        $('#allListUnapprovedUsersDiv').load(url);
+        $('#allListUnapprovedUsersDiv').load(url); *@
     }
 </script>

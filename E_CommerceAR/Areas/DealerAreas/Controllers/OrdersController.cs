@@ -42,8 +42,7 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
             }
             catch (Exception ex)
             {
-                // Log the error or handle it accordingly
-                Console.WriteLine($"Error fetching orders: {ex.Message}");
+                 Console.WriteLine($"Error fetching orders: {ex.Message}");
                 return StatusCode(500, "Internal Server Error");
             }
         }
@@ -80,8 +79,7 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
             }
             catch (Exception ex)
             {
-                // Handle exception
-                Console.WriteLine($"Error fetching products: {ex.Message}");
+                 Console.WriteLine($"Error fetching products: {ex.Message}");
                 return new List<OrdersViewModel>();
             }
         }

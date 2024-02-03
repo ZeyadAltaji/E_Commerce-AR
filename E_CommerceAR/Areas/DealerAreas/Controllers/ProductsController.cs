@@ -87,8 +87,7 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
             }
             catch (Exception ex)
             {
-                // Handle exception
-                Console.WriteLine($"Error fetching products: {ex.Message}");
+                 Console.WriteLine($"Error fetching products: {ex.Message}");
                 return new List<ProductViewModel>();
             }
         }
@@ -110,7 +109,7 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
                 return (null, null);
 
             }
-            catch (Exception ex)
+            catch
             {
                 return (null, null);
             }
@@ -311,10 +310,9 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
 
                 return RedirectToAction("ListProduct" , "Products");
             }
-            catch (Exception ex)
+            catch 
             {
-                // Handle the exception appropriately
-                return RedirectToAction("AddNewProduct" , "Products");
+                 return RedirectToAction("AddNewProduct" , "Products");
             }
         }
 
@@ -402,10 +400,9 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
 
                 return View(Index);
             }
-            catch (Exception ex)
+            catch 
             {
-                // Handle the exception
-                return RedirectToAction("EditProduct" , "Products");
+                 return RedirectToAction("EditProduct" , "Products");
             }
         }
         private async Task RemoveExistingFiles (string folderName , string bucketName)

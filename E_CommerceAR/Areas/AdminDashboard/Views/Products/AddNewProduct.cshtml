@@ -178,21 +178,11 @@
         });
     });
     function ListProducts() {
-        debugger
         $('#allProdictsDiv').html('');
         var url = '@Url.Action("Index", "Products")';
         $('#allProdictsDiv').load(url);
     }
-    // $('#fileInput').change(function (event) {
-    //     const file = event.target.files[0];
-    //     const modelViewer = $('#modelViewer');
 
-    //     if (file) {
-    //         const url = URL.createObjectURL(file);
-    //         modelViewer.attr('src', url);
-    //         modelViewer.attr('alt', file.name);
-    //     }
-    // });
     function AddPhotos() {
         $("#UploadFileProduct").wrap('<form>').closest('form').get(0).reset();
         $("#UploadFileProduct").click();
@@ -307,7 +297,6 @@
         link.click();
     }
     $('#fileInput').change(function (event) {
-        debugger
         const file = event.target.files[0];
         const modelViewer = $('#modelViewer');
         var fileInput = this;
@@ -318,13 +307,13 @@
             var fileExtension = fileName.split('.').pop().toLowerCase();
             const url = URL.createObjectURL(file);
             if (allowedExtensions.indexOf('.' + fileExtension) === -1) {
-                fileInput.value = ''; // Clear the file input
+                fileInput.value = '';
                 fileError.text('@Html.Translate("تنسيق ملف غير صالح. يرجى تحميل ملف .glb.","Invalid file format. Please upload a .glb file.")');
                 fileError.show();
             } else {
                 modelViewer.attr('src', url);
                 modelViewer.attr('alt', file.name);
-                fileError.text(''); // Clear any previous error message
+                fileError.text('');
                 fileError.hide();
 
             }
@@ -332,7 +321,6 @@
         }
     });
     function SaveProducts() {
-        debugger
         var name = $("input[name='Name']").val();
         var category = $("input[name='Category']").val();
         var price = $("input[name='Price']").val();

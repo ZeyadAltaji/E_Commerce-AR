@@ -70,8 +70,7 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
             }
             catch (Exception ex)
             {
-                // Handle exception
-                Console.WriteLine($"Error counting products: {ex.Message}");
+                 Console.WriteLine($"Error counting products: {ex.Message}");
                 return 0;
             }
         }
@@ -88,8 +87,7 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
             }
             catch (Exception ex)
             {
-                // Handle exception
-                Console.WriteLine($"Error counting orders: {ex.Message}");
+                 Console.WriteLine($"Error counting orders: {ex.Message}");
                 return 0;
             }
         }
@@ -128,7 +126,7 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
 
                 return ordersList;
             }
-            catch (Exception ex)
+            catch
             {
                 throw new NotImplementedException();
             }
@@ -167,10 +165,9 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
 
                 return productList;
             }
-            catch (Exception ex)
+            catch  
             {
-                // Handle exception
-                throw new NotImplementedException();
+                 throw new NotImplementedException();
             }
         }
         private decimal CalculateProfitRatio(decimal totalRevenue, decimal totalCost)

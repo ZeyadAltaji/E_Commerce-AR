@@ -307,8 +307,7 @@
     }
 
  
-    // 
-    
+     
 
      $(document).ready(function () {
         loadSettingsFromCookies();
@@ -366,7 +365,6 @@
         }
     }
   
-        // Function to set a cookie with a given name, value, and expiration date
     function setCookie(name, value, expirationYears) {
         const date = new Date();
         date.setFullYear(date.getFullYear() + expirationYears);
@@ -374,7 +372,6 @@
         document.cookie = name + "=" + value + ";" + expires + ";path=/";
     }
 
-    // Function to get the value of a cookie by name
     function getCookie(name) {
         const cookies = document.cookie.split(';');
         for (let i = 0; i < cookies.length; i++) {
@@ -386,7 +383,6 @@
         return "";
     }
     function sidebarTypes(a) {
-        debugger
         var parent = a.parentElement.children;
         var color = a.getAttribute("data-class");
         var body = document.querySelector("body");
@@ -415,8 +411,7 @@
         sidebar.classList.add(color);
 
 
-        // Remove text-white/text-dark classes
-        if (color == 'bg-transparent' || color == 'bg-white') {
+         if (color == 'bg-transparent' || color == 'bg-white') {
             var textWhites = document.querySelectorAll('.sidenav .text-white');
             for (let i = 0; i < textWhites.length; i++) {
                 textWhites[i].classList.remove('text-white');
@@ -438,8 +433,7 @@
             }
         }
 
-        // Remove logo-white/logo-dark
-
+ 
         if ((color == 'bg-transparent' || color == 'bg-white') && bodyWhite) {
             var navbarBrand = document.querySelector('.navbar-brand-img');
             var navbarBrandImg = navbarBrand.src;

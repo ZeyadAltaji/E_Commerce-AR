@@ -103,7 +103,6 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
             }
             catch (Exception ex)
             {
-                // Handle exception
                 Console.WriteLine($"Error fetching inactive users: {ex.Message}");
                 return new List<UsersViewModel>();
             }
@@ -184,9 +183,8 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
 
                 return View("Index");
             }
-            catch (Exception ex)
+            catch 
             {
-                // Handle the exception
                 return RedirectToAction("UnapprovedUser", "UserApproval");
             }
         }
@@ -212,9 +210,8 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
 
                 return View("Index");
             }
-            catch (Exception ex)
+            catch 
             {
-                // Handle the exception
                 return RedirectToAction("Unapproved", "Unapproved");
             }
         }

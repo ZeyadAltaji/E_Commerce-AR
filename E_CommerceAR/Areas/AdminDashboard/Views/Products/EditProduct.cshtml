@@ -192,15 +192,12 @@
         var edit = '@Edit';
         var documentId = '@DocumentId'
         $(document).ready(function () {
-            debugger
             function getGLB(Attachments_Id) {
-                debugger;
                 $.ajax({
                     url: '/Products/GetGLB',
                     type: 'GET',
                     data: { Attachments_Id: Attachments_Id },
                     success: function (data) {
-                        debugger;
                         if (data.success) {
                             const url = data.url;
                             const AttachmentsName = data.attachmentsName;
@@ -271,7 +268,6 @@
                     fileError.text('@Html.Translate("تنسيق ملف غير صالح. يرجى تحميل ملف .glb.","Invalid file format. Please upload a .glb file.")');
                     fileError.show();
                 } else {
-                    debugger
                     modelViewer.attr('src', url);
                     modelViewer.attr('alt', file.name);
                     $('#AttachmentsName').val(fileName);
@@ -454,7 +450,6 @@
         formData.append("Price", $("input[name='Price']").val());
         formData.append("OfferPercentage", $("input[name='OfferPercentage']").val());
         formData.append("ColorValues", $("#ColoresSelect").val());
-                       debugger
             var base64Atta = $('#Attachmentsbase64').val();
             var contentTypeAtta = $('#AttachmentsContentType').val();
             var fileNameAttachments = $('#AttachmentsName').val();

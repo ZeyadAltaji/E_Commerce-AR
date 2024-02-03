@@ -44,7 +44,6 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
             }
             catch (Exception ex)
             {
-                // Log the error or handle it accordingly
                 Console.WriteLine($"Error fetching orders: {ex.Message}");
                 return StatusCode(500, "Internal Server Error");
             }
@@ -78,7 +77,6 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
             }
             catch (Exception ex)
             {
-                // Handle exception
                 Console.WriteLine($"Error fetching products: {ex.Message}");
                 return new List<UsersViewModel>();
             }
@@ -144,16 +142,15 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
 
 
 
-                return RedirectToAction("Index" , "Users");
+                    return RedirectToAction("Index" , "Users");
 
-            }
-            catch (Exception ex)
-                {
-                    // Handle the exception appropriately
-                    return null;
                 }
-            
-          
+                catch
+                {
+                    throw new NotImplementedException();
+                }
+
+
         }
 
 
@@ -169,12 +166,12 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
                 if (existinguserDocument.Exists)
                 {
                     var updateData = new Dictionary<string, object>
-            {
-                { "firstName", SignupModel.firstName },
-                { "lastName", SignupModel.lastName },
-                { "email", SignupModel.email },
-                { "password", SignupModel.password },
-             };
+                    {
+                        { "firstName", SignupModel.firstName },
+                        { "lastName", SignupModel.lastName },
+                        { "email", SignupModel.email },
+                        { "password", SignupModel.password },
+                    };
 
                     await userCollectionReference.Document(DocumentId).UpdateAsync(updateData);
                 }
@@ -186,9 +183,8 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
                 return RedirectToAction("Index" , "Users");
 
             }
-            catch (Exception ex)
+            catch
             {
-                // Handle the exception
                 return RedirectToAction("Index" , "Users");
 
             }

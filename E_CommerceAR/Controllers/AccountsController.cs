@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Newtonsoft.Json;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace E_CommerceAR.Controllers
 {
@@ -141,7 +142,7 @@ namespace E_CommerceAR.Controllers
 
                 return (null, null);
             }
-            catch (Exception ex)
+            catch
             {
                 return (null, null);
             }
@@ -249,13 +250,11 @@ namespace E_CommerceAR.Controllers
             {
                 HttpContext.Session.Remove("_UserToken");
 
-                // You may want to add additional checks or logic here if needed.
 
-                return Json(new { success = true }); // Return a success response
+                return Json(new { success = true });
             }
             catch (Exception ex)
             {
-                // Log the exception for debugging purposes
                 Console.Error.WriteLine($"Error during logout: {ex.Message}");
                 return Json(new { success = false, error = ex.Message });
             }
@@ -278,20 +277,16 @@ namespace E_CommerceAR.Controllers
                     newLanguage = "en";
                 }
 
-                // Set session variable
                 HttpContext.Session.SetString("E-CommerceAR_Lang", newLanguage);
 
-                // Set cookie
                 Response.Cookies.Append("E-CommerceAR_Lang", newLanguage, new CookieOptions
                 {
                     Expires = DateTime.Now.AddYears(10)
                 });
 
-                // Set culture
                 Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo(newLanguage);
                 Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(newLanguage);
 
-                // Set custom date format
                 CultureInfo ci = new CultureInfo(newLanguage);
                 ci.DateTimeFormat.ShortDatePattern = "dd/MM/yyyy";
                 Thread.CurrentThread.CurrentCulture = ci;
@@ -300,7 +295,6 @@ namespace E_CommerceAR.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception for debugging
                 Console.WriteLine($"Exception in ChangeLanguage method: {ex.Message}");
                 return Json(new { error = "An error occurred while changing the language." });
             }
@@ -310,16 +304,24 @@ namespace E_CommerceAR.Controllers
 
 
         [HttpPost]
-        private bool IsValidEmail(string email)
+        public bool IsValidEmail(string email)
         {
             try
             {
-                System.Net.Mail.MailAddress addr = new System.Net.Mail.MailAddress(email);
-                return addr.Address == email;
+                 string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
+
+                 if (Regex.IsMatch(email , pattern))
+                 {
+                        return true;
+                 }
+                else
+                {
+                     return false;
+                }
             }
             catch
             {
-                return false;
+                 return false;
             }
         }
 

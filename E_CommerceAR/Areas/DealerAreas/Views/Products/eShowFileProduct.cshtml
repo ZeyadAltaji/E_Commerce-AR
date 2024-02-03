@@ -97,7 +97,6 @@
 <script>
 
     function handleDropdownClick(itemId) {
-        debugger
         var allDropdowns = document.querySelectorAll('.dropdown-menu');
         allDropdowns.forEach(function (dropdownMenu) {
             dropdownMenu.classList.remove('show');
@@ -112,7 +111,6 @@
     }
 
     function closeDropdownOnClickOutside(event) {
-        debugger
         var isDropdownClick = event.target.closest('.dropdown') !== null;
         if (!isDropdownClick) {
             var allDropdowns = document.querySelectorAll('.dropdown-menu');

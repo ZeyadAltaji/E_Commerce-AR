@@ -97,7 +97,6 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
             }
             catch (Exception ex)
             {
-                // Handle exception
                 Console.WriteLine($"Error fetching products: {ex.Message}");
                 return new List<ProductViewModel>();
             }
@@ -120,7 +119,7 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
                 return (null, null);
 
             }
-            catch (Exception ex)
+            catch
             {
                 return (null, null);
             }
@@ -300,10 +299,11 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
                 }
 
                 return uploadList;
-            }   catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine($"Error removing existing files: {ex.Message}");
-                return null;
+                throw new NotImplementedException();
             }
         }
 
@@ -400,9 +400,8 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
 
                 return RedirectToAction("ListProduct" , "Products");
             }
-            catch (Exception ex)
+            catch 
             {
-                // Handle the exception appropriately
                 return RedirectToAction("AddNewProduct" , "Products");
             }
         }
@@ -530,9 +529,8 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
 
                 return View(Index);
             }
-            catch (Exception ex)
+            catch 
             {
-                // Handle the exception
                 return RedirectToAction("EditProduct" , "Products");
             }
         }

@@ -16,14 +16,14 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
         private readonly FirestoreDb firestoreDb;
         public HomeController()
         {
-            {
+        
                 auth = new FirebaseAuthProvider(
                             new FirebaseConfig(ApiKey));
                 System.Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS",
                     "C:\\Users\\ziada\\Source\\repos\\E_CommerceAR\\E_CommerceAR\\Extensions\\" +
                          "finalprojectar-d85ea-firebase-adminsdk-9x4fl-3f47b05b2e.json");
                 firestoreDb = FirestoreDb.Create(PorjectId);
-            }
+         
         }
         [Route("AdminDashboard/Home/Index")]
         public async Task<IActionResult> Index()
@@ -132,9 +132,8 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
 
                 return productSnapshot.Count;
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                // Handle exception
                 Console.WriteLine($"Error counting products: {ex.Message}");
                 return 0;
             }
@@ -148,9 +147,8 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
 
                 return orderSnapshot.Count;
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                // Handle exception
                 Console.WriteLine($"Error counting orders: {ex.Message}");
                 return 0;
             }
@@ -187,7 +185,7 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
 
                 return ordersList;
             }
-            catch (Exception ex)
+            catch
             {
                  throw new NotImplementedException();
             }
@@ -224,14 +222,13 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
 
                 return productList;
             }
-            catch (Exception ex)
+            catch
             {
-                // Handle exception
-                throw new NotImplementedException();
+                 throw new NotImplementedException();
             }
         }
 
-        private decimal CalculateProfitRatio(decimal totalRevenue, decimal totalCost)
+        public decimal CalculateProfitRatio(decimal totalRevenue, decimal totalCost)
         {
             if (totalRevenue == 0)
             {

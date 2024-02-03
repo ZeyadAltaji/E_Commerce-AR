@@ -234,7 +234,6 @@
         });
     });
     function ListOrders() {
-        debugger
         $('#allOrdersDiv').html('');
         var url = '@Url.Action("Index", "Orders" , new { area = "DealerAreas" })';
         $('#allOrdersDiv').load(url);

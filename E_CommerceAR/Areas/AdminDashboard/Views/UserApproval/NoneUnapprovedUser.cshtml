@@ -89,7 +89,6 @@
     });
 
     function ListUnapprovedUsers() {
-        debugger
         $('#allListUnapprovedUsersDiv').html('');
         var url = '@Url.Action("Index", "UserApproval")';
         $('#allListUnapprovedUsersDiv').load(url);
@@ -108,8 +107,7 @@
             },
             error: function (xhr, status, error) {
                 console.error(xhr.responseText);
-                // Handle error
-            }
+             }
         });
     });
 </script>

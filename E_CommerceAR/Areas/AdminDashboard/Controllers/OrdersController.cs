@@ -46,7 +46,6 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
 			}
 			catch (Exception ex)
 			{
-				// Log the error or handle it accordingly
 				Console.WriteLine($"Error fetching orders: {ex.Message}");
 				return StatusCode(500, "Internal Server Error");
 			}
@@ -79,7 +78,6 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
             }
             catch (Exception ex)
             {
-                // Handle exception
                 Console.WriteLine($"Error fetching products: {ex.Message}");
                 return new List<OrdersViewModel>();
             }
@@ -92,11 +90,11 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
              DocumentSnapshot snapshot = ViewOrderCollection.Document(DocumentId).GetSnapshotAsync().Result;
 
              if (snapshot.Exists)
-            {
+             {
                  Orders order = snapshot.ConvertTo<Orders>();
 
                  return PartialView(order);
-            }
+             }
             else
             {
                  return NotFound();

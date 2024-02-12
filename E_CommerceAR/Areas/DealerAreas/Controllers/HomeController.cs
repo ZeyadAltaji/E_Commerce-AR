@@ -74,23 +74,48 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
                 return 0;
             }
         }
-        private async Task<int> CountOrders()
+        private async Task<int> CountOrders ()
         {
             try
             {
-                var DocumentId = HttpContext.Session.GetString("UserId");
+                var dealerId = HttpContext.Session.GetString("UserId");
 
-                Query ordersCollection = firestoreDb.Collection("orders").WhereEqualTo("dealerId" , DocumentId);
-                QuerySnapshot orderSnapshot = await ordersCollection.GetSnapshotAsync();
+                Query ordersQuery = firestoreDb.Collection("orders");
+                QuerySnapshot querySnapshot = await ordersQuery.GetSnapshotAsync();
 
-                return orderSnapshot.Count;
+                List<Orders> ordersList = new List<Orders>();
+
+                foreach (DocumentSnapshot documentSnapshot in querySnapshot.Documents)
+                {
+                    try
+                    {
+                        Orders order = documentSnapshot.ConvertTo<Orders>();
+
+                        List<OrderItem> filteredOrderItems = order.Products
+                            .Where(item => item.Product != null && item.Product.dealerId == dealerId)
+                            .ToList();
+
+                        if (filteredOrderItems.Count == 0)
+                            continue;
+
+                        order.Products = filteredOrderItems;
+                        ordersList.Add(order);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error converting document {documentSnapshot.Id}: {ex.Message}");
+                    }
+                }
+
+                return ordersList.Count;
             }
             catch (Exception ex)
             {
-                 Console.WriteLine($"Error counting orders: {ex.Message}");
+                Console.WriteLine($"Error counting orders: {ex.Message}");
                 return 0;
             }
         }
+
         private async Task<decimal> CalculateTotalRevenue ()
         {
             List<Orders> ordersList = await FetchOrdersFromDatabase();

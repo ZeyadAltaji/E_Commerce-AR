@@ -115,7 +115,7 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
             {
                 int role = userViewModel.Users.Role;
 
-                 if (role >= 2 && role <= 3)
+                 if ((role >= 2 && role <= 3) && userViewModel.Users.IsActive !=false)
                 {
                     roleCounts[role]++;
                 }

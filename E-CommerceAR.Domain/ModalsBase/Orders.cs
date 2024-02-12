@@ -58,6 +58,8 @@ namespace E_CommerceAR.Domain.ModalsBase
 
         [FirestoreProperty("colors")]
         public List<int> Colors { get; set; }
+        [FirestoreProperty("dealerId")]
+        public string dealerId { get; set; }
     }
 
     [FirestoreData]
@@ -99,7 +101,6 @@ namespace E_CommerceAR.Domain.ModalsBase
 
         [FirestoreProperty("updateTime")]
         public DateTime UpdateTime { get; set; }
-        [FirestoreProperty("dealerId")]
-        public string dealerId { get; set; }
+ 
     }
 }

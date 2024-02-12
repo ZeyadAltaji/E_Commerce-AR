@@ -14,15 +14,14 @@
     input {
         border: 1px solid !important
     }
-
-
-
-
     .form-control:focus {
         border-color: #80bdff;
         box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
     }
-
+    .error {
+        color: red;
+        display: none;
+    }
 </style>
 <div class="row">
     <div class="col-12">
@@ -48,11 +47,14 @@
                         <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
                             <label class="form-label">@Html.Translate("اسم المنتج","Name Products")</label>
                             <input type="text" class="form-control" name="Name" value="@Model.Name" @(Edit == true ? "" : "readonly")>
+                            <span class="error">@Html.Translate("هذا الحقل الزامي", "This field is required")</span>
 
                         </div>
                         <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
                             <label class="form-label">@Html.Translate("اسم الصنف","Name Category")</label>
                             <input type="text" class="form-control" name="Category" value="@Model.Category" @(Edit == true ? "" : "readonly")>
+                            <span class="error">@Html.Translate("هذا الحقل الزامي", "This field is required")</span>
+
                         </div>
                         <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
                             <label class="form-label">@Html.Translate("وصف المنتج","Desc Products")</label>
@@ -61,6 +63,8 @@
                         <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
                             <label class="form-label">@Html.Translate("السعر","Price")</label>
                             <input type="number" class="form-control" name="Price" value="@Model.Price.ToString().Replace('٫','.')" @(Edit == true ? "" : "readonly")>
+                            <span class="error">@Html.Translate("هذا الحقل الزامي", "This field is required")</span>
+
                         </div>
                         <div class="col-md-6" style="text-align: @Html.Translate("right","left");">
                             <label class="form-label">@Html.Translate("الخصم &","Offer %")</label>
@@ -102,6 +106,8 @@
                                     }
                                 }
                             </select>
+                            <span class="error">@Html.Translate("هذا الحقل الزامي", "This field is required")</span>
+
                         </div>
                     </div>
                 </div>
@@ -406,32 +412,40 @@
 
         var Products = [];
 
+        var isValid = true;
+
         // Perform validation
         if (name === '') {
-            alert('Please enter a valid Name.');
-            return;
+            isValid = false;
+            $("input[name='Name']").next('.error').show();
+        } else {
+            $("input[name='Name']").next('.error').hide();
         }
 
         if (category === '') {
-            alert('Please enter a valid Category.');
-            return;
+            isValid = false;
+            $("input[name='Category']").next('.error').show();
+        } else {
+            $("input[name='Category']").next('.error').hide();
         }
 
         if (price === '' || isNaN(price)) {
-            alert('Please enter a valid Price.');
-            return;
+            isValid = false;
+            $("input[name='Price']").next('.error').show();
+        } else {
+            $("input[name='Price']").next('.error').hide();
         }
-
-        if (offerPercentage.trim() === '' || isNaN(offerPercentage)) {
-            offerPercentage = 0;
+        if (!SizeListSelect) {
+            isValid = false;
+            $("input[id='SizeListSelect']").next('.error').show();
+        } else {
+            $("input[id='SizeListSelect']").next('.error').hide();
         }
-
-        if (!coloresSelect) {
-            coloresSelect = [];
-        }
-
         if (!attachments) {
             attachments = null;
+            isValid = false;
+            alert('@Html.Translate("يجب اضافة صور!","Pictures must be added!")')
+            return;
         }
         var formData = new FormData();
         formData.append("id", '@Model.Id');
@@ -474,23 +488,24 @@
         $.each(SizeListSelect, function (index, size) {
             formData.append("sizes[" + index + "]", size);
         });
-        $.ajax({
-           
-
-            url: '@Url.Action("SaveEditProducts", "Products", new { area = "DealerAreas" })',
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (data) {
-                $('#allProdictsDiv').html('');
-                var url = '@Url.Action("Index", "Products", new { area = "DealerAreas" })';
-                $('#allProdictsDiv').load(url);
-            },
-            error: function (error) {
-                console.error("Error saving data: ", error);
-            }
-        });
+        if (isValid) {
+            $.ajax({
+                url: '@Url.Action("SaveEditProducts", "Products", new { area = "DealerAreas" })',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    $('#allProdictsDiv').html('');
+                    var url = '@Url.Action("Index", "Products", new { area = "DealerAreas" })';
+                    $('#allProdictsDiv').load(url);
+                },
+                error: function (error) {
+                    console.error("Error saving data: ", error);
+                }
+            });
+        }
+        
     }
 
 </script>

@@ -156,8 +156,16 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
         
         private async Task<decimal> CalculateTotalRevenue()
         {
-             List<Orders> ordersList = await FetchOrdersFromDatabase();
-            decimal totalRevenue = (decimal)ordersList.Sum(order => order.TotalPrice);
+            List<Orders> ordersList = await FetchOrdersFromDatabase();
+            decimal totalRevenue = 0;
+
+            foreach (var order in ordersList)
+            {
+                foreach (var orderItem in order.Products)
+                {
+                    totalRevenue += (decimal)(orderItem.Product?.Price ?? 0) * orderItem.Quantity;
+                }
+            }
             return totalRevenue;
         }
 
@@ -235,7 +243,7 @@ namespace E_CommerceAR.Areas.AdminDashboard.Controllers
                  return 0;
             }
 
-            decimal profit = totalRevenue - totalCost;
+            decimal profit = totalCost - totalRevenue ;
             decimal profitRatio = (profit / totalRevenue) * 100;
 
             return profitRatio;

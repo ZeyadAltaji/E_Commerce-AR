@@ -91,23 +91,30 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
                 return 0;
             }
         }
-        private async Task<decimal> CalculateTotalRevenue()
+        private async Task<decimal> CalculateTotalRevenue ()
         {
             List<Orders> ordersList = await FetchOrdersFromDatabase();
-            decimal totalRevenue = (decimal)ordersList.Sum(order => order.TotalPrice);
+            decimal totalRevenue = 0;
+
+            foreach (var order in ordersList)
+            {
+                foreach (var orderItem in order.Products)
+                {
+                     totalRevenue += (decimal)(orderItem.Product?.Price ?? 0) * orderItem.Quantity;
+                }
+            }
+
             return totalRevenue;
         }
 
         private async Task<List<Orders>> FetchOrdersFromDatabase ()
         {
-
             try
             {
-                var DocumentId = HttpContext.Session.GetString("UserId");
+                var dealerId = HttpContext.Session.GetString("UserId");
 
-                Query ordersQuery = firestoreDb.Collection("orders").WhereEqualTo("dealerId" , DocumentId);
+                Query ordersQuery = firestoreDb.Collection("orders");
                 QuerySnapshot querySnapshot = await ordersQuery.GetSnapshotAsync();
-
 
                 List<Orders> ordersList = new List<Orders>();
 
@@ -116,6 +123,15 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
                     try
                     {
                         Orders order = documentSnapshot.ConvertTo<Orders>();
+
+                         List<OrderItem> filteredOrderItems = order.Products
+                            .Where(item => item.Product != null && item.Product.dealerId == dealerId)
+                            .ToList();
+
+                         if (filteredOrderItems.Count == 0)
+                            continue;
+
+                         order.Products = filteredOrderItems;
                         ordersList.Add(order);
                     }
                     catch (Exception ex)
@@ -126,13 +142,15 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
 
                 return ordersList;
             }
-            catch
+            catch (Exception ex)
             {
-                throw new NotImplementedException();
+                Console.WriteLine($"Error fetching orders: {ex.Message}");
+                return new List<Orders>();
             }
-
         }
-            private async Task<decimal> CalculateTotalCost()
+
+
+        private async Task<decimal> CalculateTotalCost()
         {
             List<Product> productsList = await FetchProductsFromDatabase();
             decimal totalCost = (decimal)productsList.Sum(product => product.Price ?? 0);
@@ -177,7 +195,7 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
                 return 0;
             }
 
-            decimal profit = totalRevenue - totalCost;
+            decimal profit =  totalCost- totalRevenue;
             decimal profitRatio = (profit / totalRevenue) * 100;
 
             return profitRatio;
@@ -205,35 +223,54 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
         {
             try
             {
-                var DocumentId = HttpContext.Session.GetString("UserId");
+                string dealerId = HttpContext.Session.GetString("UserId");
 
-                Query ordersQuery = firestoreDb.Collection("orders").WhereEqualTo("dealerId" , DocumentId);
-                QuerySnapshot querySnapshot = await ordersQuery.GetSnapshotAsync();
+                CollectionReference ordersCollection = firestoreDb.Collection("orders");
+                QuerySnapshot ordersQuery = await ordersCollection.GetSnapshotAsync();
 
-                 
+                List<OrdersViewModel> OrdersList = new List<OrdersViewModel>();
 
-                List<OrdersViewModel> ordersList = new List<OrdersViewModel>();
-
-                foreach (DocumentSnapshot documentSnapshot in querySnapshot.Documents)
+                foreach (DocumentSnapshot documentSnapshot in ordersQuery.Documents)
                 {
                     try
                     {
                         Orders Order = documentSnapshot.ConvertTo<Orders>();
+
+                        List<OrderItem> filteredOrderItems = Order.Products
+                           .Where(item => item.Product != null && item.Product.dealerId == dealerId)
+                           .ToList();
+
+                        if (filteredOrderItems.Count == 0)
+                            continue;
+
                         string documentPath = documentSnapshot.Reference.Path;
                         string documentId = documentPath.Split('/').Last();
-                        ordersList.Add(new OrdersViewModel { Orders = Order, DocumentId = documentId });
+
+                        Orders filteredOrder = new Orders
+                        {
+                            Date = Order.Date ,
+                            Address = Order.Address ,
+                            OrderId = Order.OrderId ,
+                            TotalPrice = Order.TotalPrice ,
+                            OrderStatus = Order.OrderStatus ,
+                            Products = filteredOrderItems ,
+                            CreateTime = Order.CreateTime ,
+                            UpdateTime = Order.UpdateTime
+                        };
+
+                        OrdersList.Add(new OrdersViewModel { Orders = filteredOrder , DocumentId = documentId });
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"Error converting document {documentSnapshot.Id}: {ex.Message}");
+                        Console.WriteLine($"Error processing document {documentSnapshot.Id}: {ex.Message}");
                     }
                 }
 
-                return ordersList;
+                return OrdersList;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error fetching products: {ex.Message}");
+                Console.WriteLine($"Error fetching orders: {ex.Message}");
                 return new List<OrdersViewModel>();
             }
         }

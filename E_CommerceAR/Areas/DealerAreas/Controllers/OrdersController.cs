@@ -155,6 +155,7 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
 
          public IActionResult ViewOrder(string DocumentId)
         {
+            string dealerId = HttpContext.Session.GetString("UserId");
             CollectionReference ViewOrderCollection = firestoreDb.Collection("orders");
 
             DocumentSnapshot snapshot = ViewOrderCollection.Document(DocumentId).GetSnapshotAsync().Result;
@@ -162,7 +163,7 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
             if (snapshot.Exists)
             {
                 Orders order = snapshot.ConvertTo<Orders>();
-
+                ViewBag.dealerId = dealerId;
                 return PartialView(order);
             }
             else

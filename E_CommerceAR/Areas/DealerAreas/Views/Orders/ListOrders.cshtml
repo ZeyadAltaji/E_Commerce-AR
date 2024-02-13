@@ -8,6 +8,12 @@
     table.dataTable thead th, table.dataTable thead td, table.dataTable tfoot th, table.dataTable tfoot td, div.dataTables_wrapper div.dataTables_filter {
         text-align: @Html.Translate("left","right");
     }
+
+    .dataTables_wrapper .dataTables_filter label {
+        display: flex !important;
+    @Html.Translate("margin-right","margin-left") : 2rem !important;
+        align-items: center !important;
+    }
 </style>
 <table class="table align-items-center mb-0" id="OrdersTable">
     <thead>

@@ -451,12 +451,7 @@
         }
        
 
-        if (!attachments) {
-            attachments = null;
-                isValid = false;
-                alert('@Html.Translate("يجب اضافة صور!","Pictures must be added!")')
-                return;
-        }
+        
         var formData = new FormData();
         formData.append("id", '@Model.Id');
         formData.append("DocumentId", '@DocumentId');
@@ -525,6 +520,7 @@
                     processData: false,
                     contentType: false,
                     success: function (data) {
+                        debugger
                         $('#allProdictsDiv').html('');
                         var url = '@Url.Action("Index", "Products")';
                         $('#allProdictsDiv').load(url);

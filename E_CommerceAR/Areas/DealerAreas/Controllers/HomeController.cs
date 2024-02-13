@@ -118,12 +118,14 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
 
         private async Task<decimal> CalculateTotalRevenue ()
         {
+            string dealerId = HttpContext.Session.GetString("UserId");
+
             List<Orders> ordersList = await FetchOrdersFromDatabase();
             decimal totalRevenue = 0;
 
             foreach (var order in ordersList)
             {
-                foreach (var orderItem in order.Products)
+                foreach (var orderItem in order.Products.Where(x=>x.Product.dealerId == dealerId))
                 {
                      totalRevenue += (decimal)(orderItem.Product?.Price ?? 0) * orderItem.Quantity;
                 }
@@ -177,8 +179,19 @@ namespace E_CommerceAR.Areas.DealerAreas.Controllers
 
         private async Task<decimal> CalculateTotalCost()
         {
-            List<Product> productsList = await FetchProductsFromDatabase();
-            decimal totalCost = (decimal)productsList.Sum(product => product.Price ?? 0);
+            string dealerId = HttpContext.Session.GetString("UserId");
+
+            List<Orders> ordersList = await FetchOrdersFromDatabase();
+            decimal totalCost = 0;
+
+            foreach (var order in ordersList)
+            {
+                foreach (var orderItem in order.Products.Where(x => x.Product.dealerId == dealerId))
+                {
+                    totalCost += (decimal)(orderItem.Product?.Price ?? 0);
+                }
+            }
+            //decimal totalCost = (decimal)ordersList.Sum(product => product.Products..Price ?? 0);
             return totalCost;
         }
 

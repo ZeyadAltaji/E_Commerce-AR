@@ -2,6 +2,7 @@
 @using E_CommerceAR.Domain.ModalsBase;
 @model Orders;
 @{
+    dynamic dealerId = ViewBag.dealerId;
 }
 
 <style>
@@ -27,7 +28,7 @@
                         <div class="col-md-10">
                             <h6 class="text-white text-capitalize ps-3">@Html.Translate("معلومات طلب رقم ","Info Order No ")@Model.OrderId</h6>
                         </div>
-                        <div class="col-md-2" style="text-align: end !important;">
+                        <div class="col-md-2 text-end">
                             <button class="btn bg-gradient-info mb-0" onclick="ListOrders()">
                                 @Html.Translate(" عودة الى القائمة","Back to list")
                             </button>
@@ -156,7 +157,7 @@
                             </div>
                             <div class="card-body pt-4 p-3">
                                 <ul class="list-group row">
-                                    @foreach (var item in Model.Products)
+                                    @foreach (var item in Model.Products.Where(x => x.Product.dealerId == dealerId))
                                     {
                                         <li class="list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg card card-body">
                                             <h6 class="mb-3 text-sm">@Html.Translate("اسم المنتج","Product Name ") @item.Product.Name </h6>
